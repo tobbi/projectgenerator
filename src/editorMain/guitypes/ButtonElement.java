@@ -6,6 +6,7 @@ public class ButtonElement extends GUIElement {
 
 	public ButtonElement() {
 		super();
+		this.setType("button");
 	}
 
 	@Override

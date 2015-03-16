@@ -103,13 +103,11 @@ public class JSONParserClass {
 				if(lastElement.equals("buttons"))
 				{
 					m_pCurrentElement = new ButtonElement();
-					m_pCurrentElement.setType("button");
 					m_pElementStack.push("element");
 				}
 				if(lastElement.equals("textfields"))
 				{
 					m_pCurrentElement = new GUIElement();
-					m_pCurrentElement.setType("textField");
 					m_pElementStack.push("element");
 				}
 				
