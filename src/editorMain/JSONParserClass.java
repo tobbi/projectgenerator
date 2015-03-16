@@ -59,7 +59,7 @@ public class JSONParserClass {
 				showMessageBox("Nicht wohlgeformte JSON-Datei. Fehlermeldung:\r\n"
 						+ e.getMessage());
 			}
-			if(current == JsonParser.Event.KEY_NAME) // || current == JsonParser.Event.VALUE_STRING || current == JsonParser.Event.VALUE_NUMBER)
+			if(current == JsonParser.Event.KEY_NAME)
 			{
 				m_pCurrentKeyName = m_pJsonParser.getString();
 				if(m_pCurrentKeyName.equalsIgnoreCase("_activities"))

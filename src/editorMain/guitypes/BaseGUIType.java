@@ -126,14 +126,26 @@ public abstract class BaseGUIType extends GUIDElement {
 	
 	private String m_pType;
 
+	/**
+	 * Returns the Type of this element
+	 * @return
+	 */
 	public String getType() {
 		return m_pType;
 	}
 
+	/**
+	 * Sets the type of this element
+	 * @param type The type of this element as a string
+	 */
 	public void setType(String type) {
 		this.m_pType = type;
 	}
 	
+	/**
+	 * Returns this element's readable name
+	 * @return This element's readable name
+	 */
 	public String getReadableName()
 	{
 		String name = "";
@@ -215,6 +227,12 @@ public abstract class BaseGUIType extends GUIDElement {
 		return "http://schemas.android.com/tools";
 	}
 	
+	/**
+	 * Handles this element JSOn parsing
+	 * @param parser Parser instance
+	 * @param event Current event
+	 * @param key Current key
+	 */
 	public void handleJsonEvent(JsonParser parser, JsonParser.Event event, String key) {
 		if(event == JsonParser.Event.VALUE_STRING)
 		{
