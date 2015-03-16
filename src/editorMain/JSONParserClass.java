@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import editorMain.guitypes.BaseGUIType;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
+import editorMain.guitypes.MobileApplication;
 
 import javax.json.*;
 import javax.json.stream.JsonParser;
@@ -130,10 +131,13 @@ public class JSONParserClass {
 			{
 				m_pElementStack.pop();
 			}
+
+			// Values are handled by subclasses
 			if(current == JsonParser.Event.VALUE_STRING || 
 			   current == JsonParser.Event.VALUE_NUMBER ||
 			   current == JsonParser.Event.VALUE_FALSE  ||
-			   current == JsonParser.Event.VALUE_TRUE)
+			   current == JsonParser.Event.VALUE_TRUE ||
+			   current == JsonParser.Event.VALUE_NULL)
 			{	
 				m_pCurrentElement.handleJsonEvent(m_pJsonParser, current, m_pCurrentKeyName);
 				m_pElementStack.pop();

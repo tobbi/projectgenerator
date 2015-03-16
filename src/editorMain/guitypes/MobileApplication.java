@@ -1,4 +1,4 @@
-package editorMain;
+package editorMain.guitypes;
 
 import java.util.ArrayList;
 
@@ -6,9 +6,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import editorMain.dataTypes.DOMWriter;
-import editorMain.guitypes.BaseGUIType;
-import editorMain.guitypes.GUIActivity;
-import editorMain.guitypes.ResponderObject;
 
 public class MobileApplication extends BaseGUIType {
 	public ArrayList<GUIActivity> m_pActivities;

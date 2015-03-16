@@ -40,6 +40,8 @@ import javax.swing.tree.DefaultTreeModel;
 import editorMain.guitypes.BaseGUIType;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
+import editorMain.guitypes.MobileApplication;
+
 import javax.swing.JTextPane;
 
 public class MainDialog extends JDialog {
