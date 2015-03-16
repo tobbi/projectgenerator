@@ -2,6 +2,8 @@ package editorMain.guitypes;
 
 import java.awt.Color;
 
+import javax.json.stream.JsonParser;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -143,4 +145,19 @@ public class GUIElement extends BaseGUIType {
 		
 		return element;
 	}
+	
+	@Override
+	public void handleJsonEvent(JsonParser parser, JsonParser.Event event, String key) {
+		super.handleJsonEvent(parser, event, key);
+		
+		if(event == JsonParser.Event.VALUE_STRING)
+		{
+			String strValue = parser.getString();	
+			if(key.equals("label"))
+			{
+				this.setLabel(strValue);
+			}
+		}
+	}
+	
 }

@@ -2,6 +2,8 @@ package editorMain.guitypes;
 
 import java.awt.Color;
 
+import javax.json.stream.JsonParser;
+
 import editorMain.dataTypes.AdvancedPoint;
 
 public abstract class BaseGUIType extends GUIDElement {
@@ -212,4 +214,44 @@ public abstract class BaseGUIType extends GUIDElement {
 	public String getAndroidToolsNamespace() {
 		return "http://schemas.android.com/tools";
 	}
+	
+	public void handleJsonEvent(JsonParser parser, JsonParser.Event event, String key) {
+		if(event == JsonParser.Event.VALUE_STRING)
+		{
+			String strValue = parser.getString();
+			if(key.equals("name"))
+			{
+				this.setName(strValue);
+			}
+			if(key.equals("id"))
+			{
+				this.setId(strValue);
+			}
+			if(key.equals("type"))
+			{
+				this.setType(strValue);
+			}
+			if(key.equals("backgroundColor"))
+			{
+				this.setBackgroundColor(strValue);
+			}
+			if(key.equals("textColor"))
+			{
+				this.setTextColor(strValue);
+			}
+		}
+		if(event == JsonParser.Event.VALUE_NUMBER)
+		{
+			int intValue = parser.getInt();
+			if(key.equals("posX"))
+				this.setPositionX(intValue);
+			if(key.equals("posY"))
+				this.setPositionY(intValue);
+			if(key.equals("width"))
+				this.setWidth(intValue);
+			if(key.equals("height"))
+				this.setHeight(intValue);
+		}
+	}
+	
 }

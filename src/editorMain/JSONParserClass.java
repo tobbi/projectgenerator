@@ -75,6 +75,12 @@ public class JSONParserClass {
 			{
 				String lastElement = m_pElementStack.lastElement();
 
+				// Sind wir im Element, wird das Event von den Subklassen verarbeitet
+				if(lastElement.equals("element"))
+				{
+					m_pCurrentElement.handleJsonEvent(m_pJsonParser, current, m_pCurrentKeyName);
+				}
+
 				if(lastElement.equals("_application"))
 				{
 					m_pApplication = new MobileApplication();
@@ -124,48 +130,12 @@ public class JSONParserClass {
 			{
 				m_pElementStack.pop();
 			}
-			if(current == JsonParser.Event.VALUE_STRING)
-			{
-				String strValue = m_pJsonParser.getString();
-				if(m_pCurrentKeyName.equals("name"))
-				{
-					m_pCurrentElement.setName(strValue);
-				}
-				if(m_pCurrentKeyName.equals("id"))
-				{
-					m_pCurrentElement.setId(strValue);
-				}
-				if(m_pCurrentKeyName.equals("label"))
-				{
-					((GUIElement) m_pCurrentElement).setLabel(strValue);
-				}
-				if(m_pCurrentKeyName.equals("type"))
-				{
-					m_pCurrentElement.setType(strValue);
-				}
-				if(m_pCurrentKeyName.equals("backgroundColor"))
-				{
-					m_pCurrentElement.setBackgroundColor(strValue);
-				}
-				if(m_pCurrentKeyName.equals("textColor"))
-				{
-					m_pCurrentElement.setTextColor(strValue);
-				}
-				
-				m_pElementStack.pop();
-			}
-			if(current == JsonParser.Event.VALUE_NUMBER)
-			{
-				int intValue = m_pJsonParser.getInt();
-				if(m_pCurrentKeyName.equals("posX"))
-					m_pCurrentElement.setPositionX(intValue);
-				if(m_pCurrentKeyName.equals("posY"))
-					m_pCurrentElement.setPositionY(intValue);
-				if(m_pCurrentKeyName.equals("width"))
-					m_pCurrentElement.setWidth(intValue);
-				if(m_pCurrentKeyName.equals("height"))
-					m_pCurrentElement.setHeight(intValue);
-
+			if(current == JsonParser.Event.VALUE_STRING || 
+			   current == JsonParser.Event.VALUE_NUMBER ||
+			   current == JsonParser.Event.VALUE_FALSE  ||
+			   current == JsonParser.Event.VALUE_TRUE)
+			{	
+				m_pCurrentElement.handleJsonEvent(m_pJsonParser, current, m_pCurrentKeyName);
 				m_pElementStack.pop();
 			}
 		}
