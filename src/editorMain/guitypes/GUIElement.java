@@ -47,7 +47,7 @@ public class GUIElement extends BaseGUIType {
 	public Element toIOSXMLElement() {
 		Document document = this.getDomWriter().getCurrentDocument();
 		
-		Element typeElement = document.createElement(getType());
+		Element typeElement = document.createElement(getIOSElementName());
 		typeElement.setAttribute("opaque", boolToIOSBool(false));
 		typeElement.setAttribute("contentMode", "scaleToFill");
 		typeElement.setAttribute("fixedFrame", boolToIOSBool(true));
@@ -65,16 +65,8 @@ public class GUIElement extends BaseGUIType {
 		typeElement.appendChild(rectElement);
 		
 		if(this.getBackgroundColor() != null)
-		{
-			Element bgColorElement = document.createElement("color");
-			CalibratedRgb bgColor = this.getBackgroundColorCalibrated();
-			bgColorElement.setAttribute("key", "backgroundColor");
-			bgColorElement.setAttribute("red",   String.valueOf(bgColor.r));
-			bgColorElement.setAttribute("green", String.valueOf(bgColor.g));
-			bgColorElement.setAttribute("blue",  String.valueOf(bgColor.b));
-			bgColorElement.setAttribute("alpha", String.valueOf(bgColor.a));
-			bgColorElement.setAttribute("colorSpace", "calibratedRGB");
-			typeElement.appendChild(bgColorElement);
+		{	
+			typeElement.appendChild(this.getIOSBackgroundColorElement());
 		}
 		
 		Element stateElement = document.createElement("state");
@@ -83,16 +75,7 @@ public class GUIElement extends BaseGUIType {
 
 		if(this.getTextColor() != null)
 		{
-			Element textColorElement = document.createElement("color");
-			CalibratedRgb textColor = this.getTextColorCalibrated();
-			textColorElement.setAttribute("key", "titleColor");
-			textColorElement.setAttribute("red",   String.valueOf(textColor.r));
-			textColorElement.setAttribute("green", String.valueOf(textColor.g));
-			textColorElement.setAttribute("blue",  String.valueOf(textColor.b));
-			textColorElement.setAttribute("alpha", String.valueOf(textColor.a));
-			textColorElement.setAttribute("colorSpace", "calibratedRGB");
-			
-			stateElement.appendChild(textColorElement);
+			stateElement.appendChild(this.getIOSTextColorElement());
 		}
 		
 		typeElement.appendChild(stateElement);
@@ -103,7 +86,7 @@ public class GUIElement extends BaseGUIType {
 	public Element toAndroidElement()
 	{
 		Document document = this.getDomWriter().getCurrentDocument();
-		Element element = document.createElement("Button");
+		Element element = document.createElement(getAndroidElementName());
 		element.setAttribute("android:id", "@+id/" + this.getReadableName());
 		element.setAttribute("android:text", this.getLabel());
 		element.setAttribute("android:layout_width", "wrap_content");

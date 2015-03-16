@@ -7,6 +7,8 @@ public class ButtonElement extends GUIElement {
 	public ButtonElement() {
 		super();
 		this.setType("button");
+		this.setAndroidElementName("Button");
+		this.setIOSElementName("button");
 	}
 
 	@Override

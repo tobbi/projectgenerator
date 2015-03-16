@@ -4,13 +4,12 @@ import java.awt.Color;
 
 import javax.json.stream.JsonParser;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import editorMain.dataTypes.AdvancedPoint;
 
 public abstract class BaseGUIType extends GUIDElement {
-	
-	public BaseGUIType()
-	{
-	}
 
 	/**
 	 * The name of this GUI element
@@ -143,6 +142,16 @@ public abstract class BaseGUIType extends GUIDElement {
 	}
 	
 	/**
+	 * The element name in Android
+	 */
+	private String m_pAndroidElementName;
+	
+	/**
+	 * The element name in iOS
+	 */
+	private String m_pIOSElementName;
+	
+	/**
 	 * Returns this element's readable name
 	 * @return This element's readable name
 	 */
@@ -199,8 +208,28 @@ public abstract class BaseGUIType extends GUIDElement {
 		return backgroundColor;
 	}
 	
+	public Element getIOSBackgroundColorElement() {
+		return createIOSColorElement("backgroundColor", this.getBackgroundColorCalibrated());
+	}
+	
+	private Element createIOSColorElement(String key, CalibratedRgb color) {
+		Document document = this.getDomWriter().getCurrentDocument();
+		Element element = document.createElement("color");
+		element.setAttribute("key", key);
+		element.setAttribute("red", String.valueOf(color.r));
+		element.setAttribute("green", String.valueOf(color.g));
+		element.setAttribute("blue", String.valueOf(color.b));
+		element.setAttribute("alpha", String.valueOf(color.a));
+		element.setAttribute("colorSpace", "calibratedRGB");
+		return element;
+	}
+	
 	public Color getTextColor() {
 		return textColor;
+	}
+	
+	public Element getIOSTextColorElement() {
+		return createIOSColorElement("titleColor", this.getTextColorCalibrated());
 	}
 	
 	public CalibratedRgb getTextColorCalibrated() {
@@ -245,10 +274,6 @@ public abstract class BaseGUIType extends GUIDElement {
 			{
 				this.setId(strValue);
 			}
-			if(key.equals("type"))
-			{
-				this.setType(strValue);
-			}
 			if(key.equals("backgroundColor"))
 			{
 				this.setBackgroundColor(strValue);
@@ -270,6 +295,22 @@ public abstract class BaseGUIType extends GUIDElement {
 			if(key.equals("height"))
 				this.setHeight(intValue);
 		}
+	}
+
+	public String getAndroidElementName() {
+		return m_pAndroidElementName;
+	}
+
+	public void setAndroidElementName(String androidElementName) {
+		this.m_pAndroidElementName = androidElementName;
+	}
+
+	public String getIOSElementName() {
+		return m_pIOSElementName;
+	}
+
+	public void setIOSElementName(String iosElementName) {
+		this.m_pIOSElementName = iosElementName;
 	}
 	
 }

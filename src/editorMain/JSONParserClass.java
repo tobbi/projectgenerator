@@ -15,7 +15,6 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import javax.swing.JOptionPane;
 
-import java.util.Map;
 import java.util.Stack;
 
 public class JSONParserClass {

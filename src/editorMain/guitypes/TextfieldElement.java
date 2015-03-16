@@ -4,7 +4,9 @@ public class TextfieldElement extends GUIElement {
 
 	public TextfieldElement() {
 		super();
-		this.setType("textField");
+		this.setType("textfield");
+		this.setIOSElementName("textField");
+		this.setAndroidElementName("EditText");
 		// TODO Auto-generated constructor stub
 	}
 
