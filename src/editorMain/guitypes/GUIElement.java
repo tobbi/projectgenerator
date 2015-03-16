@@ -52,7 +52,6 @@ public class GUIElement extends BaseGUIType {
 		typeElement.setAttribute("contentMode", "scaleToFill");
 		typeElement.setAttribute("fixedFrame", boolToIOSBool(true));
 		typeElement.setAttribute("contentHorizontalAlignment", "center");
-		typeElement.setAttribute("buttonType", "roundedRect");
 		typeElement.setAttribute("lineBreakMode", "middleTruncation");
 		typeElement.setAttribute("translatesAutoresizingMaskIntoConstraints", boolToIOSBool(false));
 		typeElement.setAttribute("id", this.getGeneratedID());

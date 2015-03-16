@@ -4,11 +4,16 @@ import org.w3c.dom.Element;
 
 public class ButtonElement extends GUIElement {
 
+	public ButtonElement() {
+		super();
+	}
+
+	@Override
 	public Element toIOSXMLElement() {
 		Element el = super.toIOSXMLElement();
-		
-		Element buttonNode = (Element)el.getElementsByTagName("button").item(0);
-		buttonNode.setAttribute("buttonType", "roundedRect");
+
+		// Enhance this button by setting the type to roundedRect:
+		el.setAttribute("buttonType", "roundedRect");
 		
 		return el;
 	}

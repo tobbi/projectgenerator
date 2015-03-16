@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import editorMain.guitypes.BaseGUIType;
+import editorMain.guitypes.ButtonElement;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
 import editorMain.guitypes.MobileApplication;
@@ -94,11 +95,24 @@ public class JSONParserClass {
 					m_pApplication.addActivity((GUIActivity)m_pCurrentElement);
 					m_pElementStack.push("activity");
 				}
-				if(lastElement.equals("_elements"))
+				/*if(lastElement.equals("_elements"))
 				{
 					m_pCurrentElement = new GUIElement();
 					m_pElementStack.push("element");
+				}*/
+				if(lastElement.equals("buttons"))
+				{
+					m_pCurrentElement = new ButtonElement();
+					m_pCurrentElement.setType("button");
+					m_pElementStack.push("element");
 				}
+				if(lastElement.equals("textfields"))
+				{
+					m_pCurrentElement = new GUIElement();
+					m_pCurrentElement.setType("textField");
+					m_pElementStack.push("element");
+				}
+				
 			}
 			if(current == JsonParser.Event.END_OBJECT)
 			{
@@ -125,6 +139,8 @@ public class JSONParserClass {
 				if(m_pElementStack.isEmpty())
 					  continue;
 
+				
+				
 				m_pElementStack.push(m_pCurrentKeyName);
 			}
 			if(current == JsonParser.Event.END_ARRAY)
