@@ -86,8 +86,7 @@ public class JSONParserClass {
 
 				if(lastElement.equals("_application"))
 				{
-					m_pApplication = new MobileApplication();
-					m_pCurrentElement = m_pApplication;
+					m_pCurrentElement = m_pApplication = new MobileApplication();
 					m_pElementStack.push("application");
 				}
 				if(lastElement.equals("_activities"))
