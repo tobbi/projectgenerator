@@ -8,6 +8,7 @@ import editorMain.guitypes.ButtonElement;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
 import editorMain.guitypes.MobileApplication;
+import editorMain.guitypes.TextfieldElement;
 
 import javax.json.*;
 import javax.json.stream.JsonParser;
@@ -107,7 +108,7 @@ public class JSONParserClass {
 				}
 				if(lastElement.equals("textfields"))
 				{
-					m_pCurrentElement = new GUIElement();
+					m_pCurrentElement = new TextfieldElement();
 					m_pElementStack.push("element");
 				}
 				
