@@ -15,6 +15,7 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import javax.swing.JOptionPane;
 
+import java.util.Map;
 import java.util.Stack;
 
 public class JSONParserClass {
@@ -22,12 +23,12 @@ public class JSONParserClass {
 	private FileInputStream m_pFileInputStream;
     private MainDialog m_pParentDialog;
     private JsonParser m_pJsonParser;
+    private JsonParser.Event m_pCurrentJsonEvent;
     
     private MobileApplication m_pApplication;
     private Stack<String> m_pElementStack = new Stack<String>();
     private String m_pCurrentKeyName;
     private BaseGUIType m_pCurrentElement;
-
 	public JSONParserClass(MainDialog parent) {
         m_pParentDialog = parent;
 	}
@@ -52,16 +53,15 @@ public class JSONParserClass {
 
 		while(m_pJsonParser.hasNext())
 		{
-			JsonParser.Event current = null;
 			try {
-				current = m_pJsonParser.next();
+				m_pCurrentJsonEvent = m_pJsonParser.next();
 			}
 			catch(JsonParsingException e)
 			{
 				showMessageBox("Nicht wohlgeformte JSON-Datei. Fehlermeldung:\r\n"
 						+ e.getMessage());
 			}
-			if(current == JsonParser.Event.KEY_NAME)
+			if(m_pCurrentJsonEvent == JsonParser.Event.KEY_NAME)
 			{
 				m_pCurrentKeyName = m_pJsonParser.getString();
 				if(m_pCurrentKeyName.equalsIgnoreCase("_activities"))
@@ -74,14 +74,14 @@ public class JSONParserClass {
 			if(m_pElementStack.empty())
 				continue;
 
-			if(current == JsonParser.Event.START_OBJECT)
+			if(m_pCurrentJsonEvent == JsonParser.Event.START_OBJECT)
 			{
 				String lastElement = m_pElementStack.lastElement();
 
 				// Sind wir im Element, wird das Event von den Subklassen verarbeitet
 				if(lastElement.equals("element"))
 				{
-					m_pCurrentElement.handleJsonEvent(m_pJsonParser, current, m_pCurrentKeyName);
+					m_pCurrentElement.handleJsonEvent(m_pJsonParser, m_pCurrentJsonEvent, m_pCurrentKeyName);
 				}
 
 				if(lastElement.equals("_application"))
@@ -96,11 +96,7 @@ public class JSONParserClass {
 					m_pApplication.addActivity((GUIActivity)m_pCurrentElement);
 					m_pElementStack.push("activity");
 				}
-				/*if(lastElement.equals("_elements"))
-				{
-					m_pCurrentElement = new GUIElement();
-					m_pElementStack.push("element");
-				}*/
+				
 				if(lastElement.equals("buttons"))
 				{
 					m_pCurrentElement = new ButtonElement();
@@ -113,7 +109,7 @@ public class JSONParserClass {
 				}
 				
 			}
-			if(current == JsonParser.Event.END_OBJECT)
+			if(m_pCurrentJsonEvent == JsonParser.Event.END_OBJECT)
 			{
 				if(m_pElementStack.lastElement().equals("element"))
 				{
@@ -133,7 +129,7 @@ public class JSONParserClass {
 				
 				m_pElementStack.pop();
 			}
-			if(current == JsonParser.Event.START_ARRAY)
+			if(m_pCurrentJsonEvent == JsonParser.Event.START_ARRAY)
 			{
 				if(m_pElementStack.isEmpty())
 					  continue;
@@ -142,19 +138,19 @@ public class JSONParserClass {
 				
 				m_pElementStack.push(m_pCurrentKeyName);
 			}
-			if(current == JsonParser.Event.END_ARRAY)
+			if(m_pCurrentJsonEvent == JsonParser.Event.END_ARRAY)
 			{
 				m_pElementStack.pop();
 			}
 
 			// Values are handled by subclasses
-			if(current == JsonParser.Event.VALUE_STRING || 
-			   current == JsonParser.Event.VALUE_NUMBER ||
-			   current == JsonParser.Event.VALUE_FALSE  ||
-			   current == JsonParser.Event.VALUE_TRUE ||
-			   current == JsonParser.Event.VALUE_NULL)
+			if(m_pCurrentJsonEvent == JsonParser.Event.VALUE_STRING || 
+			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_NUMBER ||
+			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_FALSE  ||
+			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_TRUE ||
+			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_NULL)
 			{	
-				m_pCurrentElement.handleJsonEvent(m_pJsonParser, current, m_pCurrentKeyName);
+				m_pCurrentElement.handleJsonEvent(m_pJsonParser, m_pCurrentJsonEvent, m_pCurrentKeyName);
 				m_pElementStack.pop();
 			}
 		}
