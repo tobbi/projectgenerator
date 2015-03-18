@@ -12,9 +12,17 @@ public class MobileApplication extends BaseGUIType {
 	
 	private ResponderObject m_pFirstResponder = new ResponderObject();
 	
+	private Boolean m_pIsInitialized = false;
+	
 	public void initializeActivities()
 	{
 		m_pActivities = new ArrayList<GUIActivity>();
+		m_pIsInitialized = true;
+	}
+	
+	public Boolean isInitialized()
+	{
+		return m_pIsInitialized;
 	}
 	
 	public void addActivity(GUIActivity activity)

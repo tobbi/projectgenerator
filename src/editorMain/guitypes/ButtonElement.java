@@ -11,6 +11,10 @@ public class ButtonElement extends GUIElement {
 		this.setAndroidElementName("Button");
 		this.setIOSElementName("button");
 	}
+	
+	public static String getGroupName() {
+		return "buttons";
+	}
 
 	@Override
 	public Element toIOSXMLElement() {

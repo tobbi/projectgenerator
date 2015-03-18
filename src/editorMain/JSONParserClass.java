@@ -63,10 +63,6 @@ public class JSONParserClass {
 			if(m_pCurrentJsonEvent == JsonParser.Event.KEY_NAME)
 			{
 				m_pCurrentKeyName = m_pJsonParser.getString();
-				if(m_pCurrentKeyName.equalsIgnoreCase("_activities"))
-				{
-					m_pApplication.initializeActivities();
-				}
 				m_pElementStack.push(m_pCurrentKeyName);
 			}
 			
@@ -90,11 +86,15 @@ public class JSONParserClass {
 				}
 				if(lastElement.equals("_activities"))
 				{
+					if(!m_pApplication.isInitialized())
+					{
+						m_pApplication.initializeActivities();
+					}
 					m_pCurrentElement = new GUIActivity();
 					m_pApplication.addActivity((GUIActivity)m_pCurrentElement);
 					m_pElementStack.push("activity");
 				}
-				
+
 				if(lastElement.equals("buttons"))
 				{
 					m_pCurrentElement = new ButtonElement();
@@ -142,12 +142,12 @@ public class JSONParserClass {
 			}
 
 			// Values are handled by subclasses
-			if(m_pCurrentJsonEvent == JsonParser.Event.VALUE_STRING || 
+			if(m_pCurrentJsonEvent == JsonParser.Event.VALUE_STRING ||
 			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_NUMBER ||
 			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_FALSE  ||
 			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_TRUE ||
 			   m_pCurrentJsonEvent == JsonParser.Event.VALUE_NULL)
-			{	
+			{
 				m_pCurrentElement.handleJsonEvent(m_pJsonParser, m_pCurrentJsonEvent, m_pCurrentKeyName);
 				m_pElementStack.pop();
 			}
