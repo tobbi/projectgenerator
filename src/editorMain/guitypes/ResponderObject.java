@@ -10,7 +10,6 @@ public class ResponderObject extends GUIDElement {
 	
 	public Element toIOSXMLElement()
 	{
-		
 		Document document = getDomWriter().getCurrentDocument();
 		Element placeholder = document.createElement("placeholder");
 		placeholder.setAttribute("placeholderIdentifier", "IBFirstResponder");

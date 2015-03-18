@@ -15,10 +15,10 @@ public class TextfieldElement extends GUIElement {
 	@Override
 	public Element toIOSXMLElement() {
 		Element element = super.toIOSXMLElement();
-		
+
 		// Set textfield text
 		element.setAttribute("text", this.getLabel());
-		
+
 		return element;
 	}
 }

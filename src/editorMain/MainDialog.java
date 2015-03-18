@@ -81,7 +81,7 @@ public class MainDialog extends JDialog {
 
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
-			m_pJsonParser.parse(dlg.getDirectory() + "/" + dlg.getFile());
+			m_pJsonParser.parse(dlg.getDirectory(), dlg.getFile());
 		}
 	};
 	

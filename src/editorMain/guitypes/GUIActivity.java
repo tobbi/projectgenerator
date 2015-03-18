@@ -1,5 +1,6 @@
 package editorMain.guitypes;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.json.stream.JsonParser;
@@ -9,6 +10,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class GUIActivity extends BaseGUIType {
+	
+	public String m_pProjectPath;
+	
+	public GUIActivity(String projectPath) {
+		m_pProjectPath = projectPath;
+	}
 	
 	/**
 	 * Contains all GUI elements of the current Activity
@@ -34,15 +41,33 @@ public class GUIActivity extends BaseGUIType {
 	 */
 	public String sourceFilePath;
 	
-	
+	/**
+	 * Gets the source file path for the current activity
+	 * @return
+	 */
 	public String getSourceFilePath() {
 		return sourceFilePath;
 	}
-
+	
+	/**
+	 * Sets the source file path for the current activity
+	 * @param sourceFilePath The path of the source file to generate
+	 */
 	public void setSourceFilePath(String sourceFilePath) {
+		File sourceFile = new File(m_pProjectPath + File.separator + sourceFilePath);
+		if(!sourceFile.exists())
+		{
+			System.out.printf("Specified source file %s does not exist. Ignoring.",
+							  sourceFile.getAbsolutePath());
+			return;
+		}
 		this.sourceFilePath = sourceFilePath;
 	}
 
+	/**
+	 * Generates an IOS XML element out of the information that we got
+	 * @return
+	 */
 	public Element toIOSXMLElement() {
 		Document document = this.getDomWriter().getCurrentDocument();
 		
@@ -78,6 +103,10 @@ public class GUIActivity extends BaseGUIType {
 		return viewController;
 	}
 	
+	/**
+	 * Creates an Android XML element out of the information that we got
+	 * @return
+	 */
 	public Element toAndroidXMLElement() {
 		Document document = this.getDomWriter().getCurrentDocument();
 		

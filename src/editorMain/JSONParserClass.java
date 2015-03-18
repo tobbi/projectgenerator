@@ -1,5 +1,6 @@
 package editorMain;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -23,6 +24,7 @@ public class JSONParserClass {
     private MainDialog m_pParentDialog;
     private JsonParser m_pJsonParser;
     private JsonParser.Event m_pCurrentJsonEvent;
+    private String m_pProjectPath;
     
     private MobileApplication m_pApplication;
     private Stack<String> m_pElementStack = new Stack<String>();
@@ -41,13 +43,14 @@ public class JSONParserClass {
      * @param filename Name of the file to parse
      * @return
      */
-	public void parse(String filename) {
+	public void parse(String pathname, String filename) {
 		try {
-			m_pFileInputStream  = new FileInputStream(filename);
+			m_pFileInputStream  = new FileInputStream(pathname + "/" + filename);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		m_pProjectPath = pathname;
 		m_pJsonParser = Json.createParser(m_pFileInputStream);
 
 		while(m_pJsonParser.hasNext())
@@ -73,7 +76,8 @@ public class JSONParserClass {
 			{
 				String lastElement = m_pElementStack.lastElement();
 
-				// Sind wir im Element, wird das Event von den Subklassen verarbeitet
+				// If we're in the element array, let the subclasses
+				// handle this event
 				if(lastElement.equals("element"))
 				{
 					m_pCurrentElement.handleJsonEvent(m_pJsonParser, m_pCurrentJsonEvent, m_pCurrentKeyName);
@@ -90,7 +94,7 @@ public class JSONParserClass {
 					{
 						m_pApplication.initializeActivities();
 					}
-					m_pCurrentElement = new GUIActivity();
+					m_pCurrentElement = new GUIActivity(m_pProjectPath);
 					m_pApplication.addActivity((GUIActivity)m_pCurrentElement);
 					m_pElementStack.push("activity");
 				}
@@ -131,9 +135,6 @@ public class JSONParserClass {
 			{
 				if(m_pElementStack.isEmpty())
 					  continue;
-
-				
-				
 				m_pElementStack.push(m_pCurrentKeyName);
 			}
 			if(m_pCurrentJsonEvent == JsonParser.Event.END_ARRAY)
