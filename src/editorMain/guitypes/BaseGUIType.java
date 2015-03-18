@@ -224,12 +224,28 @@ public abstract class BaseGUIType extends GUIDElement {
 		return element;
 	}
 	
+	private Element createIOSFrameElement()
+	{
+		Document document = this.getDomWriter().getCurrentDocument();
+		Element element = document.createElement("rect");
+		element.setAttribute("key", "frame");
+		element.setAttribute("x", String.valueOf(this.getPosition().getX()));
+		element.setAttribute("y", String.valueOf(this.getPosition().getY()));
+		element.setAttribute("width", String.valueOf(this.getSize().getX()));
+		element.setAttribute("height", String.valueOf(this.getSize().getY()));
+		return element;
+	}
+	
 	public Color getTextColor() {
 		return textColor;
 	}
 	
 	public Element getIOSTextColorElement() {
 		return createIOSColorElement("titleColor", this.getTextColorCalibrated());
+	}
+	
+	public Element getIOSFrameElement() {
+		return createIOSFrameElement();
 	}
 	
 	public CalibratedRgb getTextColorCalibrated() {

@@ -2,6 +2,9 @@ package editorMain.guitypes;
 
 import java.util.ArrayList;
 
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -25,6 +28,21 @@ public class GUIActivity extends BaseGUIType {
 		return "com.example." + this.getReadableName().replace(" ", "_");
 	}
 	
+	/**
+	 * String to the source file that interacts with this activity
+	 * @return
+	 */
+	public String sourceFilePath;
+	
+	
+	public String getSourceFilePath() {
+		return sourceFilePath;
+	}
+
+	public void setSourceFilePath(String sourceFilePath) {
+		this.sourceFilePath = sourceFilePath;
+	}
+
 	public Element toIOSXMLElement() {
 		Document document = this.getDomWriter().getCurrentDocument();
 		
@@ -84,5 +102,20 @@ public class GUIActivity extends BaseGUIType {
 		
 		return relativeLayout;
 	}
+
+	@Override
+	public void handleJsonEvent(JsonParser parser, Event event, String key) {
+
+		if(event == JsonParser.Event.VALUE_STRING)
+		{
+			String strValue = parser.getString();
+			if(key.equals("source_file"))
+			{
+				this.setSourceFilePath(strValue);
+			}
+		}
+		super.handleJsonEvent(parser, event, key);
+	}
+	
 	
 }

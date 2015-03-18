@@ -1,5 +1,7 @@
 package editorMain.guitypes;
 
+import org.w3c.dom.Element;
+
 public class TextfieldElement extends GUIElement {
 
 	public TextfieldElement() {
@@ -9,5 +11,14 @@ public class TextfieldElement extends GUIElement {
 		this.setAndroidElementName("EditText");
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	@Override
+	public Element toIOSXMLElement() {
+		Element element = super.toIOSXMLElement();
+		
+		// Set textfield text
+		element.setAttribute("text", this.getLabel());
+		
+		return element;
+	}
 }

@@ -56,29 +56,13 @@ public class GUIElement extends BaseGUIType {
 		typeElement.setAttribute("translatesAutoresizingMaskIntoConstraints", boolToIOSBool(false));
 		typeElement.setAttribute("id", this.getGeneratedID());
 		
-		Element rectElement = document.createElement("rect");
-		rectElement.setAttribute("key", "frame");
-		rectElement.setAttribute("x", String.valueOf(this.getPosition().getX()));
-		rectElement.setAttribute("y", String.valueOf(this.getPosition().getY()));
-		rectElement.setAttribute("width", String.valueOf(this.getSize().getX()));
-		rectElement.setAttribute("height", String.valueOf(this.getSize().getY()));
-		typeElement.appendChild(rectElement);
+
+		typeElement.appendChild(this.getIOSFrameElement());
 		
 		if(this.getBackgroundColor() != null)
 		{	
 			typeElement.appendChild(this.getIOSBackgroundColorElement());
 		}
-		
-		Element stateElement = document.createElement("state");
-		stateElement.setAttribute("key", "normal");
-		stateElement.setAttribute("title", this.getLabel());
-
-		if(this.getTextColor() != null)
-		{
-			stateElement.appendChild(this.getIOSTextColorElement());
-		}
-		
-		typeElement.appendChild(stateElement);
 
 		return typeElement;
 	}
