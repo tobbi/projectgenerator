@@ -21,6 +21,19 @@ public class GUIActivity extends BaseGUIType {
 	 * Contains all GUI elements of the current Activity
 	 */
 	public ArrayList<GUIElement> m_pElements = new ArrayList<GUIElement>();
+	
+	/**
+	 * Returns an element by its ID
+	 */
+	public GUIElement getElementById(String id)
+	{
+		for(GUIElement element: m_pElements)
+		{
+			if(element.getId().equals(id))
+				return element;
+		}
+		return null;
+	}
 
 	/**
 	 * Adds a new Element to the Activity
@@ -145,6 +158,5 @@ public class GUIActivity extends BaseGUIType {
 		}
 		super.handleJsonEvent(parser, event, key);
 	}
-	
 	
 }

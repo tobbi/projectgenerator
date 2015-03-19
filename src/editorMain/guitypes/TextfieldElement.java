@@ -2,6 +2,8 @@ package editorMain.guitypes;
 
 import org.w3c.dom.Element;
 
+import editorMain.JavaCodeParser;
+
 public class TextfieldElement extends GUIElement {
 
 	public TextfieldElement() {
@@ -15,10 +17,10 @@ public class TextfieldElement extends GUIElement {
 	@Override
 	public Element toIOSXMLElement() {
 		Element element = super.toIOSXMLElement();
-
+		
 		// Set textfield text
 		element.setAttribute("text", this.getLabel());
-
+		
 		return element;
 	}
 }

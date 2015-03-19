@@ -7,6 +7,8 @@ import javax.json.stream.JsonParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import editorMain.JavaCodeParser;
+
 public class GUIElement extends BaseGUIType {
 	
 	public GUIElement() {
@@ -14,10 +16,12 @@ public class GUIElement extends BaseGUIType {
 	
 	private String m_pLabel;
 
+	@ExposedMember(methodName = "getLabel", returnType = "string")
 	public String getLabel() {
 		return m_pLabel;
 	}
 
+	@ExposedMember(methodName = "setLabel", returnType = "void")
 	public void setLabel(String label) {
 		this.m_pLabel = label;
 	}

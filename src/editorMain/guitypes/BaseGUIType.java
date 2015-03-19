@@ -48,11 +48,24 @@ public abstract class BaseGUIType extends GUIDElement {
 	{
 		return new AdvancedPoint(m_pPositionX, m_pPositionY);
 	}
+
+	@ExposedMember(methodName="getPositionX", returnType="int")
+	public int getPositionX()
+	{
+		return m_pPositionX;
+	}
+
+	@ExposedMember(methodName="getPositionY", returnType="int")	
+	public int getPositionY()
+	{
+		return m_pPositionY;
+	}
 	
 	/**
 	 * Sets the position X of this element relative to its parent
 	 * @return
-	 */	
+	 */
+	@ExposedMember(methodName="setPositionX", returnType="void")
 	public void setPositionX(int x)
 	{
 		m_pPositionX = x;
@@ -62,6 +75,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position Y of this element relative to its parent
 	 * @return
 	 */	
+	@ExposedMember(methodName="setPositionY", returnType="void")
 	public void setPositionY(int y)
 	{
 		m_pPositionY = y;
@@ -86,6 +100,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position X of this element relative to its parent
 	 * @return
 	 */	
+	@ExposedMember(methodName = "setWidth", returnType = "void")
 	public void setWidth(int width)
 	{
 		m_pWidth = width;
@@ -95,9 +110,30 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position Y of this element relative to its parent
 	 * @return
 	 */	
+	@ExposedMember(methodName = "setHeight", returnType = "void")
 	public void setHeight(int height)
 	{
 		m_pHeight = height;
+	}
+	
+	/**
+	 * Gets the position X of this element relative to its parent
+	 * @return
+	 */	
+	@ExposedMember(methodName = "getWidth", returnType = "int")
+	public int getWidth(int width)
+	{
+		return m_pWidth;
+	}
+	
+	/**
+	 * Gets the position Y of this element relative to its parent
+	 * @return
+	 */	
+	@ExposedMember(methodName = "getHeight", returnType = "int")
+	public int getHeight(int height)
+	{
+		return m_pHeight;
 	}
 	
 	/**
@@ -208,6 +244,11 @@ public abstract class BaseGUIType extends GUIDElement {
 		return backgroundColor;
 	}
 	
+	@ExposedMember(methodName = "getBackgroundColor", returnType = "String")
+	public String getBackgroundColorString() {
+		return backgroundColor.toString();
+	}
+	
 	public Element getIOSBackgroundColorElement() {
 		return createIOSColorElement("backgroundColor", this.getBackgroundColorCalibrated());
 	}
@@ -240,6 +281,11 @@ public abstract class BaseGUIType extends GUIDElement {
 		return textColor;
 	}
 	
+	@ExposedMember(methodName = "getTextColor", returnType = "String")
+	public String getTextColorString() {
+		return textColor.toString();
+	}
+	
 	public Element getIOSTextColorElement() {
 		return createIOSColorElement("titleColor", this.getTextColorCalibrated());
 	}
@@ -252,6 +298,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return toCalibratedRgb(textColor);
 	}
 	
+	@ExposedMember(methodName = "setTextColor", returnType = "void")
 	public void setTextColor(String textColor) {
 		this.textColor = Color.decode(textColor);
 	}
@@ -260,6 +307,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return toCalibratedRgb(this.backgroundColor);
 	}
 
+	@ExposedMember(methodName = "setBackgroundColor", returnType = "String")
 	public void setBackgroundColor(String backgroundColor) {
 		this.backgroundColor = Color.decode(backgroundColor);
 	}

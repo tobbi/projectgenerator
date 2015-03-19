@@ -122,6 +122,7 @@ public class JSONParserClass {
 					{
 						currentElement.setName(m_pCurrentElement.getId());
 					}
+					JavaCodeParser.getPublicAPI(currentElement);
 
 					// Prepare an outlet from the information that we got:
 					currentElement.createOutlet();
