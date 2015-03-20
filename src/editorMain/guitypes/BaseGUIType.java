@@ -49,13 +49,13 @@ public abstract class BaseGUIType extends GUIDElement {
 		return new AdvancedPoint(m_pPositionX, m_pPositionY);
 	}
 
-	@ExposedMember(methodName="getPositionX", returnType="int")
+	@ExposedMember(/*methodName="getPositionX", returnType="int"*/)
 	public int getPositionX()
 	{
 		return m_pPositionX;
 	}
 
-	@ExposedMember(methodName="getPositionY", returnType="int")	
+	@ExposedMember(/*methodName="getPositionY", returnType="int"*/)	
 	public int getPositionY()
 	{
 		return m_pPositionY;
@@ -65,7 +65,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position X of this element relative to its parent
 	 * @return
 	 */
-	@ExposedMember(methodName="setPositionX", returnType="void")
+	@ExposedMember(/*methodName="setPositionX", returnType="void"*/)
 	public void setPositionX(int x)
 	{
 		m_pPositionX = x;
@@ -75,7 +75,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position Y of this element relative to its parent
 	 * @return
 	 */	
-	@ExposedMember(methodName="setPositionY", returnType="void")
+	@ExposedMember(/*methodName="setPositionY", returnType="void"*/)
 	public void setPositionY(int y)
 	{
 		m_pPositionY = y;
@@ -100,7 +100,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position X of this element relative to its parent
 	 * @return
 	 */	
-	@ExposedMember(methodName = "setWidth", returnType = "void")
+	@ExposedMember(/*methodName = "setWidth", returnType = "void"*/)
 	public void setWidth(int width)
 	{
 		m_pWidth = width;
@@ -110,7 +110,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Sets the position Y of this element relative to its parent
 	 * @return
 	 */	
-	@ExposedMember(methodName = "setHeight", returnType = "void")
+	@ExposedMember(/*methodName = "setHeight", returnType = "void"*/)
 	public void setHeight(int height)
 	{
 		m_pHeight = height;
@@ -120,7 +120,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Gets the position X of this element relative to its parent
 	 * @return
 	 */	
-	@ExposedMember(methodName = "getWidth", returnType = "int")
+	@ExposedMember(/*methodName = "getWidth", returnType = "int"*/)
 	public int getWidth(int width)
 	{
 		return m_pWidth;
@@ -130,7 +130,7 @@ public abstract class BaseGUIType extends GUIDElement {
 	 * Gets the position Y of this element relative to its parent
 	 * @return
 	 */	
-	@ExposedMember(methodName = "getHeight", returnType = "int")
+	@ExposedMember(/*methodName = "getHeight", returnType = "int"*/)
 	public int getHeight(int height)
 	{
 		return m_pHeight;
@@ -244,7 +244,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return backgroundColor;
 	}
 	
-	@ExposedMember(methodName = "getBackgroundColor", returnType = "String")
+	@ExposedMember(/*methodName = "getBackgroundColor", returnType = "String"*/)
 	public String getBackgroundColorString() {
 		return backgroundColor.toString();
 	}
@@ -281,7 +281,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return textColor;
 	}
 	
-	@ExposedMember(methodName = "getTextColor", returnType = "String")
+	@ExposedMember(/*methodName = "getTextColor", returnType = "String"*/)
 	public String getTextColorString() {
 		return textColor.toString();
 	}
@@ -298,7 +298,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return toCalibratedRgb(textColor);
 	}
 	
-	@ExposedMember(methodName = "setTextColor", returnType = "void")
+	@ExposedMember(/*methodName = "setTextColor", returnType = "void"*/)
 	public void setTextColor(String textColor) {
 		this.textColor = Color.decode(textColor);
 	}
@@ -307,7 +307,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return toCalibratedRgb(this.backgroundColor);
 	}
 
-	@ExposedMember(methodName = "setBackgroundColor", returnType = "String")
+	@ExposedMember(/*methodName = "setBackgroundColor", returnType = "String"*/)
 	public void setBackgroundColor(String backgroundColor) {
 		this.backgroundColor = Color.decode(backgroundColor);
 	}
@@ -375,6 +375,19 @@ public abstract class BaseGUIType extends GUIDElement {
 
 	public void setIOSElementName(String iosElementName) {
 		this.m_pIOSElementName = iosElementName;
+	}
+	
+	private String colorToString(Color c) {
+		// Source http://stackoverflow.com/questions/3607858/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-java
+		return String.format("#%02X%02X%02X", c.getRed(), c.getGreen(), c.getBlue());
+	}
+	
+	public String getTextColorAsString() {
+		return colorToString(this.textColor);
+	}
+	
+	public String getBackgroundColorAsString() {
+		return colorToString(this.backgroundColor);
 	}
 	
 }

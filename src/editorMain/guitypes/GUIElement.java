@@ -1,7 +1,5 @@
 package editorMain.guitypes;
 
-import java.awt.Color;
-
 import javax.json.stream.JsonParser;
 
 import org.w3c.dom.Document;
@@ -16,12 +14,12 @@ public class GUIElement extends BaseGUIType {
 	
 	private String m_pLabel;
 
-	@ExposedMember(methodName = "getLabel", returnType = "string")
+	@ExposedMember(/*methodName = "getLabel", returnType = "string"*/)
 	public String getLabel() {
 		return m_pLabel;
 	}
 
-	@ExposedMember(methodName = "setLabel", returnType = "void")
+	@ExposedMember(/*methodName = "setLabel", returnType = "void"*/)
 	public void setLabel(String label) {
 		this.m_pLabel = label;
 	}
@@ -89,19 +87,12 @@ public class GUIElement extends BaseGUIType {
 		
 		if(this.getBackgroundColor() != null)
 		{
-			Color bgcolor = this.getBackgroundColor();
-			
-			// Source http://stackoverflow.com/questions/3607858/how-to-convert-a-rgb-color-value-to-an-hexadecimal-value-in-java
-			String colorHexValue = String.format("#%02X%02X%02X", bgcolor.getRed(), bgcolor.getGreen(), bgcolor.getBlue());
-			element.setAttribute("android:background", colorHexValue);
+			element.setAttribute("android:background", this.getBackgroundColorAsString());
 		}
 		
 		if(this.getTextColor() != null)
 		{
-			Color textColor = this.getTextColor();
-			
-			String colorHexValue = String.format("#%02X%02X%02X", textColor.getRed(), textColor.getGreen(), textColor.getBlue());
-			element.setAttribute("android:textColor", colorHexValue);
+			element.setAttribute("android:textColor", this.getTextColorAsString());
 		}
 		
 	    /*<Button
