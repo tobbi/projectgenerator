@@ -122,8 +122,7 @@ public class JavaCodeParser {
 						}
 						break;
 					case FLOAT:
-						// TODO: This should use checkFloatValue(...);
-						if(!checkIntegerValue(currentGroupMatch))
+						if(!checkFloatValue(currentGroupMatch))
 						{
 							System.out.println("Detected unknown float value " + currentGroupMatch);
 						}
@@ -171,6 +170,12 @@ public class JavaCodeParser {
 	{
 		str = str.trim();
 		return str.matches("\\d+");
+	}
+	
+	public Boolean checkFloatValue(String str)
+	{
+		str = str.trim();
+		return str.matches("\\d+(\\.\\d+)?");
 	}
 	
 	
