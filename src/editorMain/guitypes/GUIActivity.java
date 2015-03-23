@@ -1,6 +1,10 @@
 package editorMain.guitypes;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.json.stream.JsonParser;
@@ -9,12 +13,17 @@ import javax.json.stream.JsonParser.Event;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import editorMain.JavaCodeParser;
+
 public class GUIActivity extends BaseGUIType {
 	
 	public String m_pProjectPath;
 	
+	public JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
+	
 	public GUIActivity(String projectPath) {
 		m_pProjectPath = projectPath;
+		
 	}
 	
 	/**
@@ -52,7 +61,7 @@ public class GUIActivity extends BaseGUIType {
 	 * String to the source file that interacts with this activity
 	 * @return
 	 */
-	public String sourceFilePath;
+	private String sourceFilePath;
 	
 	/**
 	 * Gets the source file path for the current activity
@@ -68,13 +77,37 @@ public class GUIActivity extends BaseGUIType {
 	 */
 	public void setSourceFilePath(String sourceFilePath) {
 		File sourceFile = new File(m_pProjectPath + File.separator + sourceFilePath);
-		if(!sourceFile.exists())
-		{
+		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(sourceFile);
+			this.sourceFilePath = sourceFilePath;
+		} catch (FileNotFoundException e) {
 			System.out.printf("Specified source file %s does not exist. Ignoring.",
-							  sourceFile.getAbsolutePath());
+					  sourceFile.getAbsolutePath());
 			return;
 		}
-		this.sourceFilePath = sourceFilePath;
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		StringBuffer stringBuffer = new StringBuffer();
+		String line;
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuffer.append(line);
+				stringBuffer.append("\n");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fileReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.printf("== Parsing Java source file %s ==\r\n", sourceFilePath);
+		m_pJavaCodeParser.parse(stringBuffer.toString());
 	}
 
 	/**

@@ -2,8 +2,6 @@ package editorMain.guitypes;
 
 import org.w3c.dom.Element;
 
-import editorMain.JavaCodeParser;
-
 public class TextfieldElement extends GUIElement {
 
 	public TextfieldElement() {

@@ -50,9 +50,9 @@ public class JavaCodeParser {
 		return false;
 	}
 	
-	String regexDataType = "(int|float|String|Boolean)\\s+";
+	String regexDataType = "\\s*(int|float|String|Boolean)\\s+";
 	String regexDeclaration = "(\\w+)"; // variable identifier
-	String regexDefinition = "(\\s?=\\s?([^,;]*))?";
+	String regexDefinition = "(\\s*=\\s*([^,;]*))?";
 	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexDeclaration, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	
@@ -172,6 +172,11 @@ public class JavaCodeParser {
 		return str.matches("\\d+");
 	}
 	
+	/**
+	 * Checks if this string parameter can be considered a float value
+	 * @param str The string to check
+	 * @return true if this is a float value, false if it isn't
+	 */
 	public Boolean checkFloatValue(String str)
 	{
 		str = str.trim();
@@ -194,7 +199,7 @@ public class JavaCodeParser {
 	
 
 	public void parse(String fileInput) {
-		handleVariableDeclaration("String str = 'Hallo!';\r\nint x = 3;\r\nBoolean someBoolValue;");
+		handleVariableDeclaration(fileInput);
 	}
 	
 	/**

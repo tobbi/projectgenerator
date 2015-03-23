@@ -5,8 +5,6 @@ import javax.json.stream.JsonParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import editorMain.JavaCodeParser;
-
 public class GUIElement extends BaseGUIType {
 	
 	public GUIElement() {
