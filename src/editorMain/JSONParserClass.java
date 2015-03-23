@@ -1,6 +1,5 @@
 package editorMain;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -30,8 +29,10 @@ public class JSONParserClass {
     private Stack<String> m_pElementStack = new Stack<String>();
     private String m_pCurrentKeyName;
     private BaseGUIType m_pCurrentElement;
+    private JavaCodeParser m_pJavaCodeParser;
 	public JSONParserClass(MainDialog parent) {
         m_pParentDialog = parent;
+        m_pJavaCodeParser = new JavaCodeParser();
 	}
 	
 	private void showMessageBox(String message) {
@@ -122,7 +123,8 @@ public class JSONParserClass {
 					{
 						currentElement.setName(m_pCurrentElement.getId());
 					}
-					JavaCodeParser.getPublicAPI(currentElement);
+					m_pJavaCodeParser.getPublicAPI(currentElement);
+					m_pJavaCodeParser.parse("");
 
 					// Prepare an outlet from the information that we got:
 					currentElement.createOutlet();
