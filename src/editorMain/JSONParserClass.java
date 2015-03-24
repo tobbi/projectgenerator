@@ -130,6 +130,11 @@ public class JSONParserClass {
 
 					m_pApplication.getLastActivity().addGUIElement(currentElement);
 				}
+				if(m_pElementStack.lastElement().equals("activity"))
+				{
+					// Elemente erfolgreich hinzugefuegt, Quellcode parsen:
+					m_pApplication.getLastActivity().parseSourceFile();
+				}
 				
 				m_pElementStack.pop();
 			}

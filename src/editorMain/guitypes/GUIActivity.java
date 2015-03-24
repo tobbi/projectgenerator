@@ -22,8 +22,7 @@ public class GUIActivity extends BaseGUIType {
 	public JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
 	
 	public GUIActivity(String projectPath) {
-		m_pProjectPath = projectPath;
-		
+		m_pProjectPath = projectPath;	
 	}
 	
 	/**
@@ -76,12 +75,16 @@ public class GUIActivity extends BaseGUIType {
 	 * @param sourceFilePath The path of the source file to generate
 	 */
 	public void setSourceFilePath(String sourceFilePath) {
-		File sourceFile = new File(m_pProjectPath + File.separator + sourceFilePath);
+		this.sourceFilePath = m_pProjectPath + File.separator + sourceFilePath;
+	}
+	
+	public void parseSourceFile() {
+		File sourceFile = new File(sourceFilePath);
+
 		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
 		FileReader fileReader;
 		try {
 			fileReader = new FileReader(sourceFile);
-			this.sourceFilePath = sourceFilePath;
 		} catch (FileNotFoundException e) {
 			System.out.printf("Specified source file %s does not exist. Ignoring.",
 					  sourceFile.getAbsolutePath());
@@ -107,7 +110,7 @@ public class GUIActivity extends BaseGUIType {
 		}
 		
 		System.out.printf("== Parsing Java source file %s ==\r\n", sourceFilePath);
-		m_pJavaCodeParser.parse(stringBuffer.toString());
+		m_pJavaCodeParser.parse(this, stringBuffer.toString());
 	}
 
 	/**

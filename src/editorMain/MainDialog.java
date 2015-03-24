@@ -174,8 +174,11 @@ public class MainDialog extends JDialog {
 			model.setValueAt("Width", 3, 0);
 			model.setValueAt("Height", 4, 0);
 			model.setValueAt("Label", 5, 0);
-			model.setValueAt("ID", 6, 0);
+			model.setValueAt("Generated ID", 6, 0);
 
+			if(sourceElement == null)
+				return;
+			
 			model.setValueAt(sourceElement.getName(), 0, 1);
 			model.setValueAt(sourceElement.getPosition().getX(), 1, 1);
 			model.setValueAt(sourceElement.getPosition().getY(), 2, 1);
