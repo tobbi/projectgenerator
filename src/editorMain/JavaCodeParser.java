@@ -206,8 +206,9 @@ public class JavaCodeParser {
 				}
 			}
 		}
-		if(currentGroupMatch.split(".").length == 1) {
+		else if(currentGroupMatch.split(".").length == 1) {
 			functionName = functionCallParts[0].trim();
+			System.out.println("Function name: " + functionName);
 		}
 	}
 
