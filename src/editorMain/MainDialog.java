@@ -238,7 +238,7 @@ public class MainDialog extends JDialog {
 
 		    		for(GUIElement element: activity.m_pElements)
 		    		{
-		    			MutableGUITreeNode elementNode = new MutableGUITreeNode(element.getId());
+		    			MutableGUITreeNode elementNode = new MutableGUITreeNode(element.getObjectName());
 		    			elementNode.linkedElement = element;
 		    			node.add(elementNode);
 		    		}

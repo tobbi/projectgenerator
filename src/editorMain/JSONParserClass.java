@@ -121,7 +121,7 @@ public class JSONParserClass {
 					// Add element to activity
 					if(currentElement.getName() == null)
 					{
-						currentElement.setName(m_pCurrentElement.getId());
+						currentElement.setName(m_pCurrentElement.getObjectName());
 					}
 					m_pJavaCodeParser.getPublicAPI(currentElement);
 

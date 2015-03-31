@@ -147,6 +147,11 @@ public class JavaCodeParser {
 			}
 			variables.add(var);
 		}
+		
+		for(Variable var: variables)
+		{
+			System.out.println("Variable " + var.type + " " + var.strValue);
+		}
 		return str;
 	}
 	
@@ -196,7 +201,7 @@ public class JavaCodeParser {
 			GUIElement referencedElement = m_pParentActivity.getElementById(object);
 			if(referencedElement == null)
 			{
-				System.out.println("Object " + object + " could not be found!");
+				System.out.println("Object or element " + object + " could not be found!");
 			}
 			else
 			{

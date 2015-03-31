@@ -37,7 +37,7 @@ public class GUIActivity extends BaseGUIType {
 	{
 		for(GUIElement element: m_pElements)
 		{
-			if(element.getId().equals(id))
+			if(element.getObjectName().equals(id))
 				return element;
 		}
 		return null;

@@ -49,7 +49,7 @@ public abstract class BaseGUIType extends GUIDElement {
 		return new AdvancedPoint(m_pPositionX, m_pPositionY);
 	}
 
-	@ExposedMember(/*methodName="getPositionX", returnType="int"*/)
+	@ExposedMember()
 	public int getPositionX()
 	{
 		return m_pPositionX;
@@ -139,24 +139,24 @@ public abstract class BaseGUIType extends GUIDElement {
 	/**
 	 * The ID of this GUI element
 	 */
-	private String m_pId = "< no ID set>";
+	private String m_pObjectName = "< no object name set>";
 	
 	/**
 	 * Gets the ID of this GUI element
 	 * @return public readable ID of this element (String)
 	 */
-	public String getId()
+	public String getObjectName()
 	{
-		return m_pId;
+		return m_pObjectName;
 	}
 	
 	/***
 	 * Sets the name of this GUI element
 	 * @param id ID of this GUI element
 	 */
-	public void setId(String id)
+	public void setObjectName(String id)
 	{
-		m_pId = id;
+		m_pObjectName = id;
 	}
 	
 	private String m_pType;
@@ -204,9 +204,9 @@ public abstract class BaseGUIType extends GUIDElement {
 		{
 			name += this.getName();
 		}
-		else if(this.getId() != null && !this.getId().isEmpty())
+		else if(this.getObjectName() != null && !this.getObjectName().isEmpty())
 		{
-			name += this.getId();
+			name += this.getObjectName();
 		}
 		else
 		{
@@ -334,9 +334,9 @@ public abstract class BaseGUIType extends GUIDElement {
 			{
 				this.setName(strValue);
 			}
-			if(key.equals("id"))
+			if(key.equals("object"))
 			{
-				this.setId(strValue);
+				this.setObjectName(strValue);
 			}
 			if(key.equals("backgroundColor"))
 			{
