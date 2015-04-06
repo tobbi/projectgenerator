@@ -1,12 +1,12 @@
 package editorMain;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+//import java.lang.annotation.Annotation;
+//import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.regex.*;
 
 import editorMain.guitypes.BaseGUIType;
-import editorMain.guitypes.ExposedMember;
+//import editorMain.guitypes.ExposedMember;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
 import editorMain.dataTypes.Variable;
@@ -243,7 +243,7 @@ public class JavaCodeParser {
 	 */
 	public ArrayList<String> getPublicAPI(BaseGUIType element) {
 		ArrayList<String> public_members = new ArrayList<String>();
-		Method[] methods = element.getClass().getMethods();
+		/*Method[] methods = element.getClass().getMethods();
 		for(Method method: methods)
 		{
 			Annotation[] annotations = method.getAnnotations();
@@ -254,7 +254,10 @@ public class JavaCodeParser {
 					public_members.add(method.toGenericString());
 				}
 			}
-		}
+		}*/
+		
+		public_members.add("java.lang.String editorMain.guitypes.GUIElement.getLabel()");
+		public_members.add("java.lang.String editorMain.guitypes.GUIElement.setLabel(java.lang.String text)");
 		return public_members;
 	}
 	
