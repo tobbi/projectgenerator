@@ -62,6 +62,11 @@ public class JavaCodeParser {
 	String regexClass = "\\s*class\\s+";
 	String regexClassExtends = "(\\s+extends\\s+(\\w+))";
 	
+	String regexLineComment = "\\s*//\\s*?(.*+)";
+	String regexBlockComment = "\\s*\\/\\*(.*?)\\*\\/";
+	Pattern lineCommentRegex = Pattern.compile(regexLineComment);
+	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.MULTILINE | Pattern.DOTALL);
+	
 	String regexDeclaration = "(\\w+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^,;]*))?"; // = <some value>
 	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexDeclaration, regexDefinition);
@@ -73,7 +78,7 @@ public class JavaCodeParser {
 	
 	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
-
+	
 	ArrayList<Variable> variables = new ArrayList<Variable>();
 	
 	public String handleVariableDeclaration(String str)
@@ -173,10 +178,10 @@ public class JavaCodeParser {
 			variables.add(var);
 		}
 		
-		for(Variable var: variables)
-		{
-			System.out.println("Variable " + var.type + " " + var.strValue);
-		}
+		//for(Variable var: variables)
+		//{
+		//	System.out.println("Variable " + var.type + " " + var.strValue);
+		//}
 		return str;
 	}
 	
@@ -252,6 +257,46 @@ public class JavaCodeParser {
 		}
 	}
 	
+	public void handleComments(String str)
+	{
+		Matcher commentMatcher = lineCommentRegex.matcher(str);
+		while(commentMatcher.find())
+		{
+			int i = 0;
+			while(i <= commentMatcher.groupCount())
+			{
+				String currentGroupMatch = commentMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole match. Ignore!
+					break;
+				case 1:
+					System.out.println("Comment: " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+		}
+		
+		Matcher blockCommentMatcher = blockCommentRegex.matcher(str);
+		while(blockCommentMatcher.find())
+		{
+			int i = 0;
+			while (i <= blockCommentMatcher.groupCount())
+			{
+				String currentGroupMatch = blockCommentMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole match Ignore!
+					break;
+				case 1:
+					System.out.println("BlockComment:\r\n" + currentGroupMatch);
+				}
+				i++;
+			}
+		}
+	}
+	
 	/**
 	 * Queries for a function name
 	 * @param currentGroupMatch Function name to query for
@@ -307,6 +352,7 @@ public class JavaCodeParser {
 		m_pParentActivity = activity;
 		handleClassDeclaration(fileInput);
 		handleVariableDeclaration(fileInput);
+		handleComments(fileInput);
 	}
 	
 	/**
