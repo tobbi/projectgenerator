@@ -58,6 +58,7 @@ public class MainDialog extends JDialog {
 	JLabel m_pLoadingLabel = new JLabel("Ready");
 	private static MainDialog dialog;
     private JTree m_pCategoryTree;
+    private String m_pFileExtension = ".json";
 
 	private File m_pOutputDirectory;
     private MobileApplication m_pMobileApplication;
@@ -76,7 +77,13 @@ public class MainDialog extends JDialog {
 			FileDialog dlg = new FileDialog(MainDialog.this);
 			dlg.setVisible(true);
 			
-			if(dlg.getFile() == "" || dlg.getFile() == null /*|| !dlg.getFile().endsWith(m_pFileExtension)*/)
+			if(!dlg.getFile().endsWith(m_pFileExtension))
+			{
+				JOptionPane.showMessageDialog(MainDialog.this, "Bitte waehlen Sie eine gueltige JSON-Datei aus!");
+				return;
+			}
+			
+			if(dlg.getFile() == "" || dlg.getFile() == null)
 				return;
 
 			m_pLoadingProgressBar.setIndeterminate(true);
@@ -192,6 +199,10 @@ public class MainDialog extends JDialog {
 				{
 					GUIElement p_element = (GUIElement)sourceElement;
 					model.setValueAt(p_element.getLabel(), 5, 1);
+				}
+				else
+				{
+					model.setValueAt("<element type does not support label>", 5, 1);
 				}
 			}
 		}
