@@ -63,6 +63,7 @@ public class JSONParserClass {
 			{
 				showMessageBox("Nicht wohlgeformte JSON-Datei. Fehlermeldung:\r\n"
 						+ e.getMessage());
+				break;
 			}
 			if(m_pCurrentJsonEvent == JsonParser.Event.KEY_NAME)
 			{
