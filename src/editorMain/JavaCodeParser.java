@@ -9,9 +9,8 @@ import editorMain.guitypes.BaseGUIType;
 //import editorMain.guitypes.ExposedMember;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
-import editorMain.dataTypes.GenericVariable;
 import editorMain.dataTypes.Variable;
-import editorMain.dataTypes.GenericVariable.DataType;
+import editorMain.dataTypes.IGenericVariable.DataType;
 
 public class JavaCodeParser {
 	
@@ -83,7 +82,7 @@ public class JavaCodeParser {
 	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 	
-	ArrayList<GenericVariable> variables = new ArrayList<GenericVariable>();
+	ArrayList<Variable> variables = new ArrayList<Variable>();
 	
 	public String handleVariableDeclaration(String str)
 	{
@@ -92,7 +91,7 @@ public class JavaCodeParser {
 		while(variableDeclarationMatcher.find())
 		{
 			int i = 0;
-			GenericVariable var = null;
+			Variable var = null;
 			while(i <= variableDeclarationMatcher.groupCount())
 			{
 				String currentGroupMatch = variableDeclarationMatcher.group(i);
@@ -104,27 +103,27 @@ public class JavaCodeParser {
 					System.out.print("Declared new " + currentGroupMatch + " variable");
 					if(currentGroupMatch.equals("int")) {
 						var = new Variable<Integer>();
-						var.type = DataType.INTEGER;
+						var.setType(DataType.INTEGER);
 					}
 					else if(currentGroupMatch.equals("boolean")) {
 						var = new Variable<Boolean>();
-						var.type = DataType.BOOL;
+						var.setType(DataType.BOOL);
 					}
 					else if(currentGroupMatch.equals("char")) {
 						var = new Variable<Character>();
-						var.type = DataType.CHAR;
+						var.setType(DataType.CHAR);
 					}
 					else if(currentGroupMatch.equals("double")) {
 						var = new Variable<Double>();
-						var.type = DataType.DOUBLE;
+						var.setType(DataType.DOUBLE);
 					}
 					else if(currentGroupMatch.equals("float")) {
 						var = new Variable<Float>();
-						var.type = DataType.FLOAT;
+						var.setType(DataType.FLOAT);
 					}
 					else if(currentGroupMatch.equals("String")) {
 						var = new Variable<String>();
-						var.type = DataType.STRING;
+						var.setType(DataType.STRING);
 					}
 					else {
 						System.out.printf("Unknown data type %s detected!", var.type);
@@ -155,9 +154,9 @@ public class JavaCodeParser {
 						handleFunctionCall(currentGroupMatch);
 					}
 
-					if(var.value instanceof Boolean)
+					if(var.getValue() instanceof Boolean)
 					{
-						var.value = Boolean.parseBoolean(currentGroupMatch);
+						var.setValue(Boolean.parseBoolean(currentGroupMatch));
 					}
 					if(var.value instanceof Character)
 					{
@@ -181,7 +180,7 @@ public class JavaCodeParser {
 					}
 					if(var.value instanceof String)
 					{
-						var.value = currentGroupMatch;
+						var.setValue(currentGroupMatch);
 					}
 					if(var.value instanceof Float)
 					{
@@ -209,7 +208,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			System.out.println();
-			variables.add(var);
+			//variables.add(var);
 		}
 		
 		//for(Variable var: variables)
