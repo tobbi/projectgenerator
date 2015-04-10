@@ -58,7 +58,11 @@ public class JavaCodeParser {
 	}
 	
 	String regexDataType = "\\s*(int|float|String|Boolean)\\s+";
-	String regexDeclaration = "(\\w+)"; // variable identifier
+	String regexAccessModifier = "\\s*(public|private)\\s+";
+	String regexClass = "\\s*class\\s+";
+	String regexClassExtends = "(\\s+extends\\s+(\\w+))";
+	
+	String regexDeclaration = "(\\w+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^,;]*))?"; // = <some value>
 	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexDeclaration, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
@@ -66,6 +70,9 @@ public class JavaCodeParser {
 	// Function call in the form of myFunction(myParam);
 	String functionCallDeclaration = String.format("%s\\s*\\(%s\\);?", "([\\w\\.]+)", "([^;]*)");
 	Pattern functionCallDeclarationRegex = Pattern.compile(functionCallDeclaration);
+	
+	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
+	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 
 	ArrayList<Variable> variables = new ArrayList<Variable>();
 	
@@ -85,7 +92,7 @@ public class JavaCodeParser {
 				case 0: // Whole pattern match. Ignore!
 					break;
 				case 1: // Data type
-					System.out.println("Declared new " + currentGroupMatch + " variable.");
+					System.out.print("Declared new " + currentGroupMatch + " variable");
 					if(currentGroupMatch.equals("int")) {
 						var.type = DataType.INTEGER;
 					}
@@ -105,20 +112,22 @@ public class JavaCodeParser {
 
 					break;
 				case 2: // Variable name
-					System.out.println("New variable has the name " + currentGroupMatch);
+					System.out.print(" with the name " + currentGroupMatch);
 					break;	
 				case 3: // Is a declaration
 					if(currentGroupMatch == null) {
 						i++;
 						continue;
 					}
-					System.out.println("Variable is being declared!");
+					System.out.print(" and a value of ");
 					break;
 				case 4: // Variable value
 					if(currentGroupMatch == null) {
 						i++;
 						continue;
 					}
+					
+					System.out.print(currentGroupMatch);
 					
 					if(currentGroupMatch.matches(functionCallDeclaration))
 					{
@@ -131,13 +140,28 @@ public class JavaCodeParser {
 						var.strValue = String.valueOf(Boolean.parseBoolean(currentGroupMatch));
 						break;
 					case INTEGER:
-						var.strValue = String.valueOf(Integer.parseInt(currentGroupMatch));
+						try {
+							var.strValue = String.valueOf(Integer.parseInt(currentGroupMatch));
+						}
+						catch(NumberFormatException e)
+						{
+							System.out.print(" (Could not parse Java int. Typecasts are currently not supported!) ");
+							i++;							
+						}
 						break;
 					case STRING:
 						var.strValue = String.valueOf(currentGroupMatch);
 						break;
 					case FLOAT:
-						var.strValue = String.valueOf(Float.parseFloat(currentGroupMatch));
+						try {
+							var.strValue = String.valueOf(Float.parseFloat(currentGroupMatch));
+						}
+						catch(NumberFormatException e)
+						{
+							System.out.print(" (Could not parse Java float. Typecasts are currently not supported!) ");
+							i++;
+							continue;
+						}
 						break;
 					default:
 						break;
@@ -145,6 +169,7 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
+			System.out.println();
 			variables.add(var);
 		}
 		
@@ -155,12 +180,59 @@ public class JavaCodeParser {
 		return str;
 	}
 	
+	public String handleClassDeclaration(String str) {
+		String localCopyStr = str;
+		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(localCopyStr);
+		while(classDeclarationMatcher.find())
+		{
+			int i = 0;
+			while(i <= classDeclarationMatcher.groupCount())
+			{
+				String currentGroupMatch = classDeclarationMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					break;
+				case 1: // access modifiers
+					if(currentGroupMatch != null)
+					{
+						System.out.print("Declared new " + currentGroupMatch.trim() + " class ");
+					}
+					else
+					{
+						System.out.print("Declared new class without access modifiers (implied private) ");
+					}
+					break;
+				case 2: // bigger access modifiers group
+					break;
+				case 3:
+					//System.out.println("Class has name: " + currentGroupMatch);
+					System.out.print("with name " + currentGroupMatch);
+					break;
+				case 4: // bigger extends group -> Class extends from superclass
+					break;
+				case 5: // Superclass name
+					if(currentGroupMatch != null) 
+					{
+						System.out.print(" extending from superclass " + currentGroupMatch);
+					}
+					break;
+				default:
+					System.out.println("Out of the line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			System.out.println();
+		}
+		return str;
+	}
+	
 	public void handleFunctionCall(String str) {
 		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(str);
 		System.out.println(functionCallDeclaration);
 		while(functionCallMatcher.find()) {
 			int i = 0;
-			System.out.println("Function declaration has group count " + functionCallMatcher.groupCount());
 			while(i <= functionCallMatcher.groupCount())
 			{
 				String currentGroupMatch = functionCallMatcher.group(i);
@@ -233,6 +305,7 @@ public class JavaCodeParser {
 
 	public void parse(GUIActivity activity, String fileInput) {
 		m_pParentActivity = activity;
+		handleClassDeclaration(fileInput);
 		handleVariableDeclaration(fileInput);
 	}
 	
