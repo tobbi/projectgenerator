@@ -9,6 +9,7 @@ import editorMain.guitypes.BaseGUIType;
 //import editorMain.guitypes.ExposedMember;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
+import editorMain.dataTypes.GenericVariable;
 import editorMain.dataTypes.Variable;
 import editorMain.dataTypes.GenericVariable.DataType;
 
@@ -82,7 +83,7 @@ public class JavaCodeParser {
 	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 	
-	ArrayList<Variable> variables = new ArrayList<Variable>();
+	ArrayList<GenericVariable> variables = new ArrayList<GenericVariable>();
 	
 	public String handleVariableDeclaration(String str)
 	{
@@ -91,7 +92,7 @@ public class JavaCodeParser {
 		while(variableDeclarationMatcher.find())
 		{
 			int i = 0;
-			Variable var = new Variable();
+			GenericVariable var = null;
 			while(i <= variableDeclarationMatcher.groupCount())
 			{
 				String currentGroupMatch = variableDeclarationMatcher.group(i);
@@ -102,21 +103,27 @@ public class JavaCodeParser {
 				case 1: // Data type
 					System.out.print("Declared new " + currentGroupMatch + " variable");
 					if(currentGroupMatch.equals("int")) {
+						var = new Variable<Integer>();
 						var.type = DataType.INTEGER;
 					}
 					else if(currentGroupMatch.equals("boolean")) {
+						var = new Variable<Boolean>();
 						var.type = DataType.BOOL;
 					}
 					else if(currentGroupMatch.equals("char")) {
+						var = new Variable<Character>();
 						var.type = DataType.CHAR;
 					}
 					else if(currentGroupMatch.equals("double")) {
+						var = new Variable<Double>();
 						var.type = DataType.DOUBLE;
 					}
 					else if(currentGroupMatch.equals("float")) {
+						var = new Variable<Float>();
 						var.type = DataType.FLOAT;
 					}
 					else if(currentGroupMatch.equals("String")) {
+						var = new Variable<String>();
 						var.type = DataType.STRING;
 					}
 					else {
@@ -148,55 +155,55 @@ public class JavaCodeParser {
 						handleFunctionCall(currentGroupMatch);
 					}
 
-					switch(var.type)
+					if(var.value instanceof Boolean)
 					{
-					case BOOL:
-						var.strValue = String.valueOf(Boolean.parseBoolean(currentGroupMatch));
-						break;
-					case CHAR:
+						var.value = Boolean.parseBoolean(currentGroupMatch);
+					}
+					if(var.value instanceof Character)
+					{
 						if(!currentGroupMatch.matches(regexCharacter))
 						{
 							System.out.println(currentGroupMatch + " is not a character definition!");
 							i++;
-							continue;
 						}
-						// Beispiel: 'a' <-- a hat den Index 1
-						var.strValue = String.valueOf(currentGroupMatch.charAt(1));
-						break;
-					case INTEGER:
+						var.value = currentGroupMatch.charAt(1);
+					}
+					if(var.value instanceof Integer)
+					{
 						try {
-							var.strValue = String.valueOf(Integer.parseInt(currentGroupMatch));
+							var.value = Integer.parseInt(currentGroupMatch);
 						}
 						catch(NumberFormatException e)
 						{
 							System.out.print(" (Could not parse Java int. Typecasts and not local function calls are currently not supported!) ");
-							i++;							
+							i++;
 						}
-						break;
-					case STRING:
-						var.strValue = String.valueOf(currentGroupMatch);
-						break;
-					case FLOAT:
+					}
+					if(var.value instanceof String)
+					{
+						var.value = currentGroupMatch;
+					}
+					if(var.value instanceof Float)
+					{
 						try {
-							var.strValue = String.valueOf(Float.parseFloat(currentGroupMatch));
+							var.value = Float.parseFloat(currentGroupMatch);
 						}
 						catch(NumberFormatException e)
 						{
 							System.out.print(" (Could not parse Java float. Typecasts and not local function calls are currently not supported!) ");
 							i++;
-							continue;
 						}
-						break;
-					case DOUBLE:
+					}
+					if(var.value instanceof Double)
+					{
 						try {
-							var.strValue = String.valueOf(Double.parseDouble(currentGroupMatch));
+							var.value = Double.parseDouble(currentGroupMatch);
 						}
 						catch(NumberFormatException e)
 						{
 							System.out.print(" (Could not parse Java double. Typecasts and not local function calls are currently not supported!) ");
+							i++;
 						}
-					default:
-						break;
 					}
 				}
 				i++;
