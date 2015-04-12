@@ -169,12 +169,12 @@ public class JavaCodeParser {
 							System.out.println(currentGroupMatch + " is not a character definition!");
 							i++;
 						}
-						var.value = currentGroupMatch.charAt(1);
+						var.setValue(currentGroupMatch.charAt(1));
 					}
 					if(var.getValue() instanceof Integer)
 					{
 						try {
-							var.value = Integer.parseInt(currentGroupMatch);
+							var.setValue(Integer.parseInt(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{
@@ -186,10 +186,10 @@ public class JavaCodeParser {
 					{
 						var.setValue(currentGroupMatch);
 					}
-					if(var.value instanceof Float)
+					if(var.getValue() instanceof Float)
 					{
 						try {
-							var.value = Float.parseFloat(currentGroupMatch);
+							var.setValue(Float.parseFloat(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{
@@ -197,10 +197,10 @@ public class JavaCodeParser {
 							i++;
 						}
 					}
-					if(var.value instanceof Double)
+					if(var.getValue() instanceof Double)
 					{
 						try {
-							var.value = Double.parseDouble(currentGroupMatch);
+							var.setValue(Double.parseDouble(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{

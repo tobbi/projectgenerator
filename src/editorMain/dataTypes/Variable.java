@@ -1,15 +1,13 @@
 package editorMain.dataTypes;
 
 public class Variable<Type> implements IGenericVariable<Type> {
-	public String strValue;
-	public Type value;
+	private Type value;
 	
 	public DataType type;
 	
 	public void setValue(Type value)
 	{
 		this.value = value;
-		this.strValue = value.toString();
 	}
 
 	public Type getValue()
@@ -25,5 +23,10 @@ public class Variable<Type> implements IGenericVariable<Type> {
 	public void setType(DataType type)
 	{
 		this.type = type;
+	}
+	
+	public String toString()
+	{
+		return value.toString();
 	}
 }
