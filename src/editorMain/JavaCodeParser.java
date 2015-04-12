@@ -57,28 +57,32 @@ public class JavaCodeParser {
 		return false;
 	}
 	
-	String regexDataType = "\\s*(int|float|String|boolean|char|double)\\s+";
-	String regexAccessModifier = "\\s*(public|private)\\s+";
-	String regexOtherModifier = "\\s+(static|override)\\s+";
-	String regexClass = "\\s*class\\s+";
-	String regexClassExtends = "(\\s+extends\\s+(\\w+))";
+	String regexDataType = "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
+	String regexAccessModifier = "\\s*(public|private)\\s+"; // matches <space(s) public | private <space(s)>
+	String regexOtherModifier = "\\s+(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
+	String regexClass = "\\s*class\\s+"; // matches <space(s)s>class<space(s)>
+	String regexClassExtends = "(\\s+extends\\s+(\\w+))"; // matches "extends ClassName"
 	
-	String regexLineComment = "\\s*//\\s*?(.*+)";
-	String regexBlockComment = "\\s*\\/\\*(.*?)\\*\\/";
+	String regexLineComment = "\\s*//\\s*?(.*+)"; // matches a comment like this one
+	String regexBlockComment = "\\s*\\/\\*(.*?)\\*\\/"; // /* matches a block comment like this */
 	Pattern lineCommentRegex = Pattern.compile(regexLineComment);
 	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.MULTILINE | Pattern.DOTALL);
 	
 	String regexDeclaration = "(\\w+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^,;]*))?"; // = <some value>
+
+	// matches a variable definition, for example: int i = 0;
 	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexDeclaration, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	
 	// Function call in the form of myFunction(myParam);
+	// matches (myObject.)myFunction(param1, param2);
 	String functionCallDeclaration = String.format("%s\\s*\\(%s\\);?", "([\\w\\.]+)", "([^;]*)");
 	Pattern functionCallDeclarationRegex = Pattern.compile(functionCallDeclaration);
 	
 	String regexCharacter = "'\\w'";
 	
+	// matches "public class Help (extends BaseClass)
 	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 	
@@ -133,7 +137,7 @@ public class JavaCodeParser {
 					break;
 				case 2: // Variable name
 					System.out.print(" with the name " + currentGroupMatch);
-					break;	
+					break;
 				case 3: // Is a declaration
 					if(currentGroupMatch == null) {
 						i++;
@@ -158,7 +162,7 @@ public class JavaCodeParser {
 					{
 						var.setValue(Boolean.parseBoolean(currentGroupMatch));
 					}
-					if(var.value instanceof Character)
+					if(var.getValue() instanceof Character)
 					{
 						if(!currentGroupMatch.matches(regexCharacter))
 						{
@@ -167,7 +171,7 @@ public class JavaCodeParser {
 						}
 						var.value = currentGroupMatch.charAt(1);
 					}
-					if(var.value instanceof Integer)
+					if(var.getValue() instanceof Integer)
 					{
 						try {
 							var.value = Integer.parseInt(currentGroupMatch);
@@ -178,7 +182,7 @@ public class JavaCodeParser {
 							i++;
 						}
 					}
-					if(var.value instanceof String)
+					if(var.getValue() instanceof String)
 					{
 						var.setValue(currentGroupMatch);
 					}
@@ -282,7 +286,7 @@ public class JavaCodeParser {
 					queryFunctionName(currentGroupMatch);
 					break;
 				case 2: // Function parameter?
-					System.out.println("Function parameters: " + currentGroupMatch);
+					System.out.print("Function parameters: " + currentGroupMatch);
 					break;
 				}
 				i++;
