@@ -3,7 +3,7 @@ package editorMain.dataTypes;
 public class Variable<Type> implements IGenericVariable<Type> {
 	private Type value;
 	
-	public DataType type;
+	private DataType type;
 	
 	public void setValue(Type value)
 	{

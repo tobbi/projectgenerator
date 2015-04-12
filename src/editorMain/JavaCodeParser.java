@@ -130,7 +130,7 @@ public class JavaCodeParser {
 						var.setType(DataType.STRING);
 					}
 					else {
-						System.out.printf("Unknown data type %s detected!", var.type);
+						System.out.printf("Unknown data type %s detected!", currentGroupMatch);
 						continue;
 					}
 
