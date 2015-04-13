@@ -138,10 +138,11 @@ public class JavaCodeParser {
 						var.setType(DataType.STRING);
 					}
 					else {
-						//if()
+						var = new Variable();
+						var.setType(DataType.CUSTOM);
 						//System.out.printf("Unknown data type %s detected!\r\n", currentGroupMatch);
-						i++;
-						continue;
+						//i++;
+						//continue;
 					}
 					break;
 				case 2: // Variable name
@@ -173,7 +174,12 @@ public class JavaCodeParser {
 					{
 						handleFunctionCall(currentGroupMatch);
 					}
-
+					
+					if(var.getType() == DataType.CUSTOM)
+					{
+						System.out.print(" (!!! custom data type !!!)");
+						var.setValue(currentGroupMatch);
+					}
 					if(var.getType() == DataType.BOOL)
 					{
 						var.setValue(Boolean.parseBoolean(currentGroupMatch));
@@ -265,7 +271,6 @@ public class JavaCodeParser {
 				case 2: // bigger access modifiers group
 					break;
 				case 3:
-					//System.out.println("Class has name: " + currentGroupMatch);
 					System.out.print("with name " + currentGroupMatch);
 					classNames.add(currentGroupMatch.trim());
 					break;
