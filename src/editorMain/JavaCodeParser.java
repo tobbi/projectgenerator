@@ -58,8 +58,8 @@ public class JavaCodeParser {
 	}
 	
 	String regexAnySpace = "\\s*";
-	String regexDataType = "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
-	String regexAccessModifier = "\\s*(public|private)\\s+"; // matches <space(s) public | private <space(s)>
+	String regexDataType; //= "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
+	String regexAccessModifier = "\\s*(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
 	String regexOtherModifier = "\\s+(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
 	String regexClass = "\\s*class\\s+"; // matches <space(s)s>class<space(s)>
 	String regexClassExtends = "(\\s+extends\\s+(\\w+))"; // matches "extends ClassName"
@@ -70,11 +70,11 @@ public class JavaCodeParser {
 	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.MULTILINE | Pattern.DOTALL);
 	
 	String regexIdentifier = "(\\w+)"; // variable / class identifier
-	String regexDefinition = "(\\s*=\\s*([^,;]*))?"; // = <some value>
+	String regexDefinition = "(\\s*=\\s*([^,;]*))"; // = <some value>
 
 	// matches a variable definition, for example: int i = 0;
-	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
-	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
+	String variableDeclaration; // = String.format("%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
+	Pattern variableDeclarationRegex; // = Pattern.compile(variableDeclaration);
 	
 	// matches an enum declaration, for example: enum State { SLEEPING, AWAKE }
 	String regexEnum = "\\s*enum\\s+";
@@ -138,13 +138,21 @@ public class JavaCodeParser {
 						var.setType(DataType.STRING);
 					}
 					else {
-						System.out.printf("Unknown data type %s detected!", currentGroupMatch);
+						//if()
+						//System.out.printf("Unknown data type %s detected!\r\n", currentGroupMatch);
+						i++;
 						continue;
 					}
-
 					break;
 				case 2: // Variable name
-					System.out.print(" with the name " + currentGroupMatch);
+					if(!currentGroupMatch.isEmpty())
+					{
+						System.out.print(" with the name " + currentGroupMatch);
+						if(var != null)
+						{
+							var.setName(currentGroupMatch);
+						}
+					}
 					break;
 				case 3: // Is a declaration
 					if(currentGroupMatch == null) {
@@ -225,7 +233,7 @@ public class JavaCodeParser {
 		
 		for(Variable var: variables)
 		{
-			System.out.println("Variable " + var.getType() + " " + var.toString());
+			System.out.println("Variable NAME " +  var.getName() + " TYPE " + var.getType() + " VALUE " + var.toString());
 		}
 		return str;
 	}
@@ -233,6 +241,7 @@ public class JavaCodeParser {
 	public String handleClassDeclaration(String str) {
 		String localCopyStr = str;
 		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(localCopyStr);
+		ArrayList<String> classNames = new ArrayList<String>();
 		while(classDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -258,6 +267,7 @@ public class JavaCodeParser {
 				case 3:
 					//System.out.println("Class has name: " + currentGroupMatch);
 					System.out.print("with name " + currentGroupMatch);
+					classNames.add(currentGroupMatch.trim());
 					break;
 				case 4: // bigger extends group -> Class extends from superclass
 					break;
@@ -275,6 +285,7 @@ public class JavaCodeParser {
 			}
 			System.out.println();
 		}
+		setDataTypeRegex(classNames);
 		return str;
 	}
 	
@@ -296,17 +307,34 @@ public class JavaCodeParser {
 				case 2: // Function parameter?
 					if(!currentGroupMatch.isEmpty())
 					{
-						System.out.print("Function parameters: " + currentGroupMatch);
+						System.out.println("Function parameters: " + currentGroupMatch);
 					}
 					else
 					{
-						System.out.print("No function parameters");
+						System.out.println("No function parameters");
 					}
 					break;
 				}
 				i++;
 			}
 		}
+	}
+	
+	public void setDataTypeRegex(ArrayList<String> dataTypes)
+	{
+		dataTypes.add("int");
+		dataTypes.add("float");
+		dataTypes.add("String");
+		dataTypes.add("boolean");
+		dataTypes.add("char");
+		dataTypes.add("double");
+		dataTypes.addAll(dataTypes);
+
+		String dataTypeList = dataTypes.toString().replace("[", "(").replace("]", ")").replace(", ", "|");
+		regexDataType = String.format("\\s*%s\\s+", dataTypeList);
+		System.out.println(regexDataType);
+		variableDeclaration = String.format("%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
+		variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	}
 	
 	public void handleComments(String str)
