@@ -77,14 +77,14 @@ public class MainDialog extends JDialog {
 			FileDialog dlg = new FileDialog(MainDialog.this);
 			dlg.setVisible(true);
 			
+			if(dlg.getFile() == "" || dlg.getFile() == null)
+				return;
+			
 			if(!dlg.getFile().endsWith(m_pFileExtension))
 			{
 				JOptionPane.showMessageDialog(MainDialog.this, "Bitte waehlen Sie eine gueltige JSON-Datei aus!");
 				return;
 			}
-			
-			if(dlg.getFile() == "" || dlg.getFile() == null)
-				return;
 
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");

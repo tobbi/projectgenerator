@@ -6,4 +6,7 @@ public interface IGenericVariable<Type> {
 	public Type getValue();
 	public void setType(DataType type);
 	public DataType getType();
+	public String getName();
+	public void setName(String name);
+	public String toString();
 }

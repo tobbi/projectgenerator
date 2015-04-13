@@ -57,6 +57,7 @@ public class JavaCodeParser {
 		return false;
 	}
 	
+	String regexAnySpace = "\\s*";
 	String regexDataType = "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
 	String regexAccessModifier = "\\s*(public|private)\\s+"; // matches <space(s) public | private <space(s)>
 	String regexOtherModifier = "\\s+(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
@@ -68,12 +69,18 @@ public class JavaCodeParser {
 	Pattern lineCommentRegex = Pattern.compile(regexLineComment);
 	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.MULTILINE | Pattern.DOTALL);
 	
-	String regexDeclaration = "(\\w+)"; // variable / class identifier
+	String regexIdentifier = "(\\w+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^,;]*))?"; // = <some value>
 
 	// matches a variable definition, for example: int i = 0;
-	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexDeclaration, regexDefinition);
+	String variableDeclaration = String.format("%s?%s%s[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
+	
+	// matches an enum declaration, for example: enum State { SLEEPING, AWAKE }
+	String regexEnum = "\\s*enum\\s+";
+	String enumDeclaration = "\\s*enum\\s+(\\w+)\\s*\\{\\s*((\\w+\\s*,?\\s*)*\\s*)\\}"; 
+	Pattern enumRegex = Pattern.compile(enumDeclaration, Pattern.MULTILINE);
+	//String.format("%s%s\\s*\\{(([\\w\\s,]+)?)*\\}", regexEnum, regexIdentifier);
 	
 	// Function call in the form of myFunction(myParam);
 	// matches (myObject.)myFunction(param1, param2);
@@ -83,10 +90,11 @@ public class JavaCodeParser {
 	String regexCharacter = "'\\w'";
 	
 	// matches "public class Help (extends BaseClass)
-	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexDeclaration, regexClassExtends);
+	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexIdentifier, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 	
 	ArrayList<Variable> variables = new ArrayList<Variable>();
+	//ArrayList<String> previousVariables = new ArrayList<String>();
 	
 	public String handleVariableDeclaration(String str)
 	{
@@ -158,11 +166,11 @@ public class JavaCodeParser {
 						handleFunctionCall(currentGroupMatch);
 					}
 
-					if(var.getValue() instanceof Boolean)
+					if(var.getType() == DataType.BOOL)
 					{
 						var.setValue(Boolean.parseBoolean(currentGroupMatch));
 					}
-					if(var.getValue() instanceof Character)
+					if(var.getType() == DataType.CHAR)
 					{
 						if(!currentGroupMatch.matches(regexCharacter))
 						{
@@ -171,54 +179,54 @@ public class JavaCodeParser {
 						}
 						var.setValue(currentGroupMatch.charAt(1));
 					}
-					if(var.getValue() instanceof Integer)
+					if(var.getType() == DataType.INTEGER)
 					{
 						try {
 							var.setValue(Integer.parseInt(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{
-							System.out.print(" (Could not parse Java int. Typecasts and not local function calls are currently not supported!) ");
-							i++;
+							var.setValue(0);
+							System.out.print(" (Could not parse Java int (typecasts are currently not supported). Setting value to 0). ");
 						}
 					}
-					if(var.getValue() instanceof String)
+					if(var.getType() == DataType.STRING)
 					{
 						var.setValue(currentGroupMatch);
 					}
-					if(var.getValue() instanceof Float)
+					if(var.getType() == DataType.FLOAT)
 					{
 						try {
 							var.setValue(Float.parseFloat(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{
-							System.out.print(" (Could not parse Java float. Typecasts and not local function calls are currently not supported!) ");
-							i++;
+							var.setValue(0.0f);
+							System.out.print(" (Could not parse Java float (typecasts are currently not supported). Setting value to 0.0). ");
 						}
 					}
-					if(var.getValue() instanceof Double)
+					if(var.getType() == DataType.DOUBLE)
 					{
 						try {
 							var.setValue(Double.parseDouble(currentGroupMatch));
 						}
 						catch(NumberFormatException e)
 						{
-							System.out.print(" (Could not parse Java double. Typecasts and not local function calls are currently not supported!) ");
-							i++;
+							var.setValue(0.0);
+							System.out.print(" (Could not parse Java double (typecasts are currently not supported). Setting value to 0.0). ");
 						}
 					}
 				}
 				i++;
 			}
 			System.out.println();
-			//variables.add(var);
+			variables.add(var);
 		}
 		
-		//for(Variable var: variables)
-		//{
-		//	System.out.println("Variable " + var.type + " " + var.strValue);
-		//}
+		for(Variable var: variables)
+		{
+			System.out.println("Variable " + var.getType() + " " + var.toString());
+		}
 		return str;
 	}
 	
@@ -286,7 +294,14 @@ public class JavaCodeParser {
 					queryFunctionName(currentGroupMatch);
 					break;
 				case 2: // Function parameter?
-					System.out.print("Function parameters: " + currentGroupMatch);
+					if(!currentGroupMatch.isEmpty())
+					{
+						System.out.print("Function parameters: " + currentGroupMatch);
+					}
+					else
+					{
+						System.out.print("No function parameters");
+					}
 					break;
 				}
 				i++;
@@ -355,7 +370,14 @@ public class JavaCodeParser {
 			GUIElement referencedElement = m_pParentActivity.getElementById(object);
 			if(referencedElement == null)
 			{
-				System.out.println("Object or element " + object + " could not be found!");
+				if(variables.contains(object))
+				{
+					System.out.println("Found object amongst previously declared variables");
+				}
+				else
+				{
+					System.out.println("Object or element " + object + " could not be found! Trying variables");
+				}
 			}
 			else
 			{
@@ -387,11 +409,43 @@ public class JavaCodeParser {
 
 	public void parse(GUIActivity activity, String fileInput) {
 		m_pParentActivity = activity;
+		handleEnumDeclaration(fileInput);
 		handleClassDeclaration(fileInput);
 		handleVariableDeclaration(fileInput);
 		handleComments(fileInput);
+		handleFunctionCall(fileInput);
 	}
 	
+	private void handleEnumDeclaration(String fileInput) {
+		Matcher enumMatcher = enumRegex.matcher(fileInput);
+		while(enumMatcher.find()) {
+			int i = 0;
+			while(i <= enumMatcher.groupCount())
+			{
+				String currentGroupMatch = enumMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole match. Ignore!
+					break;
+				case 1: // Enum name
+					System.out.print("Declared enum with name " + currentGroupMatch);
+					break;
+				case 2: // Function parameter?
+					if(!currentGroupMatch.isEmpty())
+					{
+						System.out.print(" and states " + currentGroupMatch);
+					}
+					else
+					{
+						System.out.print(" and no enumeration states");
+					}
+					break;
+				}
+				i++;
+			}
+		}
+	}
+
 	/**
 	 * Returns the publicly accessible API for this element
 	 * @param element The element to generate an API list for
