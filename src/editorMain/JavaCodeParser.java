@@ -3,7 +3,10 @@ package editorMain;
 //import java.lang.annotation.Annotation;
 //import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.regex.*;
+
+import javax.swing.JOptionPane;
 
 import editorMain.guitypes.BaseGUIType;
 //import editorMain.guitypes.ExposedMember;
@@ -57,24 +60,53 @@ public class JavaCodeParser {
 		return false;
 	}
 	
+	/**
+	 * Stack, in welchem geschweifte Klammern gespeichert werden
+	 */
+	//Stack<String> bracketStack = new Stack<String>();
+	Stack<State> stateStack;
+	enum State {FILE, CLASS, ENUM, FUNCTION};
+	
 	String regexAnySpace = "\\s*";
+	String regexIdentifier = "([\\w_]+)"; // variable / class identifier
+	String regexDefinition = "(\\s*=\\s*([^,;]*))"; // = <some value>
 	String regexDataType; //= "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
-	String regexAccessModifier = "\\s*(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
-	String regexOtherModifier = "\\s+(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
+	String regexAccessModifier = "(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
+	String regexOtherModifier = "\\s*(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
+	String regexfinalModifier = "\\s*(final)\\s+";
+
+	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+(%s)(%s)?;",
+		//     public                static               final              int              MAX_COUNT       =   5
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, regexDefinition);
+	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
+
+	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
+		//		     public                static               final        int              getValue       (int i)
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, "[\\s\\w,]*");
+	Pattern regexMemberFunctionDeclarationPattern = Pattern.compile(regexMemberFunctionDeclaration);
+	
+	//String regexVariableDeclaration = String.format(format, args)
+	
+	
 	String regexClass = "\\s*class\\s+"; // matches <space(s)s>class<space(s)>
 	String regexClassExtends = "(\\s+extends\\s+(\\w+))"; // matches "extends ClassName"
+	String regexConsoleOutput = "^System\\.out\\.print(f|ln)?\\((.*)\\);\\s*"; // matches System.out.println("Any string");
+	Pattern regexConsoleOutputPattern = Pattern.compile(regexConsoleOutput);
+	String regexImport = "^import\\s+[\\w\\.\\*]+;";
+	Pattern regexImportPattern = Pattern.compile(regexImport);
 	
-	String regexLineComment = "\\s*//\\s*?(.*+)"; // matches a comment like this one
-	String regexBlockComment = "\\s*\\/\\*(.*?)\\*\\/"; // /* matches a block comment like this */
+	String regexLineComment = "^\\/\\/(.*)"; // matches a comment like this one
+	String regexBlockComment = "^\\/\\*(.*?)\\*\\/"; // /* matches a block comment like this */
+	String regexBlockCommentStart = "^\\/\\*";
+	String regexBlockCommentEnd = "^\\*\\/";
 	Pattern lineCommentRegex = Pattern.compile(regexLineComment);
-	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.MULTILINE | Pattern.DOTALL);
-	
-	String regexIdentifier = "(\\w+)"; // variable / class identifier
-	String regexDefinition = "(\\s*=\\s*([^,;]*))"; // = <some value>
+	Pattern blockCommentRegex = Pattern.compile(regexBlockComment, Pattern.DOTALL | Pattern.MULTILINE);
+	Pattern blockCommentRegexStart = Pattern.compile(regexBlockCommentStart);
+	Pattern blockCommentRegexEnd = Pattern.compile(regexBlockCommentEnd);
 
 	// matches a variable definition, for example: int i = 0;
-	String variableDeclaration; // = String.format("%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
-	Pattern variableDeclarationRegex; // = Pattern.compile(variableDeclaration);
+	String variableDeclaration = String.format("^%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
+	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	
 	// matches an enum declaration, for example: enum State { SLEEPING, AWAKE }
 	String regexEnum = "\\s*enum\\s+";
@@ -90,7 +122,7 @@ public class JavaCodeParser {
 	String regexCharacter = "'\\w'";
 	
 	// matches "public class Help (extends BaseClass)
-	String classDeclaration = String.format("(%s)?%s%s%s?", regexAccessModifier, regexClass, regexIdentifier, regexClassExtends);
+	String classDeclaration = String.format("^(%s)?%s%s%s?", regexAccessModifier, regexClass, regexIdentifier, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 	
 	ArrayList<Variable> variables = new ArrayList<Variable>();
@@ -283,7 +315,7 @@ public class JavaCodeParser {
 					}
 					break;
 				default:
-					System.out.println("Out of the line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -342,7 +374,7 @@ public class JavaCodeParser {
 		variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	}
 	
-	public void handleComments(String str)
+	public String handleComments(String str)
 	{
 		Matcher commentMatcher = lineCommentRegex.matcher(str);
 		while(commentMatcher.find())
@@ -361,9 +393,11 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
+			str = str.replaceFirst(regexLineComment, "");
 		}
 		
 		Matcher blockCommentMatcher = blockCommentRegex.matcher(str);
+		System.out.println(blockCommentRegex);
 		while(blockCommentMatcher.find())
 		{
 			int i = 0;
@@ -379,7 +413,10 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
+			str = str.replaceFirst(regexBlockComment, "");
 		}
+		
+		return str;
 	}
 	
 	/**
@@ -388,6 +425,13 @@ public class JavaCodeParser {
 	 */
 	private void queryFunctionName(String currentGroupMatch) {
 		String object = null, functionName = null;
+		
+		if(currentGroupMatch.matches(regexConsoleOutput))
+		{
+			System.out.println("Console output!");
+			return;
+		}
+		
 		String[] functionCallParts = currentGroupMatch.split("\\.");
 		
 		if(functionCallParts.length > 1)
@@ -442,11 +486,282 @@ public class JavaCodeParser {
 
 	public void parse(GUIActivity activity, String fileInput) {
 		m_pParentActivity = activity;
-		handleEnumDeclaration(fileInput);
-		handleClassDeclaration(fileInput);
-		handleVariableDeclaration(fileInput);
-		handleComments(fileInput);
-		handleFunctionCall(fileInput);
+		//fileInput = handleComments(fileInput)
+		if(stateStack == null)
+		{
+			stateStack = new Stack<State>();
+		}
+		stateStack.removeAllElements();
+		stateStack.push(State.FILE);
+		stateParserStart(fileInput);
+		//handleEnumDeclaration(fileInput);
+		//handleClassDeclaration(fileInput);
+		//handleVariableDeclaration(fileInput);
+		//handleFunctionCall(fileInput);
+	}
+	
+	public void stateParserStart(String fileInput)
+	{
+		while(fileInput.length() > 0)
+		{
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserImport(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserClassDeclaration(fileInput);
+			switch(stateStack.peek())
+			{
+			case CLASS:
+				// We are in a class. Handle member and function declaration:
+				fileInput = stateParserMemberDeclaration(fileInput);
+				fileInput = stateParserFunctionDeclaration(fileInput);
+				break;
+				
+			case FUNCTION:
+				fileInput = stateParserConsoleOutput(fileInput);
+				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
+				break;
+
+			default:
+				break;
+			}
+			fileInput = stateParserBraces(fileInput);
+			JOptionPane.showMessageDialog(null, fileInput);
+		}
+	}
+	
+	private String stateParserNonPrintables(String fileInput)
+	{
+		// Nicht-druckbare Zeichen
+		while(fileInput.substring(0, 1).matches("\\s"))
+		{
+			fileInput = fileInput.substring(1, fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+	
+	private String stateParserBraces(String fileInput)
+	{
+		if(fileInput.substring(0, 1).matches("}"))
+		{
+			fileInput = fileInput.substring(1, fileInput.length() - 1);
+			stateStack.pop();
+		}
+		return fileInput;
+	}
+	
+	private String stateParserBlockComment(String fileInput) {
+		Matcher blockCommentMatcherStart = blockCommentRegexStart.matcher(fileInput);
+		if(blockCommentMatcherStart.find())
+		{
+			String blockComment = blockCommentMatcherStart.group(0);
+			Matcher blockCommentMatcherEnd = blockCommentRegexEnd.matcher(fileInput);
+			while(!blockCommentMatcherEnd.find())
+			{
+				blockComment += fileInput.substring(0, 1);
+				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				blockCommentMatcherEnd = blockCommentRegexEnd.matcher(fileInput);
+			}
+			fileInput = fileInput.substring(blockCommentMatcherEnd.group(0).length(), fileInput.length() - 1);
+			JOptionPane.showMessageDialog(null, blockComment);
+		}
+		return fileInput;
+	}
+	
+	private String stateParserLineComment(String fileInput) {
+		Matcher lineCommentMatcher = lineCommentRegex.matcher(fileInput);
+		while(lineCommentMatcher.find())
+		{
+			int i = 0;
+			while(i <= lineCommentMatcher.groupCount())
+			{
+				String currentGroupMatch = lineCommentMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Line comment: " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Line comment is: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(lineCommentMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+
+	public String stateParserImport(String fileInput)
+	{
+		Matcher regexImportMatcher = regexImportPattern.matcher(fileInput);
+		while(regexImportMatcher.find())
+		{
+			int i = 0;
+			while(i <= regexImportMatcher.groupCount())
+			{
+				String currentGroupMatch = regexImportMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println(currentGroupMatch);
+					break;
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(regexImportMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		//stateParserStart(fileInput);
+		return fileInput;
+	}
+	
+	private String stateParserClassDeclaration(String fileInput)
+	{
+		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(fileInput);
+		while(classDeclarationMatcher.find())
+		{
+			System.out.println("Found class declaration!");
+			int i = 0;
+			while(i <= classDeclarationMatcher.groupCount())
+			{
+				String currentGroupMatch = classDeclarationMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println(currentGroupMatch);
+					break; 
+				// TODO: Add more cases to class declaration!!!
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(classDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+
+			// Nicht druckbare Zeichen entfernen:
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+
+			if(!fileInput.substring(0, 1).equals("{"))
+			{
+				System.out.println("Expected {, but found " + fileInput.substring(0, 1));
+			}
+			else
+			{
+				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				stateStack.push(State.CLASS);
+			}
+		}
+		return fileInput;
+	}
+	
+	private String stateParserMemberDeclaration(String fileInput)
+	{
+		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
+		while(variableDeclarationMatcher.find())
+		{
+			int i = 0;
+			while(i <= variableDeclarationMatcher.groupCount())
+			{
+				String currentGroupMatch = variableDeclarationMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Member declaration " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+	
+	private String stateParserFunctionDeclaration(String fileInput)
+	{
+		Matcher functionDeclarationMatcher = regexMemberFunctionDeclarationPattern.matcher(fileInput);
+		while(functionDeclarationMatcher.find())
+		{
+			System.out.println("Found!");
+			int i = 0;
+			while(i <= functionDeclarationMatcher.groupCount())
+			{
+				String currentGroupMatch = functionDeclarationMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Member declaration " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(functionDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+
+			// Nicht druckbare Zeichen entfernen:
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+
+			if(!fileInput.substring(0, 1).equals("{"))
+			{
+				System.out.println("Expected {, but found " + fileInput.substring(0, 1));
+			}
+			else
+			{
+				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				stateStack.push(State.FUNCTION);
+			}
+		}
+		return fileInput;
+	}
+	
+	private String stateParserConsoleOutput(String fileInput)
+	{
+		Matcher consoleOutputMatcher = regexConsoleOutputPattern.matcher(fileInput);
+		System.out.println(regexConsoleOutput);
+		while(consoleOutputMatcher.find())
+		{
+			int i = 0;
+			while(i <= consoleOutputMatcher.groupCount())
+			{
+				String currentGroupMatch = consoleOutputMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Member declaration " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(consoleOutputMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
 	}
 	
 	private void handleEnumDeclaration(String fileInput) {
