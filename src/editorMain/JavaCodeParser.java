@@ -65,17 +65,17 @@ public class JavaCodeParser {
 	 */
 	//Stack<String> bracketStack = new Stack<String>();
 	Stack<State> stateStack;
-	enum State {FILE, CLASS, ENUM, FUNCTION};
+	enum State {FILE, CLASS, ENUM, FUNCTION, IF};
 	
 	String regexAnySpace = "\\s*";
 	String regexIdentifier = "([\\w_]+)"; // variable / class identifier
-	String regexDefinition = "(\\s*=\\s*([^,;]*))"; // = <some value>
+	String regexDefinition = "(\\s*=\\s*([^;]*))"; // = <some value>
 	String regexDataType; //= "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
 	String regexAccessModifier = "(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
 	String regexOtherModifier = "\\s*(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
 	String regexfinalModifier = "\\s*(final)\\s+";
 
-	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+(%s)(%s)?;",
+	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s+(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
 			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
@@ -520,6 +520,7 @@ public class JavaCodeParser {
 			case FUNCTION:
 				fileInput = stateParserConsoleOutput(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
+				fileInput = stateParserIfStatement(fileInput);
 				break;
 
 			default:
@@ -530,6 +531,10 @@ public class JavaCodeParser {
 		}
 	}
 	
+	private String stateParserIfStatement(String fileInput) {
+		return fileInput;
+	}
+
 	private String stateParserNonPrintables(String fileInput)
 	{
 		// Nicht-druckbare Zeichen
@@ -666,6 +671,7 @@ public class JavaCodeParser {
 	private String stateParserMemberDeclaration(String fileInput)
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
+		System.out.println(regexMemberDeclaration);
 		while(variableDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -738,7 +744,6 @@ public class JavaCodeParser {
 	private String stateParserConsoleOutput(String fileInput)
 	{
 		Matcher consoleOutputMatcher = regexConsoleOutputPattern.matcher(fileInput);
-		System.out.println(regexConsoleOutput);
 		while(consoleOutputMatcher.find())
 		{
 			int i = 0;
