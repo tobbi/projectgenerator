@@ -19,7 +19,13 @@ public class JavaCodeParser {
 	
 	
 	private GUIActivity m_pParentActivity;
+	private String m_pSwiftFileContent = "";
 
+	private void addToSwiftFile(String text)
+	{
+		m_pSwiftFileContent += text;
+	}
+	
 	/**
 	 * Test whether the passed character is
 	 * a character allowed in designations
@@ -65,7 +71,7 @@ public class JavaCodeParser {
 	 */
 	//Stack<String> bracketStack = new Stack<String>();
 	Stack<State> stateStack;
-	enum State {FILE, CLASS, ENUM, FUNCTION, IF};
+	enum State {FILE, CLASS, ENUM, FUNCTION, IF, SWITCH, CASE};
 	
 	String regexAnySpace = "\\s*";
 	String regexIdentifier = "([\\w_]+)"; // variable / class identifier
@@ -77,13 +83,28 @@ public class JavaCodeParser {
 
 	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s+(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
-			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, regexDefinition);
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_]*?", regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
 
 	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
 		//		     public                static               final        int              getValue       (int i)
 			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, "[\\s\\w,]*");
 	Pattern regexMemberFunctionDeclarationPattern = Pattern.compile(regexMemberFunctionDeclaration);
+	
+	String regexArrayIndexAssignment = "^([\\w_]*\\[\\d+\\])\\s*=\\s*(.*?);";
+	Pattern regexArrayIndexAssignmentPattern = Pattern.compile(regexArrayIndexAssignment);
+	
+	String regexIfStatement = "^if\\s*\\([^\\)]*\\)";
+	Pattern ifStatementPattern = Pattern.compile(regexIfStatement);
+	
+	String regexSwitchStatement = "^switch\\s*\\([^\\)]*\\)";
+	Pattern switchStatementPattern = Pattern.compile(regexSwitchStatement);
+	
+	String regexCaseStatement = "^case\\s*[\\w_]+:";
+	Pattern caseStatementPattern = Pattern.compile(regexCaseStatement);
+	
+	String regexBreakStatement = "^break\\s*;";
+	Pattern breakStatementPattern = Pattern.compile(regexBreakStatement);
 	
 	//String regexVariableDeclaration = String.format(format, args)
 	
@@ -107,6 +128,10 @@ public class JavaCodeParser {
 	// matches a variable definition, for example: int i = 0;
 	String variableDeclaration = String.format("^%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
+	
+	String regexHeapDefinition = "(\\s*=\\s*new\\s*\\(([^;]*\\)))";
+	String variableHeapDeclaration = String.format("^%s?%s%s?[,;]", regexDataType, regexIdentifier, regexHeapDefinition);
+	Pattern variableHeapDeclarationPattern = Pattern.compile(variableHeapDeclaration);
 	
 	// matches an enum declaration, for example: enum State { SLEEPING, AWAKE }
 	String regexEnum = "\\s*enum\\s+";
@@ -315,7 +340,7 @@ public class JavaCodeParser {
 					}
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -386,6 +411,7 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole match. Ignore!
+					addToSwiftFile(currentGroupMatch);
 					break;
 				case 1:
 					System.out.println("Comment: " + currentGroupMatch);
@@ -407,6 +433,7 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole match Ignore!
+					addToSwiftFile(currentGroupMatch);
 					break;
 				case 1:
 					System.out.println("BlockComment:\r\n" + currentGroupMatch);
@@ -505,33 +532,184 @@ public class JavaCodeParser {
 		while(fileInput.length() > 0)
 		{
 			fileInput = stateParserNonPrintables(fileInput);
-			fileInput = stateParserImport(fileInput);
 			fileInput = stateParserLineComment(fileInput);
 			fileInput = stateParserBlockComment(fileInput);
-			fileInput = stateParserClassDeclaration(fileInput);
+
+			System.out.println("Current state is " + stateStack.peek());
+			
 			switch(stateStack.peek())
 			{
+			case FILE:
+				fileInput = stateParserImport(fileInput);
+				fileInput = stateParserClassDeclaration(fileInput);
+				break;
+
 			case CLASS:
 				// We are in a class. Handle member and function declaration:
+				fileInput = stateParserClassDeclaration(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput);
 				fileInput = stateParserFunctionDeclaration(fileInput);
 				break;
 				
+			case SWITCH:
+				fileInput = stateParserCaseDefinition(fileInput);
+				break;
+			
+			case CASE:
+				fileInput = stateParserConsoleOutput(fileInput);
+				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
+				fileInput = stateParserIfStatement(fileInput);
+				fileInput = stateParserBreakStatement(fileInput);
+				fileInput = stateParserAssignment(fileInput);
+				break;
+
 			case FUNCTION:
 				fileInput = stateParserConsoleOutput(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				fileInput = stateParserIfStatement(fileInput);
+				fileInput = stateParserSwitchStatement(fileInput);
+				fileInput = stateParserAssignment(fileInput);
 				break;
 
 			default:
 				break;
 			}
 			fileInput = stateParserBraces(fileInput);
-			JOptionPane.showMessageDialog(null, fileInput);
+			JOptionPane.showMessageDialog(null, m_pSwiftFileContent);
+			System.out.println("-------------------------------------------------------");
+			System.out.println(m_pSwiftFileContent);
+			System.out.println("-------------------------------------------------------");
 		}
 	}
 	
-	private String stateParserIfStatement(String fileInput) {
+	private String stateParserAssignment(String fileInput) {
+		Matcher arrayAssignmentMatcher = regexArrayIndexAssignmentPattern.matcher(fileInput);
+		if(arrayAssignmentMatcher.find())
+		{
+			
+			fileInput = fileInput.substring(arrayAssignmentMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+
+	private String stateParserBreakStatement(String fileInput) {
+		Matcher breakStatementMatcher = breakStatementPattern.matcher(fileInput);
+		if(breakStatementMatcher.find())
+		{
+			if(stateStack.peek() != State.CASE)
+			{
+				System.out.println("Not a case statement");
+			}
+			else
+			{
+				while(stateStack.peek() == State.CASE)
+				{
+					stateStack.pop();
+				}
+			}
+			fileInput = fileInput.substring(breakStatementMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+
+	private String stateParserCaseDefinition(String fileInput) {
+		
+		Matcher caseStatementMatcher = caseStatementPattern.matcher(fileInput);
+		if(caseStatementMatcher.find())
+		{
+			int i = 0;
+			while(i <= caseStatementMatcher.groupCount())
+			{
+				String currentGroupMatch = caseStatementMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Case statement: " + currentGroupMatch);
+					break;
+				case 1: // public / private outer group
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(caseStatementMatcher.group(0).length(), fileInput.length() - 1);
+			stateStack.push(State.CASE);
+		}
+		return fileInput;
+	}
+
+	private String stateParserIfStatement(String fileInput)
+	{	
+		Matcher ifStatementMatcher = ifStatementPattern.matcher(fileInput);
+		//System.out.println(regexMemberDeclaration);
+		if(ifStatementMatcher.find())
+		{
+			int i = 0;
+			while(i <= ifStatementMatcher.groupCount())
+			{
+				String currentGroupMatch = ifStatementMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("If statement: " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(ifStatementMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+	
+	private String stateParserSwitchStatement(String fileInput)
+	{
+		Matcher switchStatementMatcher = switchStatementPattern.matcher(fileInput);
+		if(switchStatementMatcher.find())
+		{
+			int i = 0;
+			while(i <= switchStatementMatcher.groupCount())
+			{
+				String currentGroupMatch = switchStatementMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Switch statement: " + currentGroupMatch);
+					break;
+				case 1:
+					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				default:
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.substring(switchStatementMatcher.group(0).length(), fileInput.length() - 1);
+			
+			// Nicht druckbare Zeichen und Kommentare entfernen:
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+			
+			if(!fileInput.substring(0, 1).equals("{"))
+			{
+				System.out.println("Expected {, but found " + fileInput.substring(0, 1));
+			}
+			else
+			{
+				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				stateStack.push(State.SWITCH);
+			}
+		}
 		return fileInput;
 	}
 
@@ -540,6 +718,7 @@ public class JavaCodeParser {
 		// Nicht-druckbare Zeichen
 		while(fileInput.substring(0, 1).matches("\\s"))
 		{
+			addToSwiftFile(fileInput.substring(0, 1));
 			fileInput = fileInput.substring(1, fileInput.length() - 1);
 		}
 		return fileInput;
@@ -549,6 +728,7 @@ public class JavaCodeParser {
 	{
 		if(fileInput.substring(0, 1).matches("}"))
 		{
+			addToSwiftFile("}");
 			fileInput = fileInput.substring(1, fileInput.length() - 1);
 			stateStack.pop();
 		}
@@ -567,15 +747,17 @@ public class JavaCodeParser {
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				blockCommentMatcherEnd = blockCommentRegexEnd.matcher(fileInput);
 			}
+			blockComment += "*/"; // Add <end of block comment marker> to file contents;
+			addToSwiftFile(blockComment);
 			fileInput = fileInput.substring(blockCommentMatcherEnd.group(0).length(), fileInput.length() - 1);
-			JOptionPane.showMessageDialog(null, blockComment);
+			//JOptionPane.showMessageDialog(null, blockComment);
 		}
 		return fileInput;
 	}
 	
 	private String stateParserLineComment(String fileInput) {
 		Matcher lineCommentMatcher = lineCommentRegex.matcher(fileInput);
-		while(lineCommentMatcher.find())
+		if(lineCommentMatcher.find())
 		{
 			int i = 0;
 			while(i <= lineCommentMatcher.groupCount())
@@ -584,13 +766,14 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
+					addToSwiftFile(currentGroupMatch);
 					System.out.println("Line comment: " + currentGroupMatch);
 					break;
 				case 1:
 					System.out.println("Line comment is: " + currentGroupMatch);
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -600,10 +783,10 @@ public class JavaCodeParser {
 		return fileInput;
 	}
 
-	public String stateParserImport(String fileInput)
+	private String stateParserImport(String fileInput)
 	{
 		Matcher regexImportMatcher = regexImportPattern.matcher(fileInput);
-		while(regexImportMatcher.find())
+		if(regexImportMatcher.find())
 		{
 			int i = 0;
 			while(i <= regexImportMatcher.groupCount())
@@ -615,7 +798,7 @@ public class JavaCodeParser {
 					System.out.println(currentGroupMatch);
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -629,7 +812,8 @@ public class JavaCodeParser {
 	private String stateParserClassDeclaration(String fileInput)
 	{
 		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(fileInput);
-		while(classDeclarationMatcher.find())
+		System.out.println(classDeclaration);
+		if(classDeclarationMatcher.find())
 		{
 			System.out.println("Found class declaration!");
 			int i = 0;
@@ -640,10 +824,31 @@ public class JavaCodeParser {
 				{
 				case 0: // Whole pattern match. Ignore!
 					System.out.println(currentGroupMatch);
-					break; 
-				// TODO: Add more cases to class declaration!!!
+					break;
+					
+				case 1: // Outer access modifiers group
+					break;
+					 
+				case 2: // Access modifiers
+					addToSwiftFile(String.format("%s class ", currentGroupMatch));
+					break;
+					
+				case 3: // Class name
+					if(currentGroupMatch != null)
+					{
+						addToSwiftFile(currentGroupMatch);
+					}
+					break;
+					
+				case 4: // If this group exists, the class extends from a superclass.
+					break;
+				case 5: // Super class name
+					if(currentGroupMatch != null) {
+						addToSwiftFile(String.format(": %s", currentGroupMatch));
+					}
+					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -661,6 +866,7 @@ public class JavaCodeParser {
 			}
 			else
 			{
+				addToSwiftFile("{");
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				stateStack.push(State.CLASS);
 			}
@@ -672,9 +878,14 @@ public class JavaCodeParser {
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
 		System.out.println(regexMemberDeclaration);
-		while(variableDeclarationMatcher.find())
+		if(variableDeclarationMatcher.find())
 		{
 			int i = 0;
+			String accessModifiers = "";
+			String variableName = "";
+			String dataType = "";
+			Boolean isArray = false;
+			String definition = "";
 			while(i <= variableDeclarationMatcher.groupCount())
 			{
 				String currentGroupMatch = variableDeclarationMatcher.group(i);
@@ -683,15 +894,80 @@ public class JavaCodeParser {
 				case 0: // Whole pattern match. Ignore!
 					System.out.println("Member declaration " + currentGroupMatch);
 					break;
-				case 1:
-					System.out.println("Group 1: " + currentGroupMatch);
+				case 1: // public / private outer group
+					break;
+				case 2: // public / private inner group
+					if(currentGroupMatch != null)
+					{
+						System.out.println("Variable has access modifier: " + currentGroupMatch);
+						accessModifiers += String.format("%s ", currentGroupMatch);
+					}
+					break;
+				case 3: // static / override outer group
+					break;
+				case 4: // static / override inner group
+					if(currentGroupMatch != null)
+					{
+						System.out.println("Variable has access modifier #2: " + currentGroupMatch);
+						accessModifiers += String.format("%s ", currentGroupMatch);
+					}
+					break;
+				case 5: // final outer group
+					break;
+				case 6: // final inner group
+					if(currentGroupMatch != null)
+					{   // Final variables can only be defined once. We "assume" that this is const Swift, even though it isn't
+						// "Final" in Swift means: no subclassing
+						System.out.println("Variable is final!");
+						accessModifiers += String.format("%s ", "let");
+					}
+					break;
+				case 7: // data type
+					System.out.println("Variable has the data type " + currentGroupMatch);
+					dataType = currentGroupMatch;
+					break;
+				case 8: // Array brackets []
+					if(currentGroupMatch != null)
+					{
+						System.out.println("Variable is an Array declaration" + currentGroupMatch);
+						isArray = true;
+					}
+					break;
+				case 9: // Name outer
+					break;
+				case 10: // Name inner
+					System.out.println("Variable has the name: " + currentGroupMatch);
+					variableName = currentGroupMatch;
+					break;
+				case 11: // Variable definition outer
+					break;
+				case 12: // Variable definition inner
+					break;
+				case 13: // Variable definition
+					System.out.println("Variable is being defined as: " + currentGroupMatch);
+					definition = currentGroupMatch;
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
 			}
+			
+			if(!isArray)
+			{
+				// (public static let) MAX_COUNT: Integer = <definition>
+				String swiftVarDeclaration = String.format("%s %s:%s = %s", accessModifiers, variableName, dataType, definition);
+				addToSwiftFile(swiftVarDeclaration);
+				System.out.println(swiftVarDeclaration);
+			}
+			else
+			{
+				String swiftVarDeclaration = String.format("%s %s:[%s] = %s", accessModifiers, variableName, dataType, definition);
+				addToSwiftFile(swiftVarDeclaration);
+				System.out.println(swiftVarDeclaration);
+			}
+			
 			fileInput = fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 		}
 		return fileInput;
@@ -700,7 +976,7 @@ public class JavaCodeParser {
 	private String stateParserFunctionDeclaration(String fileInput)
 	{
 		Matcher functionDeclarationMatcher = regexMemberFunctionDeclarationPattern.matcher(fileInput);
-		while(functionDeclarationMatcher.find())
+		if(functionDeclarationMatcher.find())
 		{
 			System.out.println("Found!");
 			int i = 0;
@@ -716,7 +992,7 @@ public class JavaCodeParser {
 					System.out.println("Group 1: " + currentGroupMatch);
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -744,7 +1020,7 @@ public class JavaCodeParser {
 	private String stateParserConsoleOutput(String fileInput)
 	{
 		Matcher consoleOutputMatcher = regexConsoleOutputPattern.matcher(fileInput);
-		while(consoleOutputMatcher.find())
+		if(consoleOutputMatcher.find())
 		{
 			int i = 0;
 			while(i <= consoleOutputMatcher.groupCount())
@@ -759,7 +1035,7 @@ public class JavaCodeParser {
 					System.out.println("Group 1: " + currentGroupMatch);
 					break;
 				default:
-					System.out.println("Out of line group #" + i + " with value " + currentGroupMatch);
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
@@ -771,7 +1047,7 @@ public class JavaCodeParser {
 	
 	private void handleEnumDeclaration(String fileInput) {
 		Matcher enumMatcher = enumRegex.matcher(fileInput);
-		while(enumMatcher.find()) {
+		if(enumMatcher.find()) {
 			int i = 0;
 			while(i <= enumMatcher.groupCount())
 			{
