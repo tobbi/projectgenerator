@@ -534,10 +534,8 @@ public class JavaCodeParser {
 			fileInput = stateParserNonPrintables(fileInput);
 			fileInput = stateParserLineComment(fileInput);
 			fileInput = stateParserBlockComment(fileInput);
-
-			System.out.println("Current state is " + stateStack.peek());
 			
-			switch(stateStack.peek())
+			switch(stateStack.peek()) // Check what the current state is
 			{
 			case FILE:
 				fileInput = stateParserImport(fileInput);
@@ -575,7 +573,7 @@ public class JavaCodeParser {
 				break;
 			}
 			fileInput = stateParserBraces(fileInput);
-			JOptionPane.showMessageDialog(null, m_pSwiftFileContent);
+			JOptionPane.showMessageDialog(null, fileInput);
 			System.out.println("-------------------------------------------------------");
 			System.out.println(m_pSwiftFileContent);
 			System.out.println("-------------------------------------------------------");
@@ -739,7 +737,7 @@ public class JavaCodeParser {
 		Matcher blockCommentMatcherStart = blockCommentRegexStart.matcher(fileInput);
 		if(blockCommentMatcherStart.find())
 		{
-			String blockComment = blockCommentMatcherStart.group(0);
+			String blockComment = "";
 			Matcher blockCommentMatcherEnd = blockCommentRegexEnd.matcher(fileInput);
 			while(!blockCommentMatcherEnd.find())
 			{
@@ -767,10 +765,10 @@ public class JavaCodeParser {
 				{
 				case 0: // Whole pattern match. Ignore!
 					addToSwiftFile(currentGroupMatch);
-					System.out.println("Line comment: " + currentGroupMatch);
+					//System.out.println("Line comment: " + currentGroupMatch);
 					break;
 				case 1:
-					System.out.println("Line comment is: " + currentGroupMatch);
+					//System.out.println("Line comment is: " + currentGroupMatch);
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -812,10 +810,9 @@ public class JavaCodeParser {
 	private String stateParserClassDeclaration(String fileInput)
 	{
 		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(fileInput);
-		System.out.println(classDeclaration);
+		//System.out.println(classDeclaration);
 		if(classDeclarationMatcher.find())
 		{
-			System.out.println("Found class declaration!");
 			int i = 0;
 			while(i <= classDeclarationMatcher.groupCount())
 			{
@@ -877,7 +874,7 @@ public class JavaCodeParser {
 	private String stateParserMemberDeclaration(String fileInput)
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
-		System.out.println(regexMemberDeclaration);
+		//System.out.println(regexMemberDeclaration);
 		if(variableDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -889,17 +886,18 @@ public class JavaCodeParser {
 			while(i <= variableDeclarationMatcher.groupCount())
 			{
 				String currentGroupMatch = variableDeclarationMatcher.group(i);
+				if(currentGroupMatch != null)
+					currentGroupMatch = currentGroupMatch.trim();
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Member declaration " + currentGroupMatch);
 					break;
 				case 1: // public / private outer group
 					break;
 				case 2: // public / private inner group
 					if(currentGroupMatch != null)
 					{
-						System.out.println("Variable has access modifier: " + currentGroupMatch);
+						//System.out.println("Variable has access modifier: " + currentGroupMatch);
 						accessModifiers += String.format("%s ", currentGroupMatch);
 					}
 					break;
@@ -908,7 +906,7 @@ public class JavaCodeParser {
 				case 4: // static / override inner group
 					if(currentGroupMatch != null)
 					{
-						System.out.println("Variable has access modifier #2: " + currentGroupMatch);
+						//System.out.println("Variable has access modifier #2: " + currentGroupMatch);
 						accessModifiers += String.format("%s ", currentGroupMatch);
 					}
 					break;
@@ -918,25 +916,28 @@ public class JavaCodeParser {
 					if(currentGroupMatch != null)
 					{   // Final variables can only be defined once. We "assume" that this is const Swift, even though it isn't
 						// "Final" in Swift means: no subclassing
-						System.out.println("Variable is final!");
+						//System.out.println("Variable is final!");
 						accessModifiers += String.format("%s ", "let");
+					}
+					else
+					{
+						// Variable:
+						accessModifiers += String.format("%s ", "var");
 					}
 					break;
 				case 7: // data type
-					System.out.println("Variable has the data type " + currentGroupMatch);
-					dataType = currentGroupMatch;
+					//System.out.println("Variable has the data type " + currentGroupMatch);
+					dataType = toSwiftDataType(currentGroupMatch);
 					break;
 				case 8: // Array brackets []
 					if(currentGroupMatch != null)
 					{
-						System.out.println("Variable is an Array declaration" + currentGroupMatch);
 						isArray = true;
 					}
 					break;
 				case 9: // Name outer
 					break;
 				case 10: // Name inner
-					System.out.println("Variable has the name: " + currentGroupMatch);
 					variableName = currentGroupMatch;
 					break;
 				case 11: // Variable definition outer
@@ -944,7 +945,6 @@ public class JavaCodeParser {
 				case 12: // Variable definition inner
 					break;
 				case 13: // Variable definition
-					System.out.println("Variable is being defined as: " + currentGroupMatch);
 					definition = currentGroupMatch;
 					break;
 				default:
@@ -956,14 +956,13 @@ public class JavaCodeParser {
 			
 			if(!isArray)
 			{
-				// (public static let) MAX_COUNT: Integer = <definition>
-				String swiftVarDeclaration = String.format("%s %s:%s = %s", accessModifiers, variableName, dataType, definition);
+				String swiftVarDeclaration = String.format("%s %s:%s = %s;", accessModifiers, variableName, dataType, definition);
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
 			else
 			{
-				String swiftVarDeclaration = String.format("%s %s:[%s] = %s", accessModifiers, variableName, dataType, definition);
+				String swiftVarDeclaration = String.format("%s %s:[%s] = %s;", accessModifiers, variableName, dataType, definition);
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
@@ -973,12 +972,35 @@ public class JavaCodeParser {
 		return fileInput;
 	}
 	
+	private String toSwiftDataType(String dataType) {
+		if(dataType.equals("int") || dataType.equals("Integer"))
+			return "Int";
+		if(dataType.equals("float"))
+			return "Float";
+		if(dataType.equals("char"))
+			return "Character";
+		if(dataType.equals("byte"))
+			return "UInt8";
+		if(dataType.equals("boolean") || dataType.equals("bool"))
+			return "Bool";
+		if(dataType.equals("double"))
+			return "Double";
+		if(dataType.equals("String"))
+			return "String";
+		
+		// Wir nehmen einen benutzerdefinierten Datentyp an.
+		return dataType;
+	}
+
 	private String stateParserFunctionDeclaration(String fileInput)
 	{
 		Matcher functionDeclarationMatcher = regexMemberFunctionDeclarationPattern.matcher(fileInput);
+		String accessModifiers = "";
+		String returnType = "";
+		String functionName = "";
 		if(functionDeclarationMatcher.find())
 		{
-			System.out.println("Found!");
+			//System.out.println("Found function: " + functionDeclarationMatcher.group(0));
 			int i = 0;
 			while(i <= functionDeclarationMatcher.groupCount())
 			{
@@ -986,10 +1008,60 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Member declaration " + currentGroupMatch);
+					System.out.println("Function declaration " + currentGroupMatch);
 					break;
-				case 1:
-					System.out.println("Group 1: " + currentGroupMatch);
+				case 1: // outer private / public group
+					break;
+				case 2: // private / public
+					if(currentGroupMatch != null)
+					{
+						accessModifiers += String.format("%s ", currentGroupMatch.trim());
+					}
+					break;
+				case 3: // outer static / override group
+					break;
+				case 4: // static / override
+					if(currentGroupMatch != null)
+					{
+					   if(!currentGroupMatch.equals("static")) // static methods are supposed to be class funcs
+					   {
+					      accessModifiers += String.format("%s ", "class func");
+					   }
+					   else
+					   {
+						   accessModifiers += String.format("%s ", currentGroupMatch);
+					   }
+					}
+					break;
+				case 5: // outer final group
+					break;
+				case 6: // inner final group
+					if(currentGroupMatch != null)
+					{
+						accessModifiers += String.format("%s ", "final");
+					}
+					break;
+				case 7: // outer return type group
+					break;
+				case 8: // inner return type group
+					if(currentGroupMatch == null)
+					{
+						System.out.println("Function without return type declared?");
+					}
+					else
+					{
+						// We treat "void" like no return type set.
+						if(!currentGroupMatch.trim().equals("void"))
+						{
+							returnType += currentGroupMatch.trim();
+						}
+					}
+					break;
+				case 9: // function name
+					if(currentGroupMatch != null)
+					{
+						functionName += currentGroupMatch.trim();
+					}
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -997,6 +1069,15 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
+			if(!returnType.equals(""))
+			{
+				addToSwiftFile(String.format("%s %s %s() -> %s", accessModifiers, "class func", functionName, returnType));
+			}
+			else
+			{
+				addToSwiftFile(String.format("%s %s %s()", accessModifiers, "class func", functionName));
+			}
+			
 			fileInput = fileInput.substring(functionDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 
 			// Nicht druckbare Zeichen entfernen:
@@ -1010,6 +1091,7 @@ public class JavaCodeParser {
 			}
 			else
 			{
+				addToSwiftFile("{");
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				stateStack.push(State.FUNCTION);
 			}
@@ -1029,16 +1111,32 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Member declaration " + currentGroupMatch);
+					System.out.println("Console output " + currentGroupMatch);
 					break;
 				case 1:
 					System.out.println("Group 1: " + currentGroupMatch);
+					break;
+				case 2:
+					System.out.println("Group 2: " + currentGroupMatch);
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
 				}
 				i++;
+			}
+			if(consoleOutputMatcher.group(1) != null)
+			{
+				if(consoleOutputMatcher.group(1).equals("ln"))
+				{
+					addToSwiftFile(String.format("println(%s);", 
+							(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
+				}
+			}
+			else
+			{
+				addToSwiftFile(String.format("print(%s);",
+						(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
 			}
 			fileInput = fileInput.substring(consoleOutputMatcher.group(0).length(), fileInput.length() - 1);
 		}
