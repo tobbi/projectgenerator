@@ -91,7 +91,7 @@ public class JavaCodeParser {
 
 	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
 		//		     public                static               final        int              getValue       (int i)
-			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, "[\\s\\w,]*");
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, "([\\s\\w,]*)");
 	Pattern regexMemberFunctionDeclarationPattern = Pattern.compile(regexMemberFunctionDeclaration);
 	
 	String regexArrayIndexAssignment = "^([\\w_]*\\[\\d+\\])\\s*=\\s*(.*?);";
@@ -904,11 +904,9 @@ public class JavaCodeParser {
 				i++;
 			}
 			fileInput = fileInput.replaceFirst(classDeclaration, "");
-			JOptionPane.showMessageDialog(null, "After class handling: " + fileInput);
 
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
-			JOptionPane.showMessageDialog(null, "After deleting non-printables:" + fileInput);
 			fileInput = stateParserBlockComment(fileInput);
 			fileInput = stateParserLineComment(fileInput);
 
@@ -1055,6 +1053,7 @@ public class JavaCodeParser {
 		String accessModifiers = "";
 		String returnType = "";
 		String functionName = "";
+		String parameters = "";
 		if(functionDeclarationMatcher.find())
 		{
 			//System.out.println("Found function: " + functionDeclarationMatcher.group(0));
@@ -1120,6 +1119,12 @@ public class JavaCodeParser {
 						functionName += currentGroupMatch.trim();
 					}
 					break;
+					
+				case 10: // parameters
+					if(currentGroupMatch != null)
+					{
+						parameters = toSwiftParameterList(currentGroupMatch);
+					}
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
@@ -1128,11 +1133,11 @@ public class JavaCodeParser {
 			}
 			if(!returnType.equals(""))
 			{
-				addToSwiftFile(String.format("%s %s %s() -> %s", accessModifiers, "class func", functionName, returnType));
+				addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "class func", functionName, parameters, returnType));
 			}
 			else
 			{
-				addToSwiftFile(String.format("%s %s %s()", accessModifiers, "class func", functionName));
+				addToSwiftFile(String.format("%s %s %s(%s)", accessModifiers, "class func", functionName, parameters));
 			}
 			
 			fileInput = fileInput.replaceFirst(regexMemberFunctionDeclaration, "");
@@ -1156,6 +1161,24 @@ public class JavaCodeParser {
 		return fileInput;
 	}
 	
+	private String toSwiftParameterList(String currentGroupMatch) {
+		String[] parameters = currentGroupMatch.split(",");
+		String paramList = "";
+		int i = 0;
+		for(String parameter: parameters)
+		{
+			parameter = parameter.trim();
+			if(i > 0)
+				paramList += ", ";
+			String dataType = parameter.split(" ")[0].trim();
+			String variableName = parameter.split(" ")[1].trim();
+			
+			paramList += String.format("%s: %s", variableName, toSwiftDataType(dataType));
+			i++;
+		}
+		return paramList;
+	}
+
 	private String stateParserConsoleOutput(String fileInput)
 	{
 		Matcher consoleOutputMatcher = regexConsoleOutputPattern.matcher(fileInput);
