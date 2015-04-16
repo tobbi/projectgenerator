@@ -73,6 +73,9 @@ public class JavaCodeParser {
 	Stack<State> stateStack;
 	enum State {FILE, CLASS, ENUM, FUNCTION, IF, SWITCH, CASE};
 	
+	// Speichert den Namen des Switches, damit die Optionen mit <Switch name>.Option addressiert werden koennen.
+	String switchName;
+	
 	String regexAnySpace = "\\s*";
 	String regexIdentifier = "([\\w_]+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^;]*))"; // = <some value>
@@ -616,6 +619,7 @@ public class JavaCodeParser {
 		if(caseStatementMatcher.find())
 		{
 			int i = 0;
+			String caseName = "";
 			while(i <= caseStatementMatcher.groupCount())
 			{
 				String currentGroupMatch = caseStatementMatcher.group(i);
@@ -626,6 +630,7 @@ public class JavaCodeParser {
 					break;
 				case 1: // public / private outer group
 					System.out.println("Group 1: " + currentGroupMatch);
+					caseName = currentGroupMatch;
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -633,6 +638,7 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
+			addToSwiftFile(String.format("case %s:", caseName));
 			fileInput = fileInput.substring(caseStatementMatcher.group(0).length(), fileInput.length() - 1);
 			stateStack.push(State.CASE);
 		}
@@ -692,6 +698,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			fileInput = fileInput.substring(switchStatementMatcher.group(0).length(), fileInput.length() - 1);
+			addToSwiftFile(switchStatementMatcher.group(0));
 			
 			// Nicht druckbare Zeichen und Kommentare entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
@@ -704,6 +711,7 @@ public class JavaCodeParser {
 			}
 			else
 			{
+				addToSwiftFile("{");
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				stateStack.push(State.SWITCH);
 			}
@@ -1129,13 +1137,13 @@ public class JavaCodeParser {
 			{
 				if(consoleOutputMatcher.group(1).equals("ln"))
 				{
-					addToSwiftFile(String.format("println(%s);", 
+					addToSwiftFile(String.format("println(%s);\r\n", 
 							(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
 				}
 			}
 			else
 			{
-				addToSwiftFile(String.format("print(%s);",
+				addToSwiftFile(String.format("print(%s);\r\n",
 						(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
 			}
 			fileInput = fileInput.substring(consoleOutputMatcher.group(0).length(), fileInput.length() - 1);
