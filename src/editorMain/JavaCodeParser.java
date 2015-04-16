@@ -109,6 +109,9 @@ public class JavaCodeParser {
 	String regexBreakStatement = "^break\\s*;";
 	Pattern breakStatementPattern = Pattern.compile(regexBreakStatement);
 	
+	String regexReturnStatement = "^return\\s*([^;]+);";
+	Pattern returnStatementPattern = Pattern.compile(regexReturnStatement);
+	
 	//String regexVariableDeclaration = String.format(format, args)
 	
 	
@@ -570,6 +573,7 @@ public class JavaCodeParser {
 				fileInput = stateParserIfStatement(fileInput);
 				fileInput = stateParserSwitchStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
+				fileInput = stateParserReturnStatement(fileInput);
 				break;
 
 			default:
@@ -583,6 +587,36 @@ public class JavaCodeParser {
 		}
 	}
 	
+	private String stateParserReturnStatement(String fileInput) {
+		Matcher returnStatementMatcher = returnStatementPattern.matcher(fileInput);
+		if(returnStatementMatcher.find())
+		{
+			int i = 0;
+			String returnStatement = "";
+			while(i <= returnStatementMatcher.groupCount())
+			{
+				String currentGroupMatch = returnStatementMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole pattern match. Ignore!
+					System.out.println("Case statement: " + currentGroupMatch);
+					break;
+				case 1: // case name
+					System.out.println("Group 1: " + currentGroupMatch);
+					returnStatement = currentGroupMatch;
+					break;
+				default:
+					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
+					break;
+				}
+				i++;
+			}
+			addToSwiftFile(String.format("return %s;", returnStatement));
+			fileInput = fileInput.substring(returnStatementMatcher.group(0).length(), fileInput.length() - 1);
+		}
+		return fileInput;
+	}
+
 	private String stateParserAssignment(String fileInput) {
 		Matcher arrayAssignmentMatcher = regexArrayIndexAssignmentPattern.matcher(fileInput);
 		if(arrayAssignmentMatcher.find())
@@ -836,7 +870,14 @@ public class JavaCodeParser {
 					break;
 					 
 				case 2: // Access modifiers
-					addToSwiftFile(String.format("%s class ", currentGroupMatch));
+					if(currentGroupMatch != null)
+					{
+						addToSwiftFile(String.format("%s class ", currentGroupMatch));
+					}
+					else
+					{
+						addToSwiftFile("class ");
+					}
 					break;
 					
 				case 3: // Class name
@@ -982,6 +1023,8 @@ public class JavaCodeParser {
 	}
 	
 	private String toSwiftDataType(String dataType) {
+		dataType = dataType.trim();
+		System.out.println("Got data type: " + dataType);
 		if(dataType.equals("int") || dataType.equals("Integer"))
 			return "Int";
 		if(dataType.equals("float"))
@@ -1062,7 +1105,7 @@ public class JavaCodeParser {
 						// We treat "void" like no return type set.
 						if(!currentGroupMatch.trim().equals("void"))
 						{
-							returnType += currentGroupMatch.trim();
+							returnType += toSwiftDataType(currentGroupMatch.trim());
 						}
 					}
 					break;
