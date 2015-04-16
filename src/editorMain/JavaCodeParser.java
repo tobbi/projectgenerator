@@ -112,6 +112,9 @@ public class JavaCodeParser {
 	String regexReturnStatement = "^return\\s*([^;]+);";
 	Pattern returnStatementPattern = Pattern.compile(regexReturnStatement);
 	
+	String regexNonPrintables = "^\\s+";
+	Pattern nonPrintablesPattern = Pattern.compile(regexNonPrintables);
+	
 	//String regexVariableDeclaration = String.format(format, args)
 	
 	
@@ -538,14 +541,21 @@ public class JavaCodeParser {
 		while(fileInput.length() > 0)
 		{
 			fileInput = stateParserNonPrintables(fileInput);
+			System.out.println("-------------------------------------------------------");
+			JOptionPane.showMessageDialog(null, "------- Input after nonprintables ------\r\n" + fileInput);
+			System.out.println("-------------------------------------------------------");
 			fileInput = stateParserLineComment(fileInput);
+			JOptionPane.showMessageDialog(null, "------- input after line comment ------\r\n" + fileInput);
 			fileInput = stateParserBlockComment(fileInput);
+			JOptionPane.showMessageDialog(null, "------- input after block comment ------\r\n" + fileInput);
 			
 			switch(stateStack.peek()) // Check what the current state is
 			{
 			case FILE:
 				fileInput = stateParserImport(fileInput);
+				JOptionPane.showMessageDialog(null, "------- input after import ------\r\n" + fileInput);
 				fileInput = stateParserClassDeclaration(fileInput);
+				JOptionPane.showMessageDialog(null, "------- input after class declaration ------\r\n" + fileInput);
 				break;
 
 			case CLASS:
@@ -580,7 +590,7 @@ public class JavaCodeParser {
 				break;
 			}
 			fileInput = stateParserBraces(fileInput);
-			JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
+			//JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
 			System.out.println("-------------------------------------------------------");
 			System.out.println(m_pSwiftFileContent);
 			System.out.println("-------------------------------------------------------");
@@ -612,7 +622,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			addToSwiftFile(String.format("return %s;", returnStatement));
-			fileInput = fileInput.substring(returnStatementMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexReturnStatement, "");
 		}
 		return fileInput;
 	}
@@ -622,7 +632,7 @@ public class JavaCodeParser {
 		if(arrayAssignmentMatcher.find())
 		{
 			
-			fileInput = fileInput.substring(arrayAssignmentMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexArrayIndexAssignment, "");
 		}
 		return fileInput;
 	}
@@ -643,7 +653,7 @@ public class JavaCodeParser {
 				}
 				addToSwiftFile("break;");
 			}
-			fileInput = fileInput.substring(breakStatementMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexBreakStatement, "");
 		}
 		return fileInput;
 	}
@@ -674,7 +684,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			addToSwiftFile(String.format("case %s:", caseName));
-			fileInput = fileInput.substring(caseStatementMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexCaseStatement, "");
 			stateStack.push(State.CASE);
 		}
 		return fileInput;
@@ -704,7 +714,7 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			fileInput = fileInput.substring(ifStatementMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexIfStatement, "");
 		}
 		return fileInput;
 	}
@@ -732,7 +742,7 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			fileInput = fileInput.substring(switchStatementMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexSwitchStatement, "");
 			addToSwiftFile(switchStatementMatcher.group(0));
 			
 			// Nicht druckbare Zeichen und Kommentare entfernen:
@@ -747,7 +757,7 @@ public class JavaCodeParser {
 			else
 			{
 				addToSwiftFile("{");
-				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				fileInput = fileInput.replaceFirst("{", "");
 				stateStack.push(State.SWITCH);
 			}
 		}
@@ -757,10 +767,11 @@ public class JavaCodeParser {
 	private String stateParserNonPrintables(String fileInput)
 	{
 		// Nicht-druckbare Zeichen
-		while(fileInput.substring(0, 1).matches("\\s"))
+		Matcher nonPrintablesMatcher = nonPrintablesPattern.matcher(fileInput);
+		if(nonPrintablesMatcher.find())
 		{
-			addToSwiftFile(fileInput.substring(0, 1));
-			fileInput = fileInput.substring(1, fileInput.length() - 1);
+			addToSwiftFile(nonPrintablesMatcher.group(0));
+			fileInput = fileInput.replaceFirst(regexNonPrintables, "");
 		}
 		return fileInput;
 	}
@@ -770,7 +781,7 @@ public class JavaCodeParser {
 		if(fileInput.substring(0, 1).matches("}"))
 		{
 			addToSwiftFile("}");
-			fileInput = fileInput.substring(1, fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst("}", "");
 			stateStack.pop();
 		}
 		return fileInput;
@@ -790,7 +801,7 @@ public class JavaCodeParser {
 			}
 			blockComment += "*/"; // Add <end of block comment marker> to file contents;
 			addToSwiftFile(blockComment);
-			fileInput = fileInput.substring(blockCommentMatcherEnd.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexBlockComment, "");
 			//JOptionPane.showMessageDialog(null, blockComment);
 		}
 		return fileInput;
@@ -819,7 +830,7 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			fileInput = fileInput.substring(lineCommentMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexLineComment, "");
 		}
 		return fileInput;
 	}
@@ -844,9 +855,8 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			fileInput = fileInput.substring(regexImportMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexImport, "");
 		}
-		//stateParserStart(fileInput);
 		return fileInput;
 	}
 	
@@ -900,10 +910,12 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			fileInput = fileInput.substring(classDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(classDeclaration, "");
+			JOptionPane.showMessageDialog(null, "After class handling: " + fileInput);
 
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
+			JOptionPane.showMessageDialog(null, "After deleting non-printables:" + fileInput);
 			fileInput = stateParserBlockComment(fileInput);
 			fileInput = stateParserLineComment(fileInput);
 
@@ -1017,7 +1029,7 @@ public class JavaCodeParser {
 				System.out.println(swiftVarDeclaration);
 			}
 			
-			fileInput = fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(variableDeclaration, ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 		}
 		return fileInput;
 	}
@@ -1130,7 +1142,7 @@ public class JavaCodeParser {
 				addToSwiftFile(String.format("%s %s %s()", accessModifiers, "class func", functionName));
 			}
 			
-			fileInput = fileInput.substring(functionDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexMemberFunctionDeclaration, "");
 
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
@@ -1144,7 +1156,7 @@ public class JavaCodeParser {
 			else
 			{
 				addToSwiftFile("{");
-				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.FUNCTION);
 			}
 		}
@@ -1190,7 +1202,7 @@ public class JavaCodeParser {
 				addToSwiftFile(String.format("print(%s);\r\n",
 						(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
 			}
-			fileInput = fileInput.substring(consoleOutputMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(regexConsoleOutput, "");
 		}
 		return fileInput;
 	}
