@@ -103,7 +103,7 @@ public class JavaCodeParser {
 	String regexSwitchStatement = "^switch\\s*\\([^\\)]*\\)";
 	Pattern switchStatementPattern = Pattern.compile(regexSwitchStatement);
 	
-	String regexCaseStatement = "^case\\s*[\\w_]+:";
+	String regexCaseStatement = "^case\\s*([\\w_]+):";
 	Pattern caseStatementPattern = Pattern.compile(regexCaseStatement);
 	
 	String regexBreakStatement = "^break\\s*;";
@@ -607,6 +607,7 @@ public class JavaCodeParser {
 				{
 					stateStack.pop();
 				}
+				addToSwiftFile("break;");
 			}
 			fileInput = fileInput.substring(breakStatementMatcher.group(0).length(), fileInput.length() - 1);
 		}
@@ -628,7 +629,7 @@ public class JavaCodeParser {
 				case 0: // Whole pattern match. Ignore!
 					System.out.println("Case statement: " + currentGroupMatch);
 					break;
-				case 1: // public / private outer group
+				case 1: // case name
 					System.out.println("Group 1: " + currentGroupMatch);
 					caseName = currentGroupMatch;
 					break;
