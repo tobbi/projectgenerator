@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import javax.swing.BoxLayout;
@@ -75,6 +76,13 @@ public class MainDialog extends JDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			FileDialog dlg = new FileDialog(MainDialog.this);
+			dlg.setFilenameFilter(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".json");
+				}
+			});
 			dlg.setVisible(true);
 			
 			if(dlg.getFile() == "" || dlg.getFile() == null)

@@ -541,21 +541,14 @@ public class JavaCodeParser {
 		while(fileInput.length() > 0)
 		{
 			fileInput = stateParserNonPrintables(fileInput);
-			System.out.println("-------------------------------------------------------");
-			JOptionPane.showMessageDialog(null, "------- Input after nonprintables ------\r\n" + fileInput);
-			System.out.println("-------------------------------------------------------");
 			fileInput = stateParserLineComment(fileInput);
-			JOptionPane.showMessageDialog(null, "------- input after line comment ------\r\n" + fileInput);
 			fileInput = stateParserBlockComment(fileInput);
-			JOptionPane.showMessageDialog(null, "------- input after block comment ------\r\n" + fileInput);
 			
 			switch(stateStack.peek()) // Check what the current state is
 			{
 			case FILE:
 				fileInput = stateParserImport(fileInput);
-				JOptionPane.showMessageDialog(null, "------- input after import ------\r\n" + fileInput);
 				fileInput = stateParserClassDeclaration(fileInput);
-				JOptionPane.showMessageDialog(null, "------- input after class declaration ------\r\n" + fileInput);
 				break;
 
 			case CLASS:
