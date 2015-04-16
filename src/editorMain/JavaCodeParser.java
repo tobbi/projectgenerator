@@ -573,7 +573,7 @@ public class JavaCodeParser {
 				break;
 			}
 			fileInput = stateParserBraces(fileInput);
-			JOptionPane.showMessageDialog(null, fileInput);
+			JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
 			System.out.println("-------------------------------------------------------");
 			System.out.println(m_pSwiftFileContent);
 			System.out.println("-------------------------------------------------------");
