@@ -126,6 +126,17 @@ public class MainDialog extends JDialog {
 				writer.write(m_pMobileApplication.toIOSXMLString());
 				writer.close();
 				
+				for(GUIActivity activity: m_pMobileApplication.getActivities())
+				{
+					if(activity.getSwiftFileContent() != null)
+					{
+						File mainSwiftFile = new File(projectDirIOS + "/Main.swift");
+						FileWriter swiftWriter = new FileWriter(mainSwiftFile);
+						swiftWriter.write(activity.getSwiftFileContent());
+						swiftWriter.close();
+					}
+				}
+				
 				// Android
 				addStatusMessage("Creating Android activity...");
 				File projectDirAndroid = new File(projectDir + "/Android");
@@ -139,6 +150,17 @@ public class MainDialog extends JDialog {
 					writer = new FileWriter(mainActivity);
 					writer.write(fileContent);
 					writer.close();
+				}
+				
+				for(GUIActivity activity: m_pMobileApplication.getActivities())
+				{
+					if(activity.getJavaFileContent() != null)
+					{
+						File mainAndroidFile = new File(projectDirAndroid + "/MainActivity.java");
+						FileWriter androidWriter = new FileWriter(mainAndroidFile);
+						androidWriter.write(activity.getJavaFileContent());
+						androidWriter.close();
+					}
 				}
 				
 			} catch (IOException e2) {

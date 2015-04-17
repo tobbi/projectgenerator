@@ -12,12 +12,10 @@ public class GUIElement extends BaseGUIType {
 	
 	private String m_pLabel;
 
-	@ExposedMember(/*methodName = "getLabel", returnType = "string"*/)
 	public String getLabel() {
 		return m_pLabel;
 	}
 
-	@ExposedMember(/*methodName = "setLabel", returnType = "void"*/)
 	public void setLabel(String label) {
 		this.m_pLabel = label;
 	}

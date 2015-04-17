@@ -26,6 +26,11 @@ public class JavaCodeParser {
 		m_pSwiftFileContent += text;
 	}
 	
+	public String getSwiftFileContent()
+	{
+		return m_pSwiftFileContent;
+	}
+	
 	/**
 	 * Test whether the passed character is
 	 * a character allowed in designations
@@ -120,7 +125,7 @@ public class JavaCodeParser {
 	
 	String regexClass = "\\s*class\\s+"; // matches <space(s)s>class<space(s)>
 	String regexClassExtends = "(\\s+extends\\s+(\\w+))"; // matches "extends ClassName"
-	String regexConsoleOutput = "^System\\.out\\.print(f|ln)?\\((.*)\\);\\s*"; // matches System.out.println("Any string");
+	String regexConsoleOutput = "^System\\.out\\.print(f|ln)?\\((.*)\\);"; // matches System.out.println("Any string");
 	Pattern regexConsoleOutputPattern = Pattern.compile(regexConsoleOutput);
 	String regexImport = "^import\\s+[\\w\\.\\*]+;";
 	Pattern regexImportPattern = Pattern.compile(regexImport);
@@ -1079,7 +1084,7 @@ public class JavaCodeParser {
 				case 4: // static / override
 					if(currentGroupMatch != null)
 					{
-					   if(!currentGroupMatch.equals("static")) // static methods are supposed to be class funcs
+					   if(!currentGroupMatch.equals("static")) // static methods are supposed to be class functions
 					   {
 					      accessModifiers += String.format("%s ", "class func");
 					   }

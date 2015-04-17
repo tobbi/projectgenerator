@@ -17,9 +17,10 @@ import editorMain.JavaCodeParser;
 
 public class GUIActivity extends BaseGUIType {
 	
-	public String m_pProjectPath;
+	private String m_pProjectPath;
+	private String m_pJavaFileContent;
 	
-	public JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
+	private JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
 	
 	public GUIActivity(String projectPath) {
 		m_pProjectPath = projectPath;	
@@ -71,6 +72,19 @@ public class GUIActivity extends BaseGUIType {
 	}
 	
 	/**
+	 * Gets the source file content for the current activity
+	 * @return
+	 */
+	public String getSwiftFileContent() {
+		return m_pJavaCodeParser.getSwiftFileContent();
+	}
+	
+	public String getJavaFileContent()
+	{
+		return m_pJavaFileContent;
+	}
+	
+	/**
 	 * Sets the source file path for the current activity
 	 * @param sourceFilePath The path of the source file to generate
 	 */
@@ -110,7 +124,8 @@ public class GUIActivity extends BaseGUIType {
 		}
 		
 		System.out.printf("== Parsing Java source file %s ==\r\n", sourceFilePath);
-		m_pJavaCodeParser.parse(this, stringBuffer.toString());
+		m_pJavaFileContent = stringBuffer.toString();
+		m_pJavaCodeParser.parse(this, m_pJavaFileContent);
 	}
 
 	/**
