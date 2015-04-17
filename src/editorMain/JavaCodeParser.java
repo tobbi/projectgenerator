@@ -82,7 +82,7 @@ public class JavaCodeParser {
 	String switchName;
 	
 	String regexAnySpace = "\\s*";
-	String regexIdentifier = "([\\w_]+)"; // variable / class identifier
+	String regexIdentifier = "([\\w]+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^;]*))"; // = <some value>
 	String regexDataType; //= "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
 	String regexAccessModifier = "(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
@@ -91,7 +91,7 @@ public class JavaCodeParser {
 
 	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s+(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
-			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_]*?", regexIdentifier, regexDefinition);
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w]*?", regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
 
 	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
