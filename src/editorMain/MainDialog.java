@@ -192,6 +192,10 @@ public class MainDialog extends JDialog {
 			JFileChooser dlg = new JFileChooser();
 			dlg.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			dlg.showOpenDialog(MainDialog.this);
+
+			if(dlg.getSelectedFile() == null)
+				return;
+
 			m_pDirectoryField.setText(dlg.getSelectedFile().getAbsolutePath());
 			m_pOutputDirectory = dlg.getSelectedFile();
 		}
