@@ -204,6 +204,10 @@ public class MainDialog extends JDialog {
 			// TODO Auto-generated method stub
 			MutableGUITreeNode source = (MutableGUITreeNode)m_pCategoryTree.getLastSelectedPathComponent();
 			BaseGUIType sourceElement = (BaseGUIType)source.linkedElement;
+			if(sourceElement == null)
+			{
+				return;
+			}
 			TableModel model = m_pTable.getModel();
 			model.setValueAt("Name", 0, 0);
 			model.setValueAt("PositionX", 1, 0);

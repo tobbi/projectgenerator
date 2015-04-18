@@ -1054,6 +1054,7 @@ public class JavaCodeParser {
 	private String stateParserFunctionDeclaration(String fileInput)
 	{
 		Matcher functionDeclarationMatcher = regexMemberFunctionDeclarationPattern.matcher(fileInput);
+		System.out.println(regexMemberFunctionDeclaration);
 		String accessModifiers = "";
 		String returnType = "";
 		String functionName = "";
