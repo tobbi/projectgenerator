@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.*;
 
-import javax.swing.JOptionPane;
-
 import editorMain.guitypes.BaseGUIType;
 //import editorMain.guitypes.ExposedMember;
 import editorMain.guitypes.GUIActivity;
