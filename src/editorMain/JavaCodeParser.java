@@ -108,13 +108,13 @@ public class JavaCodeParser {
 	String regexSwitchStatement = "^switch\\s*\\([^\\)]*\\)";
 	Pattern switchStatementPattern = Pattern.compile(regexSwitchStatement);
 	
-	String regexCaseStatement = "^case\\s*([\\w_]+):";
+	String regexCaseStatement = "^case\\s+([\\w_]+):";
 	Pattern caseStatementPattern = Pattern.compile(regexCaseStatement);
 	
 	String regexBreakStatement = "^break\\s*;";
 	Pattern breakStatementPattern = Pattern.compile(regexBreakStatement);
 	
-	String regexReturnStatement = "^return\\s*([^;]+);";
+	String regexReturnStatement = "^return\\s+([^;]+);";
 	Pattern returnStatementPattern = Pattern.compile(regexReturnStatement);
 	
 	String regexNonPrintables = "^\\s+";
