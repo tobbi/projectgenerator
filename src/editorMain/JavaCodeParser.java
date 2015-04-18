@@ -1278,8 +1278,8 @@ public class JavaCodeParser {
 			}
 		}*/
 		
-		public_members.add("java.lang.String editorMain.guitypes.GUIElement.getLabel()");
-		public_members.add("java.lang.String editorMain.guitypes.GUIElement.setLabel(java.lang.String text)");
+		public_members.add("String getLabel()");
+		public_members.add("String setLabel(String text)");
 		return public_members;
 	}
 	
