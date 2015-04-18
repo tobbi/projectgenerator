@@ -861,7 +861,6 @@ public class JavaCodeParser {
 	private String stateParserClassDeclaration(String fileInput)
 	{
 		Matcher classDeclarationMatcher = classDeclarationRegex.matcher(fileInput);
-		//System.out.println(classDeclaration);
 		if(classDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -972,7 +971,7 @@ public class JavaCodeParser {
 					break;
 				case 6: // final inner group
 					if(currentGroupMatch != null)
-					{   // Final variables can only be defined once. We "assume" that this is const Swift, even though it isn't
+					{   // Final variables can only be defined once. We "assume" that this is const in Swift, even though it isn't
 						// "Final" in Swift means: no subclassing
 						//System.out.println("Variable is final!");
 						accessModifiers += String.format("%s ", "let");
