@@ -9,6 +9,9 @@ public class AdvancedPoint extends Point {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * inherited constructors of Point
+	 */
 	public AdvancedPoint() {
 		super();
 	}

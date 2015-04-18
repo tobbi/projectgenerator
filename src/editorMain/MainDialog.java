@@ -57,6 +57,7 @@ public class MainDialog extends JDialog {
 	JProgressBar m_pLoadingProgressBar = new JProgressBar();
 	JSONParserClass m_pJsonParser = new JSONParserClass(this);
 	JLabel m_pLoadingLabel = new JLabel("Ready");
+	JButton m_pOkButton = new JButton("Generate projects");
 	private static MainDialog dialog;
     private JTree m_pCategoryTree;
     private String m_pFileExtension = ".json";
@@ -94,6 +95,7 @@ public class MainDialog extends JDialog {
 				return;
 			}
 
+			m_pOkButton.setEnabled(true);
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
 			m_pJsonParser.parse(dlg.getDirectory(), dlg.getFile());
@@ -400,11 +402,14 @@ public class MainDialog extends JDialog {
 				buttonPane.add(m_pLoadingLabel);
 			}
 			{
-				JButton okButton = new JButton("Generate projects");
-				okButton.addActionListener(m_pGenerateProjectsButtonListener);
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				m_pOkButton.addActionListener(m_pGenerateProjectsButtonListener);
+				m_pOkButton.setActionCommand("OK");
+				if(m_pOutputDirectory == null)
+				{
+					m_pOkButton.setEnabled(false);
+				}
+				buttonPane.add(m_pOkButton);
+				getRootPane().setDefaultButton(m_pOkButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
