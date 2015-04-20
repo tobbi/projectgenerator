@@ -103,7 +103,7 @@ public class JavaCodeParser {
 	String regexIfStatement = "^if\\s*\\([^\\)]*\\)";
 	Pattern ifStatementPattern = Pattern.compile(regexIfStatement);
 	
-	String regexSwitchStatement = "^switch\\s*\\([^\\)]*\\)";
+	String regexSwitchStatement = "^switch\\s*\\(([^\\)]*)\\)";
 	Pattern switchStatementPattern = Pattern.compile(regexSwitchStatement);
 	
 	String regexCaseStatement = "^case\\s+([\\w_]+):";
@@ -1165,6 +1165,11 @@ public class JavaCodeParser {
 	}
 	
 	private String toSwiftParameterList(String currentGroupMatch) {
+		
+		// Handle empty parameter lists:
+		if(currentGroupMatch.trim().equals(""))
+			return "";
+		
 		String[] parameters = currentGroupMatch.split(",");
 		String paramList = "";
 		int i = 0;
