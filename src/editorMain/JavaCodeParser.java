@@ -153,7 +153,7 @@ public class JavaCodeParser {
 	
 	// Function call in the form of myFunction(myParam);
 	// matches (myObject.)myFunction(param1, param2);
-	String functionCallDeclaration = String.format("%s\\s*\\(%s\\);?", "([\\w\\.]+)", "([^;]*)");
+	String functionCallDeclaration = String.format("^%s\\s*\\(%s\\);", "([\\w\\.]+)", "([^;]*)");
 	Pattern functionCallDeclarationRegex = Pattern.compile(functionCallDeclaration);
 	
 	String regexCharacter = "'\\w'";
@@ -571,6 +571,7 @@ public class JavaCodeParser {
 				fileInput = stateParserIfStatement(fileInput);
 				fileInput = stateParserBreakStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
+				fileInput = stateParserFunctionCall(fileInput);
 				break;
 
 			case FUNCTION:
@@ -580,6 +581,7 @@ public class JavaCodeParser {
 				fileInput = stateParserSwitchStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
 				fileInput = stateParserReturnStatement(fileInput);
+				fileInput = stateParserFunctionCall(fileInput);
 				break;
 
 			default:
@@ -1159,6 +1161,52 @@ public class JavaCodeParser {
 				addToSwiftFile("{");
 				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.FUNCTION);
+			}
+		}
+		return fileInput;
+	}
+	
+	private String stateParserFunctionCall(String fileInput)
+	{
+		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(fileInput);
+		//System.out.println(functionCallDeclaration);
+		String functionName = "";
+		String parameters = "";
+		if(functionCallMatcher.find()) {
+			int i = 0;
+			while(i <= functionCallMatcher.groupCount())
+			{
+				String currentGroupMatch = functionCallMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole match. Ignore!
+					break;
+				case 1: // Function name
+					//queryFunctionName(currentGroupMatch);
+					if(!currentGroupMatch.isEmpty())
+					{
+					  functionName = currentGroupMatch;
+					}
+					break;
+				case 2: // Function parameter?
+					if(!currentGroupMatch.isEmpty())
+					{
+						parameters = currentGroupMatch;
+						//System.out.println("Function parameters: " + currentGroupMatch);
+					}
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.replaceFirst(functionCallDeclaration, "");
+			
+			if(!functionName.equals(""))
+			{
+				addToSwiftFile(String.format("%s(%s);", functionName, parameters));
+			}
+			else
+			{
+				System.out.println("Function without function name found. ERROR!");
 			}
 		}
 		return fileInput;
