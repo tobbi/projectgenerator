@@ -1169,7 +1169,7 @@ public class JavaCodeParser {
 	private String stateParserFunctionCall(String fileInput)
 	{
 		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(fileInput);
-		//System.out.println(functionCallDeclaration);
+		System.out.println(functionCallDeclaration);
 		String functionName = "";
 		String parameters = "";
 		if(functionCallMatcher.find()) {
