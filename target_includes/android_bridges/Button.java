@@ -1,22 +1,22 @@
-import android.widget.Button;
-
+package com.example.taschenrechner;
 /**
  * Class that represents a button
  * @author tobiasmarkus
  *
  */
-public class Button extends android.widget.Button {
+public class Button {
 	
 	/**
-	 * The label of this button
+	 * Private button instance
 	 */
-	private String label;
+	private android.widget.Button button;
 
 	/**
 	 * Public constructor of class Button
 	 */
 	public Button()
 	{
+		button = new android.widget.Button(null);
 	}
 	
 	/**
@@ -25,7 +25,7 @@ public class Button extends android.widget.Button {
 	 */
 	public String getLabel()
 	{
-		return label;
+		return button.getText().toString();
 	}
 	
 	/**
@@ -34,6 +34,6 @@ public class Button extends android.widget.Button {
 	 */
 	public void setLabel(String label)
 	{
-		this.label = label;
+		button.setText(label);
 	}
 }

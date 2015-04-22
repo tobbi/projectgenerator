@@ -1,20 +1,25 @@
+package com.example.taschenrechner;
+
+import android.text.Editable;
+import android.widget.EditText;
+
 /**
  * Class that represents a text field.
  * @author tobiasmarkus
  */
-public class Textfield extends android.widget.EditText {
+public class Textfield {
 	
 	/**
-	 * The text of this text field
+	 * Private EditText instance
 	 */
-	private String text;
+	private EditText editText;
 	
 	/**
 	 * Public constructor of class Textfield
 	 */
 	public Textfield()
 	{
-		super();
+		editText = new EditText(null);
 	}
 	
 	/**
@@ -23,7 +28,7 @@ public class Textfield extends android.widget.EditText {
 	 */
 	public void setText(String text)
 	{
-		this.text = text;
+		this.editText.setText(text);
 	}
 	
 	/**
@@ -32,6 +37,6 @@ public class Textfield extends android.widget.EditText {
 	 */
 	public String getText()
 	{
-		return this.text;
+		return this.editText.getText().toString();
 	}
 }
