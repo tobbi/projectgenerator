@@ -1,5 +1,6 @@
 package com.example.taschenrechner;
 
+import android.content.Context;
 import android.widget.EditText;
 
 /**
@@ -16,9 +17,9 @@ public class Textfield {
 	/**
 	 * Public constructor of class Textfield
 	 */
-	public Textfield()
+	public Textfield(Context context)
 	{
-		editText = new EditText(null);
+		editText = new EditText(context);
 	}
 	
 	/**

@@ -3,18 +3,18 @@ package com.example.taschenrechner;
 import java.util.ArrayList;
 
 import android.view.View;
+import android.widget.LinearLayout;
 
 public class Activity {
 	
 	/**
 	 * The android activity
 	 */
-	private android.app.Activity innerActivity;
+	private android.app.Activity innerActivity = new android.app.Activity();
 	
 	private ArrayList<View> containedViews;
 	
 	public Activity() {
-		innerActivity = new android.app.Activity();
 	}
 
 	/**
@@ -23,7 +23,7 @@ public class Activity {
 	 */
 	public void addElement(Textfield textfield) {
 		containedViews.add(textfield.getRawElement());
-		innerActivity.addContentView(textfield.getRawElement(), null);
+		innerActivity.addContentView(textfield.getRawElement(), textfield.getRawElement().getLayoutParams());
 	}
 	
 	/**
@@ -32,6 +32,6 @@ public class Activity {
 	 */
 	public void addElement(Button button) {
 		containedViews.add(button.getRawElement());
-		innerActivity.addContentView(button.getRawElement(), null);
+		innerActivity.addContentView(button.getRawElement(), button.getRawElement().getLayoutParams());
 	}
 }

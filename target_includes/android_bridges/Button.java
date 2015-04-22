@@ -1,4 +1,8 @@
 package com.example.taschenrechner;
+
+import android.content.Context;
+import android.view.ViewGroup.LayoutParams;
+
 /**
  * Class that represents a button
  * @author tobiasmarkus
@@ -10,13 +14,16 @@ public class Button {
 	 * Private button instance
 	 */
 	private android.widget.Button button;
+	
+	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
 	/**
 	 * Public constructor of class Button
 	 */
-	public Button()
+	public Button(Context context)
 	{
-		button = new android.widget.Button(null);
+		button = new android.widget.Button(context);
+		button.setLayoutParams(wrapContentParams);
 	}
 	
 	/**
