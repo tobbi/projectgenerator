@@ -56,11 +56,21 @@ public class Button {
         }
     }
     
+    /**
+     * Sets the size of this element
+     * @param width The width of this element
+     * @param height The height of this element
+     */
     public func setSize(width: CGFloat, height: CGFloat)
     {
         self.innerButton.frame = CGRectMake(self.x, self.y, width, height);
     }
-    
+
+    /**
+    * Sets the position of this element
+    * @param x The x position of this element
+    * @param y The y position of this element
+    */
     public func setPosition(x: CGFloat, y: CGFloat)
     {
         self.innerButton.frame = CGRectMake(x, y, self.innerButton.frame.width, self.innerButton.frame.height);
