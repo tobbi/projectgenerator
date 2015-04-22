@@ -12,7 +12,6 @@ import UIKit
 /**
 * Class that represents a button
 * @author tobiasmarkus
-*
 */
 public class Button {
     
@@ -24,7 +23,17 @@ public class Button {
     */
     public init()
     {
-        innerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50));
+        // Standardwerte für den Button festlegen.
+        self.innerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 30));
+        self.innerButton.backgroundColor = UIColor.whiteColor();
+        self.innerButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal);
+        self.innerButton.setTitleColor(UIColor.blueColor(), forState: UIControlState.Selected);
+        self.innerButton.layer.borderWidth = 1;
+        self.innerButton.layer.cornerRadius = 5;
+        if let titleLabel = self.innerButton.titleLabel
+        {
+            titleLabel.font = UIFont(name: "Arial", size: 12);
+        }
     }
     
     /**
@@ -50,10 +59,7 @@ public class Button {
     */
     public func setLabel(label: String)
     {
-        if let titleLabel = self.innerButton.titleLabel
-        {
-            titleLabel.text = label;
-        }
+        self.innerButton.setTitle(label, forState: UIControlState.Normal);
     }
     
     /**
@@ -73,6 +79,8 @@ public class Button {
     */
     public func setPosition(x: CGFloat, y: CGFloat)
     {
+        self.x = x;
+        self.y = y;
         self.innerButton.frame = CGRectMake(x, y, self.innerButton.frame.width, self.innerButton.frame.height);
     }
     
@@ -82,5 +90,10 @@ public class Button {
     public func getRawElement() -> UIButton
     {
         return innerButton;
+    }
+    
+    public func addToActivity(activity: UIViewController)
+    {
+        activity.view.addSubview(getRawElement());
     }
 }

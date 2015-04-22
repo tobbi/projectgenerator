@@ -24,6 +24,11 @@ public class Textfield {
     public init()
     {
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
+
+        // Set the look of this element
+        self.innerTextField.layer.borderColor = UIColor.lightGrayColor().CGColor;
+        self.innerTextField.layer.cornerRadius = 5;
+        self.innerTextField.layer.borderWidth = 0.5;
     }
     
     /**
@@ -70,5 +75,10 @@ public class Textfield {
     public func getRawElement() -> UITextField
     {
         return innerTextField;
+    }
+    
+    public func addToActivity(activity: UIViewController)
+    {
+        activity.view.addSubview(getRawElement());
     }
 }

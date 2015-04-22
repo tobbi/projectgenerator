@@ -16,6 +16,9 @@ public class Textfield {
 	 */
 	private EditText editText;
 	
+	/**
+	 * Layout parameters for wrap content elements
+	 */
 	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	
 	/**
