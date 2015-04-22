@@ -36,4 +36,26 @@ public class Button {
 	{
 		button.setText(label);
 	}
+	
+	/**
+	 * Sets the size of this element
+	 * @param width The width of this element
+	 * @param height The height of this element
+	 */
+	public void setSize(float width, float height)
+	{
+		button.setWidth((int)width);
+		button.setHeight((int)height);
+	}
+	
+	/**
+	 * Sets the position of this element
+	 * @param x The x position of this element
+	 * @param y The y position of this element
+	 */
+	public void setPosition(float x, float y)
+	{
+		button.setX(x);
+		button.setY(y);
+	}
 }
