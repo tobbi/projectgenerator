@@ -11,21 +11,21 @@ import UIKit
 
 public class Activity {
 
-    private var innerActivity: UIViewController
-    
-    private var containedViews: [UIView] = [UIView]();
+    var innerActivity: UIViewController = UIViewController();
+    var containedViews = [UIView]();
     
     public init() {
-        innerActivity = UIViewController();
     }
     
     public func addElement(textfield: Textfield)
     {
+        innerActivity.view.addSubview(textfield.getRawElement());
         containedViews.append(textfield.getRawElement());
     }
     
     public func addElement(button: Button)
     {
+        innerActivity.view.addSubview(button.getRawElement());
         containedViews.append(button.getRawElement());
     }
 }
