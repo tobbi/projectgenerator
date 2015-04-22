@@ -62,4 +62,11 @@ public class Textfield {
 		editText.setY(y);
 	}
 	
+	/**
+	 * Gets the wrapped element
+	 */
+	public android.widget.EditText getRawElement()
+	{
+		return editText;
+	}
 }

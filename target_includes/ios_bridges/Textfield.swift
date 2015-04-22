@@ -53,4 +53,12 @@ public class Textfield {
     {
         return innerTextField.text;
     }
+    
+    /**
+    * Gets the wrapped element
+    */
+    public func getRawElement() -> UITextField
+    {
+        return innerTextField;
+    }
 }

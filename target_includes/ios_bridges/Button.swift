@@ -75,4 +75,12 @@ public class Button {
     {
         self.innerButton.frame = CGRectMake(x, y, self.innerButton.frame.width, self.innerButton.frame.height);
     }
+    
+    /**
+    * Gets the wrapped element
+    */
+    public func getRawElement() -> UIButton
+    {
+        return innerButton;
+    }
 }

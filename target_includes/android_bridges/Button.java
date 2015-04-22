@@ -58,4 +58,11 @@ public class Button {
 		button.setX(x);
 		button.setY(y);
 	}
+	
+	/**
+	 * Gets the wrapped element
+	 */
+	public android.widget.Button getRawElement() {
+		return button;
+	}
 }
