@@ -26,16 +26,6 @@ public class Textfield {
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
     }
     
-    public func setSize(width: CGFloat, height: CGFloat)
-    {
-        self.innerTextField.frame = CGRectMake(self.x, self.y, width, height);
-    }
-    
-    public func setPosition(x: CGFloat, y: CGFloat)
-    {
-        self.innerTextField.frame = CGRectMake(x, y, self.innerTextField.frame.width, self.innerTextField.frame.height);
-    }
-    
     /**
     * Sets the text for this text field
     * @param text String The text for this text field
@@ -52,6 +42,26 @@ public class Textfield {
     public func getText() -> String
     {
         return innerTextField.text;
+    }
+    
+    /**
+    * Sets the size of this element
+    * @param width The width of this element
+    * @param height The height of this element
+    */
+    public func setSize(width: CGFloat, height: CGFloat)
+    {
+        self.innerTextField.frame = CGRectMake(self.x, self.y, width, height);
+    }
+    
+    /**
+    * Sets the position of this element
+    * @param x The x position of this element
+    * @param y The y position of this element
+    */
+    public func setPosition(x: CGFloat, y: CGFloat)
+    {
+        self.innerTextField.frame = CGRectMake(x, y, self.innerTextField.frame.width, self.innerTextField.frame.height);
     }
     
     /**

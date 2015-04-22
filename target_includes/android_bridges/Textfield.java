@@ -39,7 +39,6 @@ public class Textfield {
 		return this.editText.getText().toString();
 	}
 	
-	
 	/**
 	 * Sets the size of this element
 	 * @param width The width of this element
@@ -64,6 +63,7 @@ public class Textfield {
 	
 	/**
 	 * Gets the wrapped element
+	 * @return The element wrapped by this class
 	 */
 	public android.widget.EditText getRawElement()
 	{
