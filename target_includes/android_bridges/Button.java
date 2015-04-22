@@ -72,4 +72,12 @@ public class Button {
 	public android.widget.Button getRawElement() {
 		return button;
 	}
+	
+	/**
+	 * Adds this button to the specified activity.
+	 * @param activity The activity to add the button to
+	 */
+	public void addToActivity(android.app.Activity activity) {
+		activity.addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+	}
 }

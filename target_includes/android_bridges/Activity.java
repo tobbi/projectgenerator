@@ -3,7 +3,6 @@ package com.example.taschenrechner;
 import java.util.ArrayList;
 
 import android.view.View;
-import android.widget.LinearLayout;
 
 public class Activity {
 	

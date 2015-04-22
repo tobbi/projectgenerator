@@ -1,6 +1,8 @@
 package com.example.taschenrechner;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 
 /**
@@ -14,12 +16,17 @@ public class Textfield {
 	 */
 	private EditText editText;
 	
+	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	
 	/**
 	 * Public constructor of class Textfield
 	 */
 	public Textfield(Context context)
 	{
 		editText = new EditText(context);
+		editText.setLayoutParams(wrapContentParams);
+		editText.setBackgroundColor(Color.WHITE);
+		editText.setTextColor(Color.BLACK);
 	}
 	
 	/**
@@ -69,5 +76,13 @@ public class Textfield {
 	public android.widget.EditText getRawElement()
 	{
 		return editText;
+	}
+	
+	/**
+	 * Adds this button to the specified activity.
+	 * @param activity The activity to add the button to
+	 */
+	public void addToActivity(android.app.Activity activity) {
+		activity.addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
 	}
 }
