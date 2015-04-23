@@ -15,7 +15,7 @@ public class Button {
 	 */
 	private android.widget.Button button;
 	
-	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	private LayoutParams layoutParams = null;
 
 	/**
 	 * Public constructor of class Button
@@ -23,7 +23,6 @@ public class Button {
 	public Button(Context context)
 	{
 		button = new android.widget.Button(context);
-		button.setLayoutParams(wrapContentParams);
 	}
 	
 	/**
@@ -51,8 +50,10 @@ public class Button {
 	 */
 	public void setSize(float width, float height)
 	{
-		button.setWidth((int)width);
-		button.setHeight((int)height);
+		button.setMaxWidth((int)width);
+		button.setMaxHeight((int)height);
+		layoutParams = new LayoutParams((int)width, (int)height);
+		button.setLayoutParams(layoutParams);
 	}
 	
 	/**

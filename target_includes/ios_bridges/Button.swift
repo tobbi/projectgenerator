@@ -17,12 +17,16 @@ public class Button {
     
     private var innerButton: UIButton;
     private var x: CGFloat = 0, y: CGFloat = 0;
+    private var parentContext: UIViewController;
     
     /**
     * Public constructor of class "Button"
     */
-    public init()
+    public init(context: UIViewController!)
     {
+        // Set parent context:
+        self.parentContext = context;
+        
         // Standardwerte für den Button festlegen.
         self.innerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 30));
         self.innerButton.backgroundColor = UIColor.whiteColor();
@@ -92,8 +96,27 @@ public class Button {
         return innerButton;
     }
     
-    public func addToActivity(activity: UIViewController)
+    /**
+     * Adds this button to the specified activity
+     * @param activity: The activity to add the button to
+     */
+    public func addToActivity()
     {
-        activity.view.addSubview(getRawElement());
+        parentContext.view.addSubview(getRawElement());
+    }
+    
+    /**
+     * Adds an onClick listener to this button
+     * @param sender The object the listener is in
+     * @param listenerName Function name of the listener
+     */
+    public func addOnClickListener(listenerName: String) {
+        innerButton.addTarget(parentContext,
+            action: Selector(listenerName + ":"),
+            forControlEvents: UIControlEvents.TouchUpInside);
+    }
+    
+    public func buttonListener(sender: Button!) {
+        println("Button listener worked!");
     }
 }

@@ -17,12 +17,14 @@ public class Textfield {
     
     private var innerTextField: UITextField;
     private var x: CGFloat = 0, y: CGFloat = 0;
+    private var parentContext: UIViewController;
     
     /**
     * Public constructor of class text field
     */
-    public init()
+    public init(context: UIViewController)
     {
+        self.parentContext = context;
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
 
         // Set the look of this element
@@ -47,6 +49,23 @@ public class Textfield {
     public func getText() -> String
     {
         return innerTextField.text;
+    }
+    
+    /**
+     * Adds text to this text field
+     * @text The text to add to this text field
+     */
+    public func addText(text: String)
+    {
+        innerTextField.text! += text;
+    }
+    
+    /**
+     * Removes all text from this text field
+     */
+    public func clear()
+    {
+        innerTextField.text! = "";
     }
     
     /**
@@ -77,8 +96,8 @@ public class Textfield {
         return innerTextField;
     }
     
-    public func addToActivity(activity: UIViewController)
+    public func addToActivity()
     {
-        activity.view.addSubview(getRawElement());
+        parentContext.view.addSubview(getRawElement());
     }
 }
