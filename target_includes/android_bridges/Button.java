@@ -1,6 +1,8 @@
 package com.example.taschenrechner;
 
 import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 
 /**
@@ -83,5 +85,13 @@ public class Button {
 	 */
 	public void addToActivity() {
 		((MainActivity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+	}
+	
+	/**
+	 * Adds an onClick listener to this element
+	 * @param listener The listener to add to this element
+	 */
+	public void addOnClickListener(OnClickListener listener) {
+		button.setOnClickListener(listener);
 	}
 }

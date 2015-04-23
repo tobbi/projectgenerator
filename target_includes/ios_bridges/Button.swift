@@ -27,8 +27,10 @@ public class Button {
         // Set parent context:
         self.parentContext = context;
         
-        // Standardwerte für den Button festlegen.
+        // Initialize button
         self.innerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 30));
+        
+        // Set the default look for this button
         self.innerButton.backgroundColor = UIColor.whiteColor();
         self.innerButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal);
         self.innerButton.setTitleColor(UIColor.blueColor(), forState: UIControlState.Selected);
@@ -98,7 +100,6 @@ public class Button {
     
     /**
      * Adds this button to the specified activity
-     * @param activity: The activity to add the button to
      */
     public func addToActivity()
     {
@@ -107,7 +108,6 @@ public class Button {
     
     /**
      * Adds an onClick listener to this button
-     * @param sender The object the listener is in
      * @param listenerName Function name of the listener
      */
     public func addOnClickListener(listenerName: String) {

@@ -25,6 +25,8 @@ public class Textfield {
     public init(context: UIViewController!)
     {
         self.parentContext = context;
+        
+        // Initialize text field
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
 
         // Set the look of this element
