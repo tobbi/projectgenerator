@@ -19,7 +19,7 @@ public class Textfield {
 	/**
 	 * Layout parameters for wrap content elements
 	 */
-	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	//private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	
 	private Context parentContext = null;
 	
@@ -30,9 +30,10 @@ public class Textfield {
 	{
 		parentContext = context;
 		editText = new EditText(context);
-		editText.setLayoutParams(wrapContentParams);
+		//editText.setLayoutParams(wrapContentParams);
 		editText.setBackgroundColor(Color.WHITE);
 		editText.setTextColor(Color.BLACK);
+		editText.setEms(12);
 	}
 	
 	/**
@@ -42,6 +43,15 @@ public class Textfield {
 	public void setText(String text)
 	{
 		this.editText.setText(text);
+	}
+	
+	/**
+	 * Adds the specified text to the element
+	 * @param text The text to add to the element
+	 */
+	public void addText(String text)
+	{
+		setText(getText() + text);
 	}
 	
 	/**
@@ -60,8 +70,9 @@ public class Textfield {
 	 */
 	public void setSize(float width, float height)
 	{
-		editText.setWidth((int)width);
-		editText.setHeight((int)height);
+		editText.setLayoutParams(new LayoutParams((int)width, (int)height));
+		//editText.setWidth((int)width);
+		//editText.setHeight((int)height);
 	}
 	
 	/**

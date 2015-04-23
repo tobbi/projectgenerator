@@ -28,6 +28,7 @@ public class Button {
 	{
 		parentContext = context;
 		button = new android.widget.Button(context);
+		button.setTextSize(12);
 	}
 	
 	/**
@@ -55,9 +56,9 @@ public class Button {
 	 */
 	public void setSize(float width, float height)
 	{
-		button.setMaxWidth((int)width);
-		button.setMaxHeight((int)height);
-		layoutParams = new LayoutParams((int)width, (int)height);
+		button.setWidth((int)width);
+		button.setHeight((int)height);
+		layoutParams = new LayoutParams((int)width, (int) height);
 		button.setLayoutParams(layoutParams);
 	}
 	
@@ -89,7 +90,7 @@ public class Button {
 	
 	/**
 	 * Adds an onClick listener to this element
-	 * @param listener The listener to add to this element
+	 * @param listener The listener to add to this element.
 	 */
 	public void addOnClickListener(OnClickListener listener) {
 		button.setOnClickListener(listener);
