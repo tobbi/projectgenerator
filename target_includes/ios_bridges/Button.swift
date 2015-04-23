@@ -115,8 +115,4 @@ public class Button {
             action: Selector(listenerName + ":"),
             forControlEvents: UIControlEvents.TouchUpInside);
     }
-    
-    public func buttonListener(sender: Button!) {
-        println("Button listener worked!");
-    }
 }

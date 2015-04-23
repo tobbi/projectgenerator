@@ -22,7 +22,7 @@ public class Textfield {
     /**
     * Public constructor of class text field
     */
-    public init(context: UIViewController)
+    public init(context: UIViewController!)
     {
         self.parentContext = context;
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
@@ -96,6 +96,9 @@ public class Textfield {
         return innerTextField;
     }
     
+    /**
+     * Adds this text field to its parent activity
+     */
     public func addToActivity()
     {
         parentContext.view.addSubview(getRawElement());
