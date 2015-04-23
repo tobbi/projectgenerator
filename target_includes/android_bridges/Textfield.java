@@ -21,11 +21,14 @@ public class Textfield {
 	 */
 	private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	
+	private Context parentContext = null;
+	
 	/**
 	 * Public constructor of class Textfield
 	 */
 	public Textfield(Context context)
 	{
+		parentContext = context;
 		editText = new EditText(context);
 		editText.setLayoutParams(wrapContentParams);
 		editText.setBackgroundColor(Color.WHITE);
@@ -85,7 +88,7 @@ public class Textfield {
 	 * Adds this button to the specified activity.
 	 * @param activity The activity to add the button to
 	 */
-	public void addToActivity(android.app.Activity activity) {
-		activity.addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+	public void addToActivity() {
+		((MainActivity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
 	}
 }

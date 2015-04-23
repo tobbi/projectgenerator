@@ -16,12 +16,15 @@ public class Button {
 	private android.widget.Button button;
 	
 	private LayoutParams layoutParams = null;
+	
+	private Context parentContext = null;
 
 	/**
 	 * Public constructor of class Button
 	 */
 	public Button(Context context)
 	{
+		parentContext = context;
 		button = new android.widget.Button(context);
 	}
 	
@@ -78,7 +81,7 @@ public class Button {
 	 * Adds this button to the specified activity.
 	 * @param activity The activity to add the button to
 	 */
-	public void addToActivity(android.app.Activity activity) {
-		activity.addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+	public void addToActivity() {
+		((MainActivity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
 	}
 }
