@@ -9,7 +9,7 @@ public class Activity {
 	/**
 	 * The Android activity
 	 */
-	private android.app.Activity innerActivity = null;
+	private android.app.Activity parentContext = null;
 	
     /**
      * Array list containing all subviews of this activity
@@ -21,7 +21,7 @@ public class Activity {
      * @param activity The MainActivity parent (aka "Main function")
      */
 	public Activity(android.app.Activity context) {
-		innerActivity = context;
+		parentContext = context;
 		containedViews = new ArrayList<View>();
 	}
 	
@@ -30,7 +30,7 @@ public class Activity {
     * @return The created button element
     */
 	public Button createButton() {
-		return new Button(innerActivity);
+		return new Button(parentContext);
 	}
 	
     /**
@@ -38,7 +38,7 @@ public class Activity {
     * @return The created text field element
     */
 	public Textfield createTextfield() {
-		return new Textfield(innerActivity);
+		return new Textfield(parentContext);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class Activity {
 	 */
 	public void addElement(Textfield textfield) {
 		containedViews.add(textfield.getWrappedElement());
-		innerActivity.addContentView(textfield.getWrappedElement(), textfield.getWrappedElement().getLayoutParams());
+		parentContext.addContentView(textfield.getWrappedElement(), textfield.getWrappedElement().getLayoutParams());
 	}
 	
 	/**
@@ -56,6 +56,6 @@ public class Activity {
 	 */
 	public void addElement(Button button) {
 		containedViews.add(button.getWrappedElement());
-		innerActivity.addContentView(button.getWrappedElement(), button.getWrappedElement().getLayoutParams());
+		parentContext.addContentView(button.getWrappedElement(), button.getWrappedElement().getLayoutParams());
 	}
 }

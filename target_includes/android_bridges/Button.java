@@ -1,8 +1,13 @@
 package com.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Class that represents a button
@@ -55,8 +60,8 @@ public class Button {
 	 */
 	public void setSize(float width, float height)
 	{
-		button.setWidth((int)width);
-		button.setHeight((int)height);
+		button.setWidth((int)(width * 2));
+		button.setHeight((int)(height * 2));
 		layoutParams = new LayoutParams((int)width, (int) height);
 		button.setLayoutParams(layoutParams);
 	}
@@ -91,7 +96,13 @@ public class Button {
 	 * Adds an onClick listener to this element
 	 * @param listener The listener to add to this element.
 	 */
-	public void addOnClickListener(OnClickListener listener) {
-		button.setOnClickListener(listener);
+	public void addOnClickListener(final IButtonClickListener listener) {
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				listener.click();
+			}
+		});
 	}
 }
