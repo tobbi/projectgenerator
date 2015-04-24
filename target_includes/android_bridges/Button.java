@@ -32,8 +32,8 @@ public class Button {
 	}
 	
 	/**
-	 * Liefert die Beschriftung dieses Buttons zurück
-	 * @return String Die Beschriftung dieses Buttons
+	 * Returns the label of this button
+	 * @return String The label of this button
 	 */
 	public String getLabel()
 	{
