@@ -17,15 +17,24 @@ public class Button {
     
     private var innerButton: UIButton;
     private var x: CGFloat = 0, y: CGFloat = 0;
-    private var parentContext: UIViewController;
+    /**
+    * Specifies the place where the textfield goes.
+    */
+    private var parentUIContext: UIViewController;
+    
+    /**
+    * Specifies the place where the handlers are defined
+    */
+    private var parentEventContext: UIResponder;
     
     /**
     * Public constructor of class "Button"
     */
-    public init(context: UIViewController!)
+    public init(context: UIViewController!, eventContext: UIResponder)
     {
         // Set parent context:
-        self.parentContext = context;
+        self.parentUIContext = context;
+        self.parentEventContext = eventContext;
         
         // Initialize button
         self.innerButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 30));
@@ -103,7 +112,7 @@ public class Button {
      */
     public func addToActivity()
     {
-        parentContext.view.addSubview(getRawElement());
+        parentUIContext.view.addSubview(getRawElement());
     }
     
     /**
@@ -111,7 +120,7 @@ public class Button {
      * @param listenerName Function name of the listener
      */
     public func addOnClickListener(listenerName: String) {
-        innerButton.addTarget(parentContext,
+        innerButton.addTarget(parentEventContext,
             action: Selector(listenerName + ":"),
             forControlEvents: UIControlEvents.TouchUpInside);
     }

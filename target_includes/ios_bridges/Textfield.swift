@@ -16,15 +16,29 @@ import UIKit
 public class Textfield {
     
     private var innerTextField: UITextField;
+    
+    /**
+     * Text field's X and Y coordinates
+     */
     private var x: CGFloat = 0, y: CGFloat = 0;
-    private var parentContext: UIViewController;
+
+    /**
+     * Specifies the place where the textfield goes.
+     */
+    private var parentUIContext: UIViewController;
+    
+    /**
+     * Specifies the place where the handlers are defined
+     */
+    private var parentEventContext: UIResponder;
     
     /**
     * Public constructor of class text field
     */
-    public init(context: UIViewController!)
+    public init(context: UIViewController!, eventContext: UIResponder!)
     {
-        self.parentContext = context;
+        self.parentUIContext      = context;
+        self.parentEventContext = eventContext;
         
         // Initialize text field
         self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
@@ -103,6 +117,6 @@ public class Textfield {
      */
     public func addToActivity()
     {
-        parentContext.view.addSubview(getRawElement());
+        parentUIContext.view.addSubview(getRawElement());
     }
 }
