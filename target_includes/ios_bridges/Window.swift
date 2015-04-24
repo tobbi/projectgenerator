@@ -62,4 +62,13 @@ public class Window {
         parentWindow.rootViewController = activity;
         return activity;
     }
+    
+    /**
+     * Returns the current activity
+     * @return the activity belonging to this window
+     */
+    public func getActivity() -> Activity
+    {
+        return parentWindow.rootViewController as! Activity;
+    }
 }

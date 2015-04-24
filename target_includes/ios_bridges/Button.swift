@@ -119,9 +119,8 @@ public class Button {
      * Adds an onClick listener to this button
      * @param listenerName Function name of the listener
      */
-    public func addOnClickListener(listenerName: String) {
-        innerButton.addTarget(parentEventContext,
-            action: Selector(listenerName + ":"),
-            forControlEvents: UIControlEvents.TouchUpInside);
+    public func addOnClickListener(methodName: String) {
+        // add a target
+        innerButton.addTarget(parentEventContext, action: Selector(methodName + ":"), forControlEvents: UIControlEvents.TouchUpInside);
     }
 }
