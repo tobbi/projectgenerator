@@ -1,4 +1,4 @@
-package com.example.taschenrechner;
+package com.fhflensburg.tobiasmarkus.androidBridge;
 
 import java.util.ArrayList;
 
@@ -9,11 +9,12 @@ public class Activity {
 	/**
 	 * The android activity
 	 */
-	private android.app.Activity innerActivity = new android.app.Activity();
+	private android.app.Activity innerActivity = null;
 	
 	private ArrayList<View> containedViews;
 	
-	public Activity() {
+	public Activity(android.app.Activity activity) {
+		innerActivity = activity;
 	}
 
 	/**
@@ -23,6 +24,14 @@ public class Activity {
 	public void addElement(Textfield textfield) {
 		containedViews.add(textfield.getRawElement());
 		innerActivity.addContentView(textfield.getRawElement(), textfield.getRawElement().getLayoutParams());
+	}
+	
+	public Button createButton() {
+		return new Button(innerActivity);
+	}
+	
+	public Textfield createTextfield() {
+		return new Textfield(innerActivity);
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package com.example.taschenrechner;
+package com.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.content.Context;
 import android.view.View;
@@ -85,7 +85,7 @@ public class Button {
 	 * @param activity The activity to add the button to
 	 */
 	public void addToActivity() {
-		((MainActivity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+		((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
 	}
 	
 	/**

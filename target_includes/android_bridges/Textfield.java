@@ -1,4 +1,4 @@
-package com.example.taschenrechner;
+package com.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -100,6 +100,6 @@ public class Textfield {
 	 * @param activity The activity to add the button to
 	 */
 	public void addToActivity() {
-		((MainActivity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+		((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
 	}
 }
