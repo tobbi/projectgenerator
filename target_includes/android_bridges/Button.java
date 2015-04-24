@@ -96,12 +96,34 @@ public class Button {
 	 * Adds an onClick listener to this element
 	 * @param listener The listener to add to this element.
 	 */
-	public void addOnClickListener(final IButtonClickListener listener) {
+	public void addOnClickListener(final String methodName) {
+		final Button _button = this;
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				listener.click();
+				java.lang.reflect.Method method = null;
+				try {
+				  method = parentContext.getClass().getMethod(methodName, Button.class);
+				} catch (SecurityException e) {
+				  // ...
+				} catch (NoSuchMethodException e) {
+				  // ...
+					e.printStackTrace();
+				}
+				if(method != null)
+					try {
+						method.invoke(parentContext, _button);
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 		});
 	}
