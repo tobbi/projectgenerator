@@ -7,21 +7,36 @@ import android.view.View;
 public class Activity {
 	
 	/**
-	 * The android activity
+	 * The Android activity
 	 */
 	private android.app.Activity innerActivity = null;
 	
+    /**
+     * Array list containing all subviews of this activity
+     */
 	private ArrayList<View> containedViews;
 	
-	public Activity(android.app.Activity activity) {
-		innerActivity = activity;
+    /**
+     * Initialize activity
+     * @param activity The MainActivity parent (aka "Main function")
+     */
+	public Activity(android.app.Activity context) {
+		innerActivity = context;
 		containedViews = new ArrayList<View>();
 	}
 	
+    /**
+    * Creates a new button element
+    * @return The created button element
+    */
 	public Button createButton() {
 		return new Button(innerActivity);
 	}
 	
+    /**
+    * Creates a new text field element
+    * @return The created text field element
+    */
 	public Textfield createTextfield() {
 		return new Textfield(innerActivity);
 	}
