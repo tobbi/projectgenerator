@@ -15,6 +15,15 @@ public class Activity {
 	
 	public Activity(android.app.Activity activity) {
 		innerActivity = activity;
+		containedViews = new ArrayList<View>();
+	}
+	
+	public Button createButton() {
+		return new Button(innerActivity);
+	}
+	
+	public Textfield createTextfield() {
+		return new Textfield(innerActivity);
 	}
 
 	/**
@@ -24,14 +33,6 @@ public class Activity {
 	public void addElement(Textfield textfield) {
 		containedViews.add(textfield.getRawElement());
 		innerActivity.addContentView(textfield.getRawElement(), textfield.getRawElement().getLayoutParams());
-	}
-	
-	public Button createButton() {
-		return new Button(innerActivity);
-	}
-	
-	public Textfield createTextfield() {
-		return new Textfield(innerActivity);
 	}
 	
 	/**

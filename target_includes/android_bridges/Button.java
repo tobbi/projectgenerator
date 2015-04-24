@@ -84,9 +84,9 @@ public class Button {
 	 * Adds this button to the specified activity.
 	 * @param activity The activity to add the button to
 	 */
-	public void addToActivity() {
-		((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
-	}
+	//public void addToActivity() {
+	//	((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+	//}
 	
 	/**
 	 * Adds an onClick listener to this element
