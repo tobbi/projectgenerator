@@ -30,7 +30,7 @@ public class Button {
     /**
     * Public constructor of class "Button"
     */
-    public init(context: UIViewController!, eventContext: UIResponder)
+    public init(context: UIViewController!, eventContext: UIResponder!)
     {
         // Set parent context:
         self.parentUIContext = context;

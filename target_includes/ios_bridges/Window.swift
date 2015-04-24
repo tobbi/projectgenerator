@@ -15,7 +15,7 @@ import UIKit
 public class Window {
     
     /**
-     * Variable that saves the parent UIResponder (for later reference)
+     * Variable that saves the parent UIResponder object (for later reference)
      */
     var parentContext: UIResponder;
     
