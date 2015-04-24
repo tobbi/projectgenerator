@@ -1,7 +1,6 @@
 package com.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.content.Context;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 
