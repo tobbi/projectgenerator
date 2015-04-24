@@ -90,7 +90,7 @@ public class Textfield {
 	 * Gets the wrapped element
 	 * @return The element wrapped by this class
 	 */
-	public android.widget.EditText getRawElement()
+	public android.widget.EditText getWrappedElement()
 	{
 		return editText;
 	}
@@ -100,6 +100,6 @@ public class Textfield {
 	 * @param activity The activity to add the button to
 	 */
 	public void addToActivity() {
-		((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+		((android.app.Activity)parentContext).addContentView(this.getWrappedElement(), this.getWrappedElement().getLayoutParams());
 	}
 }

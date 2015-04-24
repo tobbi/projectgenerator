@@ -49,7 +49,7 @@ public class Window {
      * Return the wrapped UIWindow instance
      * @return UIWindow The wrapped UIWindow instance
      */
-    public func getRawElement() -> UIWindow {
+    public func getWrappedElement() -> UIWindow {
         return parentWindow;
     }
     

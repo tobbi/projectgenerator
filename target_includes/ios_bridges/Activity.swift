@@ -43,7 +43,7 @@ public class Activity: UIViewController {
      */
     public func addElement(textfield: Textfield)
     {
-        containedViews.append(textfield.getRawElement());
+        containedViews.append(textfield.getWrappedElement());
     }
     
     /**
@@ -52,7 +52,7 @@ public class Activity: UIViewController {
     */
     public func addElement(button: Button)
     {
-        containedViews.append(button.getRawElement());
+        containedViews.append(button.getWrappedElement());
     }
  
     /**

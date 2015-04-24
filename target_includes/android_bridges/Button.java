@@ -76,7 +76,7 @@ public class Button {
 	/**
 	 * Gets the wrapped element
 	 */
-	public android.widget.Button getRawElement() {
+	public android.widget.Button getWrappedElement() {
 		return button;
 	}
 	
@@ -85,7 +85,7 @@ public class Button {
 	 * @param activity The activity to add the button to
 	 */
 	public void addToActivity() {
-		((android.app.Activity)parentContext).addContentView(this.getRawElement(), this.getRawElement().getLayoutParams());
+		((android.app.Activity)parentContext).addContentView(this.getWrappedElement(), this.getWrappedElement().getLayoutParams());
 	}
 	
 	/**

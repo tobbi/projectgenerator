@@ -102,7 +102,7 @@ public class Button {
     /**
     * Gets the wrapped element
     */
-    public func getRawElement() -> UIButton
+    public func getWrappedElement() -> UIButton
     {
         return innerButton;
     }
@@ -112,7 +112,7 @@ public class Button {
      */
     public func addToActivity()
     {
-        parentUIContext.view.addSubview(getRawElement());
+        parentUIContext.view.addSubview(getWrappedElement());
     }
     
     /**

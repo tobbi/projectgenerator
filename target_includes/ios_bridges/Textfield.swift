@@ -107,7 +107,7 @@ public class Textfield {
     /**
     * Gets the wrapped element
     */
-    public func getRawElement() -> UITextField
+    public func getWrappedElement() -> UITextField
     {
         return innerTextField;
     }
@@ -117,6 +117,6 @@ public class Textfield {
      */
     public func addToActivity()
     {
-        parentUIContext.view.addSubview(getRawElement());
+        parentUIContext.view.addSubview(getWrappedElement());
     }
 }

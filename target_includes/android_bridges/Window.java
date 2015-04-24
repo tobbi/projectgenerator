@@ -19,7 +19,7 @@ public class Window {
      * Return the wrapped Activity instance
      * @return Activity The wrapped Activity instance
      */
-	public android.app.Activity getRawElement() {
+	public android.app.Activity getWrappedElement() {
 		return innerActivity;
 	}
 
