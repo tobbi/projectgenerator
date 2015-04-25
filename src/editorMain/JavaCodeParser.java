@@ -136,8 +136,13 @@ public class JavaCodeParser {
 	
 	public void stateParserStart(String fileInput)
 	{
+		int lastLength = 0;
 		while(fileInput.length() > 0)
 		{
+			if(lastLength == fileInput.length())
+				break;
+			lastLength = fileInput.length();
+			
 			fileInput = stateParserNonPrintables(fileInput);
 			fileInput = stateParserLineComment(fileInput);
 			fileInput = stateParserBlockComment(fileInput);
@@ -186,6 +191,11 @@ public class JavaCodeParser {
 
 			// bei einer schliessenden geschweiften Klammer, State vom Stack nehmen:
 			fileInput = stateParserBraces(fileInput);
+		}
+		
+		if(fileInput.length() > 0) {
+			System.out.println("Unhandled java source, starting with this:\r\n" + fileInput);
+			return;
 		}
 
 		//JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
@@ -238,7 +248,6 @@ public class JavaCodeParser {
 		Matcher arrayAssignmentMatcher = regexArrayIndexAssignmentPattern.matcher(fileInput);
 		if(arrayAssignmentMatcher.find())
 		{
-			
 			fileInput = fileInput.replaceFirst(regexArrayIndexAssignment, "");
 		}
 		return fileInput;
