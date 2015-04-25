@@ -1002,9 +1002,9 @@ public class JavaCodeParser {
 				case 12: // Variable definition inner
 					break;
 				case 13: // Variable definition
-					if(currentGroupMatch.trim().equals("null"))
+					if(currentGroupMatch.trim().equals("null") || currentGroupMatch.trim().equals(""))
 					{
-						// When data type equals null, we need to make this an optional value,
+						// When data type equals null or is empty, we need to make this an optional value,
 						// denoted by a question mark.
 						dataType += "?";
 					}
