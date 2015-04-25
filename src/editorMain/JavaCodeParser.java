@@ -28,19 +28,6 @@ public class JavaCodeParser {
 	private Boolean nextDeclarationIsEventHandler = false;
 	
 	/**
-	 * Returns true when the firstChar matches the given one
-	 * @param str String to check
-	 * @param c Character to check against
-	 * @return true if it matches, false if it doesn't
-	 */
-	public Boolean firstCharMatches(String str, Character c) {
-		if(str.charAt(0) == c)
-			return true;
-
-		return false;
-	}
-	
-	/**
 	 * Stack, in welchem geschweifte Klammern gespeichert werden
 	 */
 	//Stack<String> bracketStack = new Stack<String>();
