@@ -1271,6 +1271,14 @@ public class JavaCodeParser {
 			String dataType = parameter.split(" ")[0].trim();
 			String variableName = parameter.split(" ")[1].trim();
 			
+			// Work around for a API difference: Swift event handlers
+			// generally pass a UIButton! as evt handler parameter.
+			// Java uses a variable of type Button
+			if(nextDeclarationIsEventHandler && dataType.equals("Button"))
+			{
+				dataType = "UIButton!";
+			}
+			
 			paramList += String.format("%s: %s", variableName, toSwiftDataType(dataType));
 			i++;
 		}
