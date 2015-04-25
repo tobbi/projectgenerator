@@ -18,6 +18,7 @@ public class JavaCodeParser {
 	
 	private GUIActivity m_pParentActivity;
 	private String m_pSwiftFileContent = "";
+	private ArrayList<String> m_pOptionalVars = new ArrayList<String>();
 
 	private void addToSwiftFile(String text)
 	{
@@ -1023,6 +1024,7 @@ public class JavaCodeParser {
 						// When data type equals null or is empty, we need to make this an optional value,
 						// denoted by a question mark.
 						dataType += "?";
+						m_pOptionalVars.add(variableName.trim());
 					}
 					definition = toSwiftDefinition(currentGroupMatch);
 					break;
@@ -1228,6 +1230,14 @@ public class JavaCodeParser {
 					if(!currentGroupMatch.isEmpty())
 					{
 					  functionName = currentGroupMatch;
+					  for(String optionalVar: m_pOptionalVars)
+					  {
+						  if(functionName.startsWith(optionalVar + "."))
+						  {
+							  functionName = functionName.replaceFirst(optionalVar, optionalVar + "!");
+							  break;
+						  }
+					  }
 					}
 					break;
 				case 2: // Function parameter?
