@@ -19,8 +19,14 @@ public class Button {
 	 */
 	private android.widget.Button button;
 	
+	/**
+	 * Private layout params instance
+	 */
 	private LayoutParams layoutParams = null;
 	
+	/**
+	 * Parent context (activity?)
+	 */
 	private Context parentContext = null;
 
 	/**

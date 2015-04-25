@@ -12,7 +12,7 @@ import UIKit
 /**
  * Class that represents an iOS Application Window
  */
-public class Window {
+public class Application {
     
     /**
      * Variable that saves the parent UIResponder object (for later reference)

@@ -1,6 +1,6 @@
 package com.fhflensburg.tobiasmarkus.androidBridge;
 
-public class Window {
+public class Application {
 	
 	/**
 	 * The android activity
@@ -16,7 +16,7 @@ public class Window {
      * Initialize window
      * @param context The main Activity (aka main function) this window is wrapped in
      */
-	public Window(android.app.Activity context) {
+	public Application(android.app.Activity context) {
 		innerActivity = context;
 	}
 	
