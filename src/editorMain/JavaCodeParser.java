@@ -1002,6 +1002,12 @@ public class JavaCodeParser {
 				case 12: // Variable definition inner
 					break;
 				case 13: // Variable definition
+					if(currentGroupMatch.trim().equals("null"))
+					{
+						// When data type equals null, we need to make this an optional value,
+						// denoted by a question mark.
+						dataType += "?";
+					}
 					definition = toSwiftDefinition(currentGroupMatch);
 					break;
 				default:
