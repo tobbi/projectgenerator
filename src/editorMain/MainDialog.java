@@ -209,6 +209,9 @@ public class MainDialog extends JDialog {
 		public void valueChanged(TreeSelectionEvent e) {
 			// TODO Auto-generated method stub
 			MutableGUITreeNode source = (MutableGUITreeNode)m_pCategoryTree.getLastSelectedPathComponent();
+			if(source == null)
+				return;
+
 			BaseGUIType sourceElement = (BaseGUIType)source.linkedElement;
 			if(sourceElement == null)
 			{
