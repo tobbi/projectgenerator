@@ -121,7 +121,7 @@ public class JavaCodeParser {
 	String classDeclaration = String.format("^(%s)?%s%s%s?", regexAccessModifier, regexClass, regexIdentifier, regexClassExtends);
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 
-	public void parse(GUIActivity activity, String fileInput) {
+	public void parse(String fileInput) {
 		if(stateStack == null)
 		{
 			stateStack = new Stack<State>();

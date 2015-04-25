@@ -125,7 +125,7 @@ public class GUIActivity extends BaseGUIType {
 		
 		System.out.printf("== Parsing Java source file %s ==\r\n", sourceFilePath);
 		m_pJavaFileContent = stringBuffer.toString();
-		m_pJavaCodeParser.parse(this, m_pJavaFileContent);
+		m_pJavaCodeParser.parse(m_pJavaFileContent);
 	}
 
 	/**
