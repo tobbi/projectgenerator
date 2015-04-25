@@ -42,7 +42,7 @@ public class JavaCodeParser {
 	String regexOtherModifier = "\\s*(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
 	String regexfinalModifier = "\\s*(final)\\s+";
 
-	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s+(%s)(%s)?;",
+	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s*(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
 			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w]*?", regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
@@ -96,7 +96,7 @@ public class JavaCodeParser {
 	Pattern blockCommentRegexEnd = Pattern.compile(regexBlockCommentEnd);
 
 	// matches a variable definition, for example: int i = 0;
-	String variableDeclaration = String.format("^%s?%s%s?[,;]", regexDataType /* (optional) */, regexIdentifier, regexDefinition);
+	String variableDeclaration = String.format("^%s?%s%s?[,;]", regexIdentifier /* (optional) */, regexIdentifier, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
 	
 	String regexHeapDefinition = "(\\s*=\\s*new\\s*\\(([^;]*\\)))";
@@ -549,7 +549,7 @@ public class JavaCodeParser {
 	private String stateParserMemberDeclaration(String fileInput)
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
-		//System.out.println(regexMemberDeclaration);
+		System.out.println(regexMemberDeclaration);
 		if(variableDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -638,7 +638,11 @@ public class JavaCodeParser {
 			
 			if(!isArray)
 			{
-				String swiftVarDeclaration = String.format("%s %s:%s%s;", accessModifiers, variableName, dataType, definition.equals("") ? "" : " = " + definition);
+				String swiftVarDeclaration = String.format("%s %s%s%s;", 
+						dataType.equals("") ? "": accessModifiers, 
+						variableName, 
+						dataType.equals("") ? "": ": " + dataType, 
+						definition.equals("") ? "" : " = " + definition);
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
