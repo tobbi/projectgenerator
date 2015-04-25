@@ -10,8 +10,6 @@ import editorMain.guitypes.GUIElement;
 
 public class JavaCodeParser {
 	
-	
-	private GUIActivity m_pParentActivity;
 	private String m_pSwiftFileContent = "";
 	private ArrayList<String> m_pOptionalVars = new ArrayList<String>();
 
@@ -124,7 +122,6 @@ public class JavaCodeParser {
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 
 	public void parse(GUIActivity activity, String fileInput) {
-		m_pParentActivity = activity;
 		if(stateStack == null)
 		{
 			stateStack = new Stack<State>();
