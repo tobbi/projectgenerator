@@ -129,7 +129,10 @@ public class JavaCodeParser {
 		{
 			stateStack = new Stack<State>();
 		}
-		stateStack.removeAllElements();
+		else 
+		{
+			stateStack.removeAllElements();
+		}
 		stateStack.push(State.FILE);
 		stateParserStart(fileInput);
 	}
