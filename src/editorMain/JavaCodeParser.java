@@ -1024,7 +1024,7 @@ public class JavaCodeParser {
 				System.out.println(swiftVarDeclaration);
 			}
 			
-			fileInput = fileInput.replaceFirst(variableDeclaration, ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replaceFirst(variableDeclarationMatcher.group(0), ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 		}
 		return fileInput;
 	}
