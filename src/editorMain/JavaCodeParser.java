@@ -1,17 +1,12 @@
 package editorMain;
 
-//import java.lang.annotation.Annotation;
-//import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.*;
 
 import editorMain.guitypes.BaseGUIType;
-//import editorMain.guitypes.ExposedMember;
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
-import editorMain.dataTypes.Variable;
-import editorMain.dataTypes.IGenericVariable.DataType;
 
 public class JavaCodeParser {
 	
