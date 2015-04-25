@@ -639,7 +639,7 @@ public class JavaCodeParser {
 			if(!isArray)
 			{
 				String swiftVarDeclaration = String.format("%s %s%s%s;", 
-						dataType.equals("") ? "": accessModifiers, 
+						dataType.equals("") ? "": accessModifiers, // if there is no data type, we are accessing a declared variable.
 						variableName, 
 						dataType.equals("") ? "": ": " + dataType, 
 						definition.equals("") ? "" : " = " + definition);
@@ -856,8 +856,25 @@ public class JavaCodeParser {
 				case 2: // Function parameter?
 					if(!currentGroupMatch.isEmpty())
 					{
-						parameters = currentGroupMatch;
-						//System.out.println("Function parameters: " + currentGroupMatch);
+						String[] parametersTemp = currentGroupMatch.split(",");
+						int j = 0;
+						for(String parameter: parametersTemp) {
+							parameter = parameter.trim();
+							for(String optionalVar: m_pOptionalVars)
+								if(optionalVar.equals(parameter))
+								{
+									parametersTemp[j] = parameter + "!";
+								}
+							j++;
+						}
+						j = 0;
+						for(String parameter: parametersTemp)
+						{
+							if(j > 0)
+								parameters += ", ";
+							parameters += parameter;
+							j++;
+						}
 					}
 					break;
 				}
