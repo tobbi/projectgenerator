@@ -1002,7 +1002,7 @@ public class JavaCodeParser {
 				case 12: // Variable definition inner
 					break;
 				case 13: // Variable definition
-					if(currentGroupMatch.trim().equals("null") || currentGroupMatch.trim().equals(""))
+					if(currentGroupMatch == null || currentGroupMatch.trim().equals("null"))
 					{
 						// When data type equals null or is empty, we need to make this an optional value,
 						// denoted by a question mark.
@@ -1019,13 +1019,13 @@ public class JavaCodeParser {
 			
 			if(!isArray)
 			{
-				String swiftVarDeclaration = String.format("%s %s:%s = %s;", accessModifiers, variableName, dataType, definition);
+				String swiftVarDeclaration = String.format("%s %s:%s%s;", accessModifiers, variableName, dataType, definition.equals("") ? "" : " = " + definition);
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
 			else
 			{
-				String swiftVarDeclaration = String.format("%s %s:[%s] = %s;", accessModifiers, variableName, dataType, definition);
+				String swiftVarDeclaration = String.format("%s %s:[%s]%s;", accessModifiers, variableName, dataType, definition.equals("") ? "" : " = " + definition);
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
@@ -1036,6 +1036,9 @@ public class JavaCodeParser {
 	}
 	
 	private String toSwiftDefinition(String definitionValue) {
+		if(definitionValue == null)
+			return "";
+		
 		definitionValue = definitionValue.trim();
 		// NULL-Werte korrekt handeln
 		if(definitionValue.equals("null"))
