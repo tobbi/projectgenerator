@@ -33,33 +33,6 @@ public class JavaCodeParser {
 	private Boolean nextDeclarationIsEventHandler = false;
 	
 	/**
-	 * Test whether the passed character is
-	 * a character allowed in designations
-	 * @param c
-	 * @return
-	 */
-	public String abfruehstuecken(String str, Character c) {
-		/*if(str.length() == 0 || str.length() == 1)
-		{
-			return "";
-		}*/
-
-		if(firstCharMatches(str, c)) {
-			return str.substring(1, str.length() - 1);
-		}
-		return str;
-	}
-	
-	public String abfruehstuecken(String str, String matching)
-	{
-		if(str.startsWith(matching))
-		{
-			str = str.substring(matching.length());
-		}
-		return str;
-	}
-	
-	/**
 	 * Returns true when the firstChar matches the given one
 	 * @param str String to check
 	 * @param c Character to check against
@@ -515,23 +488,8 @@ public class JavaCodeParser {
 		}
 	}
 
-	public String getJavaIdentifier(String str) {
-		Character firstChar = str.charAt(0);
-		String varName = "";
-		while(Character.isJavaIdentifierPart(firstChar))
-		{
-			varName += firstChar;
-			abfruehstuecken(str, firstChar.toString());
-			firstChar = str.charAt(0);
-		}
-		
-		return varName;
-	}
-	
-
 	public void parse(GUIActivity activity, String fileInput) {
 		m_pParentActivity = activity;
-		//fileInput = handleComments(fileInput)
 		if(stateStack == null)
 		{
 			stateStack = new Stack<State>();
@@ -539,10 +497,6 @@ public class JavaCodeParser {
 		stateStack.removeAllElements();
 		stateStack.push(State.FILE);
 		stateParserStart(fileInput);
-		//handleEnumDeclaration(fileInput);
-		//handleClassDeclaration(fileInput);
-		//handleVariableDeclaration(fileInput);
-		//handleFunctionCall(fileInput);
 	}
 	
 	public void stateParserStart(String fileInput)
