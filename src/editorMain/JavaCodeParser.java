@@ -1002,7 +1002,7 @@ public class JavaCodeParser {
 				case 12: // Variable definition inner
 					break;
 				case 13: // Variable definition
-					definition = currentGroupMatch;
+					definition = toSwiftDefinition(currentGroupMatch);
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -1029,6 +1029,16 @@ public class JavaCodeParser {
 		return fileInput;
 	}
 	
+	private String toSwiftDefinition(String definitionValue) {
+		definitionValue = definitionValue.trim();
+		// NULL-Werte korrekt handeln
+		if(definitionValue.equals("null"))
+		{
+			return "nil";
+		}
+		return definitionValue;
+	}
+
 	private String toSwiftDataType(String dataType) {
 		dataType = dataType.trim();
 		System.out.println("Got data type: " + dataType);
