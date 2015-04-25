@@ -856,6 +856,7 @@ public class JavaCodeParser {
 				case 2: // Function parameter?
 					if(!currentGroupMatch.isEmpty())
 					{
+						// Check if we need to unwrap the function parameter
 						String[] parametersTemp = currentGroupMatch.split(",");
 						int j = 0;
 						for(String parameter: parametersTemp) {
