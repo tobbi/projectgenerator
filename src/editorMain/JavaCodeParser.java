@@ -129,6 +129,7 @@ public class JavaCodeParser {
 		else 
 		{
 			stateStack.removeAllElements();
+			m_pOptionalVars.clear();
 		}
 		stateStack.push(State.FILE);
 		stateParserStart(fileInput);
@@ -183,12 +184,15 @@ public class JavaCodeParser {
 			default:
 				break;
 			}
+
+			// bei einer schliessenden geschweiften Klammer, State vom Stack nehmen:
 			fileInput = stateParserBraces(fileInput);
-			//JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
-			System.out.println("-------------------------------------------------------");
-			System.out.println(m_pSwiftFileContent);
-			System.out.println("-------------------------------------------------------");
 		}
+
+		//JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
+		System.out.println("-------------------------------------------------------");
+		System.out.println(m_pSwiftFileContent);
+		System.out.println("-------------------------------------------------------");
 	}
 	
 	private String stateParserEventHandlerDeclaration(String fileInput) {
