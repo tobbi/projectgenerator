@@ -5,7 +5,6 @@ import java.util.Stack;
 import java.util.regex.*;
 
 import editorMain.guitypes.BaseGUIType;
-import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
 
 public class JavaCodeParser {
@@ -641,7 +640,7 @@ public class JavaCodeParser {
 				System.out.println(swiftVarDeclaration);
 			}
 			
-			fileInput = fileInput.replaceFirst(variableDeclarationMatcher.group(0), ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replace(variableDeclarationMatcher.group(0), ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 		}
 		return fileInput;
 	}
@@ -656,6 +655,14 @@ public class JavaCodeParser {
 		{
 			return "nil";
 		}
+		if(definitionValue.startsWith("new "))
+		{
+			// Swift benutzt kein new zur Instantiierung
+			definitionValue = definitionValue.replaceFirst("new ", "");
+		}
+		// this durch self ersetzen:
+		definitionValue = definitionValue.replace("this", "self");
+		
 		return definitionValue;
 	}
 
