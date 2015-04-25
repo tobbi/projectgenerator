@@ -29,6 +29,8 @@ public class JavaCodeParser {
 		return m_pSwiftFileContent;
 	}
 	
+	private Boolean nextDeclarationIsEventHandler = false;
+	
 	/**
 	 * Test whether the passed character is
 	 * a character allowed in designations
@@ -117,6 +119,9 @@ public class JavaCodeParser {
 	
 	String regexNonPrintables = "^\\s+";
 	Pattern nonPrintablesPattern = Pattern.compile(regexNonPrintables);
+	
+	String regexEventHandlerPrefix = "^@EventHandler";
+	Pattern regexEventHandlerPattern = Pattern.compile(regexEventHandlerPrefix);
 	
 	//String regexVariableDeclaration = String.format(format, args)
 	
@@ -558,6 +563,7 @@ public class JavaCodeParser {
 				// We are in a class. Handle member and function declaration:
 				fileInput = stateParserClassDeclaration(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput);
+				fileInput = stateParserEventHandlerDeclaration(fileInput);
 				fileInput = stateParserFunctionDeclaration(fileInput);
 				break;
 				
@@ -595,6 +601,16 @@ public class JavaCodeParser {
 		}
 	}
 	
+	private String stateParserEventHandlerDeclaration(String fileInput) {
+		Matcher eventHandlerTagMatcher = regexEventHandlerPattern.matcher(fileInput);
+		if(eventHandlerTagMatcher.find())
+		{
+			fileInput = fileInput.replaceFirst(regexEventHandlerPrefix, "");
+			nextDeclarationIsEventHandler = true;
+		}
+		return fileInput;
+	}
+
 	private String stateParserReturnStatement(String fileInput) {
 		Matcher returnStatementMatcher = returnStatementPattern.matcher(fileInput);
 		if(returnStatementMatcher.find())
@@ -1157,12 +1173,19 @@ public class JavaCodeParser {
 			}
 			if(!returnType.equals(""))
 			{
-				addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "class func", functionName, parameters, returnType));
+				if(!nextDeclarationIsEventHandler)
+					addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "class func", functionName, parameters, returnType));
+				else
+					addToSwiftFile(String.format("%s %s(%s) -> %s", "func", functionName, parameters, returnType));
 			}
 			else
 			{
-				addToSwiftFile(String.format("%s %s %s(%s)", accessModifiers, "class func", functionName, parameters));
+				if(!nextDeclarationIsEventHandler)
+					addToSwiftFile(String.format("%s %s %s(%s)", accessModifiers, "class func", functionName, parameters));
+				else
+					addToSwiftFile(String.format("%s %s(%s)", "func", functionName, parameters));
 			}
+			nextDeclarationIsEventHandler = false;
 			
 			fileInput = fileInput.replaceFirst(regexMemberFunctionDeclaration, "");
 
