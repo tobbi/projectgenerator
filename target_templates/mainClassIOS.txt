@@ -4,7 +4,7 @@
 //  This program rocks, I know it does!
 //
 //  Created presumably some time before or on this very day!
-//  Copyright (c) [Current year] Tobias Markus. All rights reserved.
+//  Copyright (c) [current year] Tobias Markus. All rights reserved.
 //
 
 import UIKit
