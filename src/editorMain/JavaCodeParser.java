@@ -824,7 +824,6 @@ public class JavaCodeParser {
 
 	private String toSwiftDataType(String dataType) {
 		dataType = dataType.trim();
-		System.out.println("Got data type: " + dataType);
 		if(dataType.equals("int") || dataType.equals("Integer"))
 			return "Int";
 		if(dataType.equals("float"))
@@ -847,7 +846,6 @@ public class JavaCodeParser {
 	private String stateParserFunctionDeclaration(String fileInput)
 	{
 		Matcher functionDeclarationMatcher = regexMemberFunctionDeclarationPattern.matcher(fileInput);
-		System.out.println(regexMemberFunctionDeclaration);
 		String accessModifiers = "";
 		String returnType = "";
 		String functionName = "";
@@ -1127,7 +1125,6 @@ public class JavaCodeParser {
 		Matcher enumMatcher = enumStatementPattern.matcher(fileInput);
 		if(enumMatcher.find())
 		{
-			System.out.println("Found enum declaration!");
 			int i = 0;
 			String enumName = "";
 			while(i <= enumMatcher.groupCount())
@@ -1150,7 +1147,6 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			System.out.println("Found enum statement: " + enumMatcher.group(0));
 			fileInput = fileInput.replaceFirst(regexEnumStatement, "");
 			addToSwiftFile(String.format("enum %s", enumName.trim()));
 
