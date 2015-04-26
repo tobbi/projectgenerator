@@ -55,7 +55,6 @@ public class JavaCodeParser {
 	String regexAnySpace = "\\s*";
 	String regexIdentifier = "([\\w]+)"; // variable / class identifier
 	String regexDefinition = "(\\s*=\\s*([^;]*))"; // = <some value>
-	String regexDataType; //= "\\s*(int|float|String|boolean|char|double)\\s+"; // matches primitive data type
 	String regexAccessModifier = "(public|private)\\s+"; // matches <space(s)> public | private <space(s)>
 	String regexOtherModifier = "\\s*(static|override)\\s+"; // matches <space(s)> static | override <space(s)>
 	String regexfinalModifier = "\\s*(final)\\s+";
@@ -87,6 +86,12 @@ public class JavaCodeParser {
 	
 	String regexReturnStatement = "^return\\s+([^;]+);";
 	Pattern returnStatementPattern = Pattern.compile(regexReturnStatement);
+	
+	String regexEnumStatement = "^enum\\s+(\\w+)";
+	Pattern enumStatementPattern = Pattern.compile(regexEnumStatement);
+	
+	String regexEnumCaseStatement = "^(\\w+),?";
+	Pattern enumCaseStatementPattern = Pattern.compile(regexEnumCaseStatement);
 	
 	String regexNonPrintables = "^\\s+";
 	Pattern nonPrintablesPattern = Pattern.compile(regexNonPrintables);
@@ -122,16 +127,6 @@ public class JavaCodeParser {
 	// matches a variable definition, for example: int i = 0;
 	String variableDeclaration = String.format("^%s?%s%s?[,;]", regexIdentifier /* (optional) */, regexIdentifier, regexDefinition);
 	Pattern variableDeclarationRegex = Pattern.compile(variableDeclaration);
-	
-	String regexHeapDefinition = "(\\s*=\\s*new\\s*\\(([^;]*\\)))";
-	String variableHeapDeclaration = String.format("^%s?%s%s?[,;]", regexDataType, regexIdentifier, regexHeapDefinition);
-	Pattern variableHeapDeclarationPattern = Pattern.compile(variableHeapDeclaration);
-	
-	// matches an enum declaration, for example: enum State { SLEEPING, AWAKE }
-	String regexEnum = "\\s*enum\\s+";
-	String enumDeclaration = "\\s*enum\\s+(\\w+)\\s*\\{\\s*((\\w+\\s*,?\\s*)*\\s*)\\}"; 
-	Pattern enumRegex = Pattern.compile(enumDeclaration, Pattern.MULTILINE);
-	//String.format("%s%s\\s*\\{(([\\w\\s,]+)?)*\\}", regexEnum, regexIdentifier);
 	
 	// Function call in the form of myFunction(myParam);
 	// matches (myObject.)myFunction(param1, param2);
@@ -215,10 +210,15 @@ public class JavaCodeParser {
 			case CLASS:
 				// We are in a class. Handle member and function declaration:
 				fileInput = stateParserClassDeclaration(fileInput);
+				fileInput = stateParserEnumDeclaration(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput);
 				fileInput = stateParserMainFunctionTag(fileInput);
 				fileInput = stateParserEventHandlerTag(fileInput);
 				fileInput = stateParserFunctionDeclaration(fileInput);
+				break;
+				
+			case ENUM:
+				fileInput = stateParserEnumCaseDeclaration(fileInput);
 				break;
 				
 			case SWITCH:
@@ -264,6 +264,32 @@ public class JavaCodeParser {
 		System.out.println("-------------------------------------------------------");
 	}
 	
+	private String stateParserEnumCaseDeclaration(String fileInput) {
+		Matcher enumCaseMatcher	 = enumCaseStatementPattern.matcher(fileInput);
+		if(enumCaseMatcher.find())
+		{
+			String caseName = "";
+			int i = 0;
+			while(i <= enumCaseMatcher.groupCount())
+			{
+				String currentGroupMatch = enumCaseMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole group match. Ignore!
+					break;
+					
+				case 1:
+					caseName = currentGroupMatch.trim();
+					break;
+				}
+				i++;
+			}
+			fileInput = fileInput.replaceFirst(regexEnumCaseStatement, "");
+			addToSwiftFile(String.format("case %s;", caseName));
+		}
+		return fileInput;
+	}
+
 	private String stateParserEventHandlerTag(String fileInput) {
 		Matcher eventHandlerTagMatcher = regexEventHandlerPattern.matcher(fileInput);
 		if(eventHandlerTagMatcher.find())
@@ -306,10 +332,8 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Case statement: " + currentGroupMatch);
 					break;
 				case 1: // case name
-					System.out.println("Group 1: " + currentGroupMatch);
 					returnStatement = currentGroupMatch;
 					break;
 				default:
@@ -367,10 +391,8 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Case statement: " + currentGroupMatch);
 					break;
 				case 1: // case name
-					System.out.println("Group 1: " + currentGroupMatch);
 					caseName = currentGroupMatch;
 					break;
 				default:
@@ -389,7 +411,6 @@ public class JavaCodeParser {
 	private String stateParserIfStatement(String fileInput)
 	{	
 		Matcher ifStatementMatcher = ifStatementPattern.matcher(fileInput);
-		//System.out.println(regexMemberDeclaration);
 		if(ifStatementMatcher.find())
 		{
 			int i = 0;
@@ -474,6 +495,9 @@ public class JavaCodeParser {
 	
 	private String stateParserBraces(String fileInput)
 	{
+		if(fileInput.length() == 0)
+			return "";
+
 		if(fileInput.substring(0, 1).matches("}"))
 		{
 			fileInput = fileInput.replaceFirst("}", "");
@@ -1100,34 +1124,55 @@ public class JavaCodeParser {
 		return fileInput;
 	}
 	
-	private void handleEnumDeclaration(String fileInput) {
-		Matcher enumMatcher = enumRegex.matcher(fileInput);
-		if(enumMatcher.find()) {
+	private String stateParserEnumDeclaration(String fileInput)
+	{
+		Matcher enumMatcher = enumStatementPattern.matcher(fileInput);
+		if(enumMatcher.find())
+		{
+			System.out.println("Found enum declaration!");
 			int i = 0;
+			String enumName = "";
 			while(i <= enumMatcher.groupCount())
 			{
 				String currentGroupMatch = enumMatcher.group(i);
 				switch(i)
 				{
-				case 0: // Whole match. Ignore!
+				case 0: // Whole group match: Ignore!
 					break;
-				case 1: // Enum name
-					System.out.print("Declared enum with name " + currentGroupMatch);
-					break;
-				case 2: // Function parameter?
-					if(!currentGroupMatch.isEmpty())
+					
+				case 1: // enum name
+					if(currentGroupMatch != null)
 					{
-						System.out.print(" and states " + currentGroupMatch);
-					}
-					else
-					{
-						System.out.print(" and no enumeration states");
+						enumName = currentGroupMatch;
 					}
 					break;
+				default:
+					System.out.println("Unexpected group #" + i + " in enum declaration");
+					break;	
 				}
 				i++;
 			}
+			System.out.println("Found enum statement: " + enumMatcher.group(0));
+			fileInput = fileInput.replaceFirst(regexEnumStatement, "");
+			addToSwiftFile(String.format("enum %s", enumName.trim()));
+
+			// Nicht druckbare Zeichen entfernen:
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+
+			if(!fileInput.substring(0, 1).equals("{"))
+			{
+				System.out.println("Expected {, but found " + fileInput.substring(0, 1));
+			}
+			else
+			{
+				addToSwiftFile("{");
+				fileInput = fileInput.substring(1, fileInput.length() - 1);
+				stateStack.push(State.ENUM);
+			}
 		}
+		return fileInput;
 	}
 
 	/**
