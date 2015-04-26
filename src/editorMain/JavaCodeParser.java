@@ -227,20 +227,20 @@ public class JavaCodeParser {
 			
 			case CASE:
 				fileInput = stateParserConsoleOutput(fileInput);
-				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				fileInput = stateParserIfStatement(fileInput);
 				fileInput = stateParserBreakStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
 				fileInput = stateParserFunctionCall(fileInput);
+				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				break;
 
 			case FUNCTION:
 				fileInput = stateParserConsoleOutput(fileInput);
-				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				fileInput = stateParserIfStatement(fileInput);
 				fileInput = stateParserSwitchStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
 				fileInput = stateParserReturnStatement(fileInput);
+				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				fileInput = stateParserFunctionCall(fileInput);
 				break;
 
