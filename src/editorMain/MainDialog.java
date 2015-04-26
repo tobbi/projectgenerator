@@ -43,6 +43,8 @@ import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.GUIElement;
 import editorMain.guitypes.MobileApplication;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.swing.JTextPane;
 
 public class MainDialog extends JDialog {
@@ -123,6 +125,9 @@ public class MainDialog extends JDialog {
 				File projectDirIOS = new File(projectDir + "/IOS");
 				projectDirIOS.mkdirs();
 
+				File iosBridgeFiles = new File("target_includes/ios_bridges");
+				FileUtils.copyDirectory(iosBridgeFiles, projectDirIOS);
+				
 				File mainStoryboard = new File(projectDirIOS + "/Main.storyboard");
 				FileWriter writer = new FileWriter(mainStoryboard);
 				writer.write(m_pMobileApplication.toIOSXMLString());
@@ -132,7 +137,7 @@ public class MainDialog extends JDialog {
 				{
 					if(activity.getSwiftFileContent() != null)
 					{
-						File mainSwiftFile = new File(projectDirIOS + "/Main.swift");
+						File mainSwiftFile = new File(projectDirIOS + "/ViewController.swift");
 						FileWriter swiftWriter = new FileWriter(mainSwiftFile);
 						swiftWriter.write(activity.getSwiftFileContent());
 						swiftWriter.close();
@@ -143,6 +148,9 @@ public class MainDialog extends JDialog {
 				addStatusMessage("Creating Android activity...");
 				File projectDirAndroid = new File(projectDir + "/Android");
 				projectDirAndroid.mkdirs();
+				
+				File androidBridgeFiles = new File("target_includes/android_bridges");
+				FileUtils.copyDirectory(androidBridgeFiles, projectDirAndroid);
 
 				int activity_index = 0;
 				for(String fileContent: m_pMobileApplication.toAndroidXMLString())
