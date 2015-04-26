@@ -860,7 +860,6 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Function declaration " + currentGroupMatch);
 					break;
 				case 1: // outer private / public group
 					break;
