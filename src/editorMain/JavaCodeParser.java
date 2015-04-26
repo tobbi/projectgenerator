@@ -1082,19 +1082,27 @@ public class JavaCodeParser {
 		if(consoleOutputMatcher.find())
 		{
 			int i = 0;
+			String whichPrintFunc = "";
+			String outputString = "";
 			while(i <= consoleOutputMatcher.groupCount())
 			{
 				String currentGroupMatch = consoleOutputMatcher.group(i);
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("Console output " + currentGroupMatch);
 					break;
 				case 1:
-					System.out.println("Group 1: " + currentGroupMatch);
+					if(currentGroupMatch != null)
+					{
+						whichPrintFunc = currentGroupMatch.trim();
+					}
 					break;
 				case 2:
 					System.out.println("Group 2: " + currentGroupMatch);
+					if(currentGroupMatch != null)
+					{
+						outputString = currentGroupMatch.trim();
+					}
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -1102,18 +1110,16 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			if(consoleOutputMatcher.group(1) != null)
+			if(!whichPrintFunc.equals(""))
 			{
-				if(consoleOutputMatcher.group(1).equals("ln"))
+				if(whichPrintFunc.equals("ln"))
 				{
-					addToSwiftFile(String.format("println(%s);\r\n", 
-							(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
+					addToSwiftFile(String.format("println(%s);", outputString));
 				}
 			}
 			else
 			{
-				addToSwiftFile(String.format("print(%s);\r\n",
-						(consoleOutputMatcher.group(2) == null) ? "" : consoleOutputMatcher.group(2)));
+				addToSwiftFile(String.format("print(%s);", outputString));
 			}
 			fileInput = fileInput.replaceFirst(regexConsoleOutput, "");
 		}
