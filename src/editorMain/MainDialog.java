@@ -125,6 +125,7 @@ public class MainDialog extends JDialog {
 				File projectDirIOS = new File(projectDir + "/IOS");
 				projectDirIOS.mkdirs();
 
+				// Copy include files:
 				File iosBridgeFiles = new File("target_includes/ios_bridges");
 				FileUtils.copyDirectory(iosBridgeFiles, projectDirIOS);
 				
@@ -149,6 +150,7 @@ public class MainDialog extends JDialog {
 				File projectDirAndroid = new File(projectDir + "/Android");
 				projectDirAndroid.mkdirs();
 				
+				// Copy include files
 				File androidBridgeFiles = new File("target_includes/android_bridges");
 				FileUtils.copyDirectory(androidBridgeFiles, projectDirAndroid);
 
