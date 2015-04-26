@@ -1,5 +1,10 @@
 package editorMain;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.*;
@@ -138,9 +143,42 @@ public class JavaCodeParser {
 		}
 		m_pOptionalVars.clear();
 		stateStack.push(State.FILE);
+		m_pSwiftFileContent = getSwiftTemplateContent();
 		stateParserStart(fileInput);
 	}
 	
+	private String getSwiftTemplateContent() {
+		
+		File sourceFile = new File("target_templates/mainClassIOS.txt");
+
+		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(sourceFile);
+		} catch (FileNotFoundException e) {
+			System.out.printf("ERROR: Could not find template file %s.", sourceFile.getAbsolutePath());
+			return "";
+		}
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		StringBuffer stringBuffer = new StringBuffer();
+		String line;
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuffer.append(line);
+				stringBuffer.append("\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			fileReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return stringBuffer.toString();
+	}
+
 	public void stateParserStart(String fileInput)
 	{
 		int lastLength = 0;
