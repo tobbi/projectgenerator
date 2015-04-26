@@ -36,6 +36,7 @@ public class JavaCodeParser {
 	}
 	
 	private Boolean nextDeclarationIsEventHandler = false;
+	private Boolean nextDeclarationIsMainClass = false;
 	
 	/**
 	 * Stack, in welchem geschweifte Klammern gespeichert werden
@@ -95,6 +96,9 @@ public class JavaCodeParser {
 	
 	String regexMainFunctionPrefix = "^@Main";
 	Pattern regexMainFunctionPattern = Pattern.compile(regexMainFunctionPrefix);
+	
+	String regexMainClassPrefix = "^@MainClass";
+	Pattern regexMainClassPattern = Pattern.compile(regexMainClassPrefix);
 	
 	//String regexVariableDeclaration = String.format(format, args)
 	
@@ -204,6 +208,7 @@ public class JavaCodeParser {
 			{
 			case FILE:
 				fileInput = stateParserImport(fileInput);
+				fileInput = stateParserMainClassTag(fileInput);
 				fileInput = stateParserClassDeclaration(fileInput);
 				break;
 
@@ -275,6 +280,16 @@ public class JavaCodeParser {
 		{
 			fileInput = fileInput.replaceFirst(regexMainFunctionPrefix, "");
 			templateContext = TemplateContext.MAIN;
+		}
+		return fileInput;
+	}
+	
+	private String stateParserMainClassTag(String fileInput) {
+		Matcher mainClassTagMatcher = regexMainClassPattern.matcher(fileInput);
+		if(mainClassTagMatcher.find())
+		{
+			fileInput = fileInput.replaceFirst(regexMainClassPrefix, "");
+			nextDeclarationIsMainClass = true;
 		}
 		return fileInput;
 	}
@@ -470,6 +485,12 @@ public class JavaCodeParser {
 			{
 				templateContext = TemplateContext.CLASS;
 			}
+			else if(stateStack.peek() == State.CLASS && nextDeclarationIsMainClass)
+			{
+				// Do nothing, main class was not added in the first place,
+				// thus does not need to be closed!
+				nextDeclarationIsMainClass = false;
+			}
 			else
 			{
 				addToSwiftFile("}");
@@ -559,6 +580,9 @@ public class JavaCodeParser {
 		if(classDeclarationMatcher.find())
 		{
 			int i = 0;
+			String accessModifiers = "";
+			String className = "";
+			String superClassName = "";
 			while(i <= classDeclarationMatcher.groupCount())
 			{
 				String currentGroupMatch = classDeclarationMatcher.group(i);
@@ -574,18 +598,20 @@ public class JavaCodeParser {
 				case 2: // Access modifiers
 					if(currentGroupMatch != null)
 					{
-						addToSwiftFile(String.format("%s class ", currentGroupMatch));
+						accessModifiers = currentGroupMatch.trim();
+						//addToSwiftFile(String.format("%s class ", currentGroupMatch));
 					}
 					else
 					{
-						addToSwiftFile("class ");
+						//addToSwiftFile("class ");
 					}
 					break;
 					
 				case 3: // Class name
 					if(currentGroupMatch != null)
 					{
-						addToSwiftFile(currentGroupMatch);
+						className = currentGroupMatch.trim();
+						//addToSwiftFile(currentGroupMatch);
 					}
 					break;
 					
@@ -593,7 +619,8 @@ public class JavaCodeParser {
 					break;
 				case 5: // Super class name
 					if(currentGroupMatch != null) {
-						addToSwiftFile(String.format(": %s", currentGroupMatch));
+						superClassName = currentGroupMatch.trim();
+						//addToSwiftFile(String.format(": %s", currentGroupMatch));
 					}
 					break;
 				default:
@@ -604,6 +631,19 @@ public class JavaCodeParser {
 			}
 			fileInput = fileInput.replaceFirst(classDeclaration, "");
 
+			if(nextDeclarationIsMainClass)
+			{
+				// main class is ignored because it's already in the template
+			}
+			else if(superClassName != "")
+			{
+				addToSwiftFile(String.format("%s class %s: %s", accessModifiers, className, superClassName));
+			}
+			else
+			{
+				addToSwiftFile(String.format("%s class %s", accessModifiers, className));
+			}
+			
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
 			fileInput = stateParserBlockComment(fileInput);
@@ -615,7 +655,10 @@ public class JavaCodeParser {
 			}
 			else
 			{
-				addToSwiftFile("{");
+				if(!nextDeclarationIsMainClass)
+				{
+					addToSwiftFile("{");
+				}
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				stateStack.push(State.CLASS);
 			}
