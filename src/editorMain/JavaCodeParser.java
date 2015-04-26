@@ -19,7 +19,15 @@ public class JavaCodeParser {
 
 	private void addToSwiftFile(String text)
 	{
-		m_pSwiftFileContent += text;
+		// Insert code at the right position:
+		if(templateContext == TemplateContext.CLASS)
+		{
+			m_pSwiftFileContent = m_pSwiftFileContent.replace("@classContext", text + "@classContext");
+		}
+		else
+		{
+			m_pSwiftFileContent = m_pSwiftFileContent.replace("@mainContext", text + "@mainContext");
+		}
 	}
 	
 	public String getSwiftFileContent()
@@ -244,6 +252,8 @@ public class JavaCodeParser {
 			return;
 		}
 
+		m_pSwiftFileContent = m_pSwiftFileContent.replace("@classContext", "");
+		m_pSwiftFileContent = m_pSwiftFileContent.replace("@mainContext", "");
 		System.out.println("-------------------------------------------------------");
 		System.out.println(m_pSwiftFileContent);
 		System.out.println("-------------------------------------------------------");
