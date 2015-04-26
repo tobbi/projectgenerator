@@ -1,6 +1,9 @@
 package editorMain;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Stack;
 import java.util.regex.*;
 
@@ -135,8 +138,8 @@ public class JavaCodeParser {
 		else 
 		{
 			stateStack.removeAllElements();
-			m_pOptionalVars.clear();
 		}
+		m_pOptionalVars.clear();
 		stateStack.push(State.FILE);
 		stateParserStart(fileInput);
 	}
