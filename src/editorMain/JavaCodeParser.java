@@ -416,8 +416,9 @@ public class JavaCodeParser {
 		{
 			fileInput = fileInput.replaceFirst("}", "");
 
-			// if previous function was main function, reset template context to MAIN
-			// and don't add closing brace to the file
+			// if previous function was main function, reset template context to MAIN.
+			// Since this function was never added to the file in the first place, 
+			// we don't add a closing brace to the file.
 			if(stateStack.peek() == State.FUNCTION && templateContext == TemplateContext.MAIN)
 			{
 				templateContext = TemplateContext.CLASS;
