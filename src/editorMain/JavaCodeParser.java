@@ -693,7 +693,6 @@ public class JavaCodeParser {
 	private String stateParserMemberDeclaration(String fileInput)
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
-		System.out.println(regexMemberDeclaration);
 		if(variableDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -980,7 +979,6 @@ public class JavaCodeParser {
 	private String stateParserFunctionCall(String fileInput)
 	{
 		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(fileInput);
-		System.out.println(functionCallDeclaration);
 		String functionName = "";
 		String parameters = "";
 		if(functionCallMatcher.find()) {
