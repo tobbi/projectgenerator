@@ -1,9 +1,10 @@
 //
 //  AppDelegate.swift
-//  MobileApplicationsSwiftAufgabe1
+//  Created using the Java-to-mobile parser
+//  This program rocks, I know it does!
 //
-//  Created by Tobias Markus on 02.02.15.
-//  Copyright (c) 2015 Tobias Markus. All rights reserved.
+//  Created presumably some time before or on this very day!
+//  Copyright (c) [Current year] Tobias Markus. All rights reserved.
 //
 
 import UIKit

@@ -1,3 +1,11 @@
+//
+//  MainActivity.java
+//  Created using the Java-to-Mobile parser
+//  This program rocks, I know it does!
+//
+//  Created presumably some time before or on this very day!
+//  Copyright (c) [Current year] Tobias Markus. All rights reserved.
+//
 public class MainActivity extends Activity {
 	
 	@classContext
