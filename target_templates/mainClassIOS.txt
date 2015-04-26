@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Created using the Java-to-mobile parser
+//  Created using the Java-to-mobile converter
 //  This program rocks, I know it does!
 //
 //  Created presumably some time before or on this very day!
