@@ -206,7 +206,6 @@ public class JavaCodeParser {
 			return;
 		}
 
-		//JOptionPane.showMessageDialog(null, "------- Next input ------\r\n" + fileInput);
 		System.out.println("-------------------------------------------------------");
 		System.out.println(m_pSwiftFileContent);
 		System.out.println("-------------------------------------------------------");
