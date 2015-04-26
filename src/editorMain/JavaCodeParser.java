@@ -31,6 +31,10 @@ public class JavaCodeParser {
 	Stack<State> stateStack;
 	enum State {FILE, CLASS, ENUM, FUNCTION, IF, SWITCH, CASE};
 	
+	// Speichert, wo die erkannten Konstrukte eingefuegt werden.
+	enum TemplateContext {CLASS, MAIN};
+	TemplateContext templateContext = TemplateContext.CLASS;
+	
 	// Speichert den Namen des Switches, damit die Optionen mit <Switch name>.Option addressiert werden koennen.
 	String switchName;
 	
@@ -75,6 +79,9 @@ public class JavaCodeParser {
 	
 	String regexEventHandlerPrefix = "^@EventHandler";
 	Pattern regexEventHandlerPattern = Pattern.compile(regexEventHandlerPrefix);
+	
+	String regexMainFunctionPrefix = "^@Main";
+	Pattern regexMainFunctionPattern = Pattern.compile(regexMainFunctionPrefix);
 	
 	//String regexVariableDeclaration = String.format(format, args)
 	
@@ -158,7 +165,8 @@ public class JavaCodeParser {
 				// We are in a class. Handle member and function declaration:
 				fileInput = stateParserClassDeclaration(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput);
-				fileInput = stateParserEventHandlerDeclaration(fileInput);
+				fileInput = stateParserMainFunctionTag(fileInput);
+				fileInput = stateParserEventHandlerTag(fileInput);
 				fileInput = stateParserFunctionDeclaration(fileInput);
 				break;
 				
@@ -204,12 +212,22 @@ public class JavaCodeParser {
 		System.out.println("-------------------------------------------------------");
 	}
 	
-	private String stateParserEventHandlerDeclaration(String fileInput) {
+	private String stateParserEventHandlerTag(String fileInput) {
 		Matcher eventHandlerTagMatcher = regexEventHandlerPattern.matcher(fileInput);
 		if(eventHandlerTagMatcher.find())
 		{
 			fileInput = fileInput.replaceFirst(regexEventHandlerPrefix, "");
 			nextDeclarationIsEventHandler = true;
+		}
+		return fileInput;
+	}
+	
+	private String stateParserMainFunctionTag(String fileInput) {
+		Matcher mainFunctionTagMatcher = regexMainFunctionPattern.matcher(fileInput);
+		if(mainFunctionTagMatcher.find())
+		{
+			fileInput = fileInput.replaceFirst(regexMainFunctionPrefix, "");
+			templateContext = TemplateContext.MAIN;
 		}
 		return fileInput;
 	}
@@ -396,8 +414,19 @@ public class JavaCodeParser {
 	{
 		if(fileInput.substring(0, 1).matches("}"))
 		{
-			addToSwiftFile("}");
 			fileInput = fileInput.replaceFirst("}", "");
+
+			// if previous function was main function, reset template context to MAIN
+			// and don't add closing brace to the file
+			if(stateStack.peek() == State.FUNCTION && templateContext == TemplateContext.MAIN)
+			{
+				templateContext = TemplateContext.CLASS;
+			}
+			else
+			{
+				addToSwiftFile("}");
+			}
+			
 			stateStack.pop();
 		}
 		return fileInput;
@@ -786,7 +815,13 @@ public class JavaCodeParser {
 				}
 				i++;
 			}
-			if(!returnType.equals(""))
+
+			if(templateContext == TemplateContext.MAIN)
+			{
+				// For main functions, we don't add anything to the Swift file
+				// (main function is handled externally)
+			}
+			else if(!returnType.equals(""))
 			{
 				if(!nextDeclarationIsEventHandler)
 					addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "class func", functionName, parameters, returnType));
@@ -815,7 +850,11 @@ public class JavaCodeParser {
 			}
 			else
 			{
-				addToSwiftFile("{");
+				if(templateContext != TemplateContext.MAIN) {
+					// Only add an opening brace when we are not in the main function, 
+					// as that function is handled externally.
+					addToSwiftFile("{");
+				}
 				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.FUNCTION);
 			}
