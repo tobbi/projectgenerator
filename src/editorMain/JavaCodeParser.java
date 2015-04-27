@@ -850,6 +850,12 @@ public class JavaCodeParser {
 						dataType.equals("") ? "": ": " + dataType, 
 						definition.equals("") ? "" : " = " + definition);
 				addToSwiftFile(swiftVarDeclaration);
+
+				// If we declared a window, we need to add the element as a private variable:
+				if(dataType.equals("Application") && !definition.equals(""))
+				{
+					addToSwiftFile(String.format("\r\nself.window = %s.getWrappedElement();", variableName));
+				}
 				System.out.println(swiftVarDeclaration);
 			}
 			else
