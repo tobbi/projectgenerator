@@ -27,7 +27,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.MobileApplication;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +41,6 @@ public class MainDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 
 	JProgressBar m_pLoadingProgressBar = new JProgressBar();
-	JSONParserClass m_pJsonParser = new JSONParserClass(this);
 	JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
 	JLabel m_pLoadingLabel = new JLabel("Ready");
 	JButton m_pOkButton = new JButton("Generate");
@@ -50,7 +48,6 @@ public class MainDialog extends JDialog {
     private String m_pFileExtension = ".java";
 
 	private File m_pOutputDirectory;
-    private MobileApplication m_pMobileApplication;
     
     private void addStatusMessage(String message)
     {
@@ -232,13 +229,6 @@ public class MainDialog extends JDialog {
 			e.printStackTrace();
 		}
 	}
-    
-    public void createTreeFromActivityList(final MobileApplication application)
-    {
-    	m_pMobileApplication = application;
-        m_pLoadingProgressBar.setIndeterminate(false);
-        m_pLoadingLabel.setText("Ready");
-    }
 
 	/**
 	 * Create the dialog.
