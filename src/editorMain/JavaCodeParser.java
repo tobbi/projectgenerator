@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.*;
 
@@ -1256,8 +1257,9 @@ public class JavaCodeParser {
 	 * @param element The element to generate an API list for
 	 * @return An ArrayList of method signatures with parameters for this element
 	 */
-	public ArrayList<String> getPublicAPI(String element) {
-		ArrayList<String> public_members = new ArrayList<String>();
+	public HashMap<String, String[]> getPublicAPI(String element) {
+		HashMap<String, String[]> methodToParamNamesMap = new HashMap<String, String[]>();
+		//ArrayList<String> public_members = new ArrayList<String>();
 		/*Method[] methods = element.getClass().getMethods();
 		for(Method method: methods)
 		{
@@ -1271,28 +1273,32 @@ public class JavaCodeParser {
 			}
 		}*/
 		
+		/* Application public members: */		
+		methodToParamNamesMap.put("createActivity", null);
+		methodToParamNamesMap.put("getActivity",    null);
+		
 		/* Activity public members: */
-		public_members.add("addButton(button)");
-		public_members.add("addTextfield(textfield)");
-		public_members.add("createActivity()");
-		public_members.add("getActivity()");
-		public_members.add("getWrappedElement()");
-		public_members.add("getLabel()");
-		public_members.add("setLabel(label)");
-		public_members.add("setPosition(x, y)");
-		public_members.add("setSize(width, height)");
-		return public_members;
-	}
-	
-	public Boolean publicAPIContains(String element, String functionName) {
-		ArrayList<String> publicAPI = getPublicAPI(element);
-		for(String apiCall: publicAPI)
-		{
-			if(apiCall.indexOf(functionName) != -1)
-			{
-				return true;
-			}
-		}
-		return false;
+		methodToParamNamesMap.put("addButton",     "button".split(","));
+		methodToParamNamesMap.put("addTextfield",  "textfield".split(","));
+		methodToParamNamesMap.put("createButton",  null);
+		methodToParamNamesMap.put("addTextfield",  null);
+		methodToParamNamesMap.put("getWrappedElement", null);
+		
+		/* GUI element public members (shared with all GUI elements): */
+		methodToParamNamesMap.put("getLabel",      null);
+		methodToParamNamesMap.put("setLabel",      "label".split(","));
+		methodToParamNamesMap.put("setPosition",   "x,y".split(","));
+		methodToParamNamesMap.put("setSize",       "width,height".split(","));
+		methodToParamNamesMap.put("addToActivity", null);
+		
+		/* Button public members: */
+		methodToParamNamesMap.put("addOnClickListener", 
+												  "methodName".split(","));
+		
+		/* Textfield public members: */
+		methodToParamNamesMap.put("addText",      "text".split(","));
+		methodToParamNamesMap.put("setText",      "text".split(","));
+		methodToParamNamesMap.put("getText",      null);
+		return methodToParamNamesMap;
 	}
 }
