@@ -1020,19 +1020,7 @@ public class JavaCodeParser {
 				case 10: // parameters
 					if(currentGroupMatch != null)
 					{
-						// Add the function to the known functions list:
-						String[] parameterNameList = new String[currentGroupMatch.split(",").length];
-						int j = 0;
-						for(String parameter: currentGroupMatch.split(","))
-						{
-							parameter = parameter.trim();
-							if(parameter.equals(""))
-								continue;
-							String varName = parameter.split(" ")[1];
-							parameterNameList[j] = varName;
-							j++;
-						}
-						m_pFunctionParamLabels.put(functionName.trim(), parameterNameList);
+						addFunctionToKnownFunctionsList(functionName, currentGroupMatch);
 						parameters = toSwiftParameterList(currentGroupMatch);
 					}
 					break;
@@ -1379,6 +1367,22 @@ public class JavaCodeParser {
 		}
 		
 		return parameters;
+	}
+	
+	private void addFunctionToKnownFunctionsList(String functionName, String parameterList)
+	{
+		String[] parameterNameList = new String[parameterList.split(",").length];
+		int j = 0;
+		for(String parameter: parameterList.split(","))
+		{
+			parameter = parameter.trim();
+			if(parameter.equals(""))
+				continue;
+			String varName = parameter.split(" ")[1];
+			parameterNameList[j] = varName;
+			j++;
+		}
+		m_pFunctionParamLabels.put(functionName.trim(), parameterNameList);
 	}
 	
 }
