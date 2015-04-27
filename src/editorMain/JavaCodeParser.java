@@ -596,7 +596,7 @@ public class JavaCodeParser {
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				blockCommentMatcherEnd = blockCommentRegexEnd.matcher(fileInput);
 			}
-			blockComment += "*/"; // Add <end of block comment marker> to file contents;
+			blockComment += blockCommentMatcherEnd.group(0); // Add <end of block comment marker> to file contents;
 			addToSwiftFile(blockComment);
 			addToAndroidFile(blockComment);
 			fileInput = fileInput.replaceFirst(regexBlockComment, "");
