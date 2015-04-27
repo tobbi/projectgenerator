@@ -1047,12 +1047,16 @@ public class JavaCodeParser {
 				else
 					addToSwiftFile(String.format("%s %s(%s)", "func", functionName, parameters));
 			}
-			nextDeclarationIsEventHandler = false;
 			
 			if(templateContext != TemplateContext.MAIN)
 			{
-				addToAndroidFile(functionDeclarationMatcher.group(0));
+				// Event handlers need to be public functions in order to work properly
+				if(nextDeclarationIsEventHandler && !accessModifiers.contains("public"))
+				    addToAndroidFile("public " + functionDeclarationMatcher.group(0));
+				else
+					addToAndroidFile(functionDeclarationMatcher.group(0));
 			}
+			nextDeclarationIsEventHandler = false;
 			
 			fileInput = fileInput.replaceFirst(regexMemberFunctionDeclaration, "");
 
