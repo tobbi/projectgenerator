@@ -926,6 +926,8 @@ public class JavaCodeParser {
 
 	private String toSwiftDataType(String dataType) {
 		dataType = dataType.trim();
+		if(dataType.equals("void")) // void is treated like no return type set
+			return "";
 		if(dataType.equals("int") || dataType.equals("Integer"))
 			return "Int";
 		if(dataType.equals("float"))
@@ -1003,11 +1005,7 @@ public class JavaCodeParser {
 					}
 					else
 					{
-						// We treat "void" like no return type set.
-						if(!currentGroupMatch.trim().equals("void"))
-						{
-							returnType += toSwiftDataType(currentGroupMatch.trim());
-						}
+						returnType += toSwiftDataType(currentGroupMatch.trim());
 					}
 					break;
 				case 9: // function name
