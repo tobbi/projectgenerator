@@ -7,7 +7,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -23,6 +26,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
 import editorMain.guitypes.GUIActivity;
 import editorMain.guitypes.MobileApplication;
 
@@ -39,10 +43,11 @@ public class MainDialog extends JDialog {
 
 	JProgressBar m_pLoadingProgressBar = new JProgressBar();
 	JSONParserClass m_pJsonParser = new JSONParserClass(this);
+	JavaCodeParser m_pJavaCodeParser = new JavaCodeParser();
 	JLabel m_pLoadingLabel = new JLabel("Ready");
 	JButton m_pOkButton = new JButton("Generate");
 	private static MainDialog dialog;
-    private String m_pFileExtension = ".json";
+    private String m_pFileExtension = ".java";
 
 	private File m_pOutputDirectory;
     private MobileApplication m_pMobileApplication;
@@ -61,7 +66,7 @@ public class MainDialog extends JDialog {
 				
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.endsWith(".json");
+					return name.endsWith(m_pFileExtension);
 				}
 			});
 			dlg.setVisible(true);
@@ -82,9 +87,44 @@ public class MainDialog extends JDialog {
 			}
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
-			m_pJsonParser.parse(dlg.getDirectory(), dlg.getFile());
+			parseSourceFile(dlg.getDirectory() + dlg.getFile());
 		}
 	};
+	
+	public void parseSourceFile(String sourceFilePath) {
+		File sourceFile = new File(sourceFilePath);
+
+		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(sourceFile);
+		} catch (FileNotFoundException e) {
+			System.out.printf("Specified source file %s does not exist. Ignoring.",
+					  sourceFile.getAbsolutePath());
+			return;
+		}
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		StringBuffer stringBuffer = new StringBuffer();
+		String line;
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuffer.append(line);
+				stringBuffer.append("\n");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fileReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.printf("== Parsing Java source file %s ==\r\n", sourceFilePath);
+		m_pJavaCodeParser.parse(stringBuffer.toString());
+	}
 	
 	private final ActionListener m_pGenerateProjectsButtonListener = new ActionListener() {
 		
@@ -93,11 +133,8 @@ public class MainDialog extends JDialog {
 			// TODO Auto-generated method stub
 			//m_pStatusMessagesPane.setText("");
 			File projectDir;
-			String outPath = m_pOutputDirectory + "/MobileApplicationProjects/";
-			if(m_pMobileApplication.getName() != null)
-				projectDir = new File(outPath + m_pMobileApplication.getName());
-			else
-				projectDir = new File(outPath + "testProject");
+			String outPath = m_pOutputDirectory + "/JavaToMobileConverter/";
+			projectDir = new File(outPath);
 			
 			addStatusMessage("Creating path...");
 			
@@ -111,16 +148,10 @@ public class MainDialog extends JDialog {
 				File iosBridgeFiles = new File("target_includes/ios_bridges");
 				FileUtils.copyDirectory(iosBridgeFiles, projectDirIOS);
 				
-				for(GUIActivity activity: m_pMobileApplication.getActivities())
-				{
-					if(activity.getSwiftFileContent() != null)
-					{
-						File mainSwiftFile = new File(projectDirIOS + "/ViewController.swift");
-						FileWriter swiftWriter = new FileWriter(mainSwiftFile);
-						swiftWriter.write(activity.getSwiftFileContent());
-						swiftWriter.close();
-					}
-				}
+				File mainSwiftFile = new File(projectDirIOS + "/ViewController.swift");
+				FileWriter swiftWriter = new FileWriter(mainSwiftFile);
+				swiftWriter.write(m_pJavaCodeParser.getSwiftFileContent());
+				swiftWriter.close();
 				
 				// Android
 				addStatusMessage("Creating Android activity...");
@@ -130,17 +161,12 @@ public class MainDialog extends JDialog {
 				// Copy include files
 				File androidBridgeFiles = new File("target_includes/android_bridges");
 				FileUtils.copyDirectory(androidBridgeFiles, projectDirAndroid);
+
+				File mainAndroidFile = new File(projectDirAndroid + "/MainActivity.java");
+				FileWriter androidWriter = new FileWriter(mainAndroidFile);
+				androidWriter.write(m_pJavaCodeParser.getAndroidFileContent());
+				androidWriter.close();
 				
-				for(GUIActivity activity: m_pMobileApplication.getActivities())
-				{
-					if(activity.getJavaFileContent() != null)
-					{
-						File mainAndroidFile = new File(projectDirAndroid + "/MainActivity.java");
-						FileWriter androidWriter = new FileWriter(mainAndroidFile);
-						androidWriter.write(activity.getJavaFileContent());
-						androidWriter.close();
-					}
-				}
 				
 			} catch (IOException e2) {
 				// TODO Auto-generated catch block
