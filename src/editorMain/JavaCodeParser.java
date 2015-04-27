@@ -1270,8 +1270,10 @@ public class JavaCodeParser {
 			}
 		}*/
 		
-		public_members.add("String getLabel()");
-		public_members.add("String setLabel(String text)");
+		public_members.add("getLabel()");
+		public_members.add("setLabel(label)");
+		public_members.add("setPosition(x, y)");
+		public_members.add("setSize(width, height)");
 		return public_members;
 	}
 	
