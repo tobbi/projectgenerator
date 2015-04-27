@@ -108,11 +108,6 @@ public class MainDialog extends JDialog {
 				File iosBridgeFiles = new File("target_includes/ios_bridges");
 				FileUtils.copyDirectory(iosBridgeFiles, projectDirIOS);
 				
-				File mainStoryboard = new File(projectDirIOS + "/Main.storyboard");
-				FileWriter writer = new FileWriter(mainStoryboard);
-				writer.write(m_pMobileApplication.toIOSXMLString());
-				writer.close();
-				
 				for(GUIActivity activity: m_pMobileApplication.getActivities())
 				{
 					if(activity.getSwiftFileContent() != null)
@@ -132,16 +127,6 @@ public class MainDialog extends JDialog {
 				// Copy include files
 				File androidBridgeFiles = new File("target_includes/android_bridges");
 				FileUtils.copyDirectory(androidBridgeFiles, projectDirAndroid);
-
-				int activity_index = 0;
-				for(String fileContent: m_pMobileApplication.toAndroidXMLString())
-				{
-					activity_index++;
-					File mainActivity = new File(projectDirAndroid + "/activity" + activity_index + ".xml");
-					writer = new FileWriter(mainActivity);
-					writer.write(fileContent);
-					writer.close();
-				}
 				
 				for(GUIActivity activity: m_pMobileApplication.getActivities())
 				{
