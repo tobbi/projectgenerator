@@ -907,33 +907,7 @@ public class JavaCodeParser {
 					break;
 					
 				case 2: // parameters
-					// Check if we need to unwrap the function parameters
-					// and add parameter labels to them
-					String[] parametersTemp = currentGroupMatch.split(",");
-					int j = 0;
-					for(String parameter: parametersTemp) {
-						parameter = parameter.trim();
-						// Konstruktoraufruf unterteilen:
-						String[] paramLabels = getParameterLabelsForFunction(constructorName.trim());
-						if(paramLabels != null && paramLabels[j] != null) {
-							parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
-						}
-						for(String optionalVar: m_pOptionalVars)
-							if(optionalVar.equals(parameter))
-							{
-								parametersTemp[j] += "!";
-							}
-						j++;
-					}
-					// Parameter array -> String conversion
-					j = 0;
-					for(String parameter: parametersTemp)
-					{
-						if(j > 0)
-							parameters += ", ";
-						parameters += parameter;
-						j++;
-					}
+					parameters = unwrapAndLabelParameterList(constructorName, currentGroupMatch, true);
 					break;
 				}
 				i++;
@@ -1126,7 +1100,6 @@ public class JavaCodeParser {
 		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(fileInput);
 		String functionName = "";
 		String parameters = "";
-		Boolean isConstructor = false;
 		if(functionCallMatcher.find()) {
 			int i = 0;
 			while(i <= functionCallMatcher.groupCount())
@@ -1136,12 +1109,7 @@ public class JavaCodeParser {
 				{
 				case 0: // Whole match. Ignore!
 					break;
-				case 1: // "new" (for constructors)
-					if(currentGroupMatch != null)
-					{
-						System.out.println("Found constructor!");
-						isConstructor = true;
-					}
+				case 1: // "new" (for constructors; handled elsewhere)
 					break;
 				case 2: // Function name
 					//queryFunctionName(currentGroupMatch);
@@ -1161,36 +1129,7 @@ public class JavaCodeParser {
 				case 3: // Function parameter?
 					if(!currentGroupMatch.isEmpty())
 					{
-						// Check if we need to unwrap the function parameter
-						// and add parameter labels to the function
-						String[] parametersTemp = currentGroupMatch.split(",");
-						int j = 0;
-						for(String parameter: parametersTemp) {
-							parameter = parameter.trim();
-							if(j > 0 || isConstructor)
-							{
-								// Funktionsaufruf unterteilen:
-								String[] paramLabels = getParameterLabelsForFunction(functionName.trim());
-								if(paramLabels != null && paramLabels[j] != null) {
-									parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
-								}
-							}
-							for(String optionalVar: m_pOptionalVars)
-								if(optionalVar.equals(parameter))
-								{
-									parametersTemp[j] += "!";
-								}
-							j++;
-						}
-						// Parameter array -> String conversion
-						j = 0;
-						for(String parameter: parametersTemp)
-						{
-							if(j > 0)
-								parameters += ", ";
-							parameters += parameter;
-							j++;
-						}
+						parameters = unwrapAndLabelParameterList(functionName, currentGroupMatch, false);
 					}
 					break;
 				}
@@ -1393,6 +1332,53 @@ public class JavaCodeParser {
 		System.out.println("Trying to get key " + methodName);
 		System.out.println("Has key? " + (m_pFunctionParamLabels.get(methodName) != null));
 		return m_pFunctionParamLabels.get(methodName);
+	}
+	
+	/**
+	 * Unwraps all optional parameters in the parameters list, and labels all necessary variables
+	 * @param functionName The name of the function to label
+	 * @param paramList List of parameter values to pass to this function (String, comma-separated)
+	 * @param isConstructor true if the instance is a constructor (constructors need all parameter values labeled)
+	 * @return
+	 */
+	private String unwrapAndLabelParameterList(String functionName, String paramList, Boolean isConstructor)
+	{
+		String parameters = "";
+		
+		// Check if we need to unwrap the function parameter
+		// and add parameter labels to the function
+		String[] parametersTemp = paramList.split(",");
+		int j = 0;
+		for(String parameter: parametersTemp) {
+			parameter = parameter.trim();
+			// Konstruktoren muessen alle Parameter gelabeled haben,
+			// normale Funktionsaufrufe nur ab dem zweiten.
+			if(j > 0 || isConstructor)
+			{
+				// Funktionsaufruf unterteilen:
+				String[] paramLabels = getParameterLabelsForFunction(functionName.trim());
+				if(paramLabels != null && paramLabels[j] != null) {
+					parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
+				}
+			}
+			for(String optionalVar: m_pOptionalVars)
+				if(optionalVar.equals(parameter))
+				{
+					parametersTemp[j] += "!";
+				}
+			j++;
+		}
+		// Parameter array -> String conversion
+		j = 0;
+		for(String parameter: parametersTemp)
+		{
+			if(j > 0)
+				parameters += ", ";
+			parameters += parameter;
+			j++;
+		}
+		
+		return parameters;
 	}
 	
 }
