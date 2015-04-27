@@ -15,6 +15,7 @@ public class JavaCodeParser {
 	private String m_pSwiftFileContent = "";
 	private String m_pAndroidFileContent = "";
 	private ArrayList<String> m_pOptionalVars = new ArrayList<String>();
+	private HashMap<String, String[]> m_pFunctionParamLabels = getPublicAPI();
 
 	private void addToSwiftFile(String text)
 	{
@@ -120,6 +121,9 @@ public class JavaCodeParser {
 	String regexMainClassPrefix = "^@MainClass";
 	Pattern regexMainClassPattern = Pattern.compile(regexMainClassPrefix);
 	
+	String regexConstructorCallDefinition = "^new\\s+([^;\\(\\)]+)\\s*\\(([^;]*)\\)";
+	Pattern regexConstructorCallPattern = Pattern.compile(regexConstructorCallDefinition);
+	
 	//String regexVariableDeclaration = String.format(format, args)
 	
 	
@@ -145,7 +149,7 @@ public class JavaCodeParser {
 	
 	// Function call in the form of myFunction(myParam);
 	// matches (myObject.)myFunction(param1, param2);
-	String functionCallDeclaration = String.format("^%s\\s*\\(%s\\);", "([\\w\\.]+)", "([^;]*)");
+	String functionCallDeclaration = String.format("^%s\\s*\\(%s\\);", "(new\\s+)?([\\w\\.]+)", "([^;]*)");
 	Pattern functionCallDeclarationRegex = Pattern.compile(functionCallDeclaration);
 	
 	String regexCharacter = "'\\w'";
@@ -878,11 +882,68 @@ public class JavaCodeParser {
 		{
 			return "nil";
 		}
-		if(definitionValue.startsWith("new "))
+		
+		/*if(definitionValue.startsWith("new "))
 		{
 			// Swift benutzt kein new zur Instantiierung
 			definitionValue = definitionValue.replaceFirst("new ", "");
+		}*/
+		Matcher constructorCallMatcher = regexConstructorCallPattern.matcher(definitionValue);
+		if(constructorCallMatcher.find())
+		{
+			int i = 0;
+			String constructorName = "";
+			String parameters = "";
+			while( i <= constructorCallMatcher.groupCount())
+			{
+				String currentGroupMatch = constructorCallMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole group match. Ignore!
+					break;
+					
+				case 1: // constructor name
+					constructorName = currentGroupMatch.trim();
+					break;
+					
+				case 2: // parameters
+					// Check if we need to unwrap the function parameters
+					// and add parameter labels to them
+					String[] parametersTemp = currentGroupMatch.split(",");
+					int j = 0;
+					for(String parameter: parametersTemp) {
+						parameter = parameter.trim();
+						// Konstruktoraufruf unterteilen:
+						String[] paramLabels = getParameterLabelsForFunction(constructorName.trim());
+						if(paramLabels != null && paramLabels[j] != null) {
+							parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
+						}
+						for(String optionalVar: m_pOptionalVars)
+							if(optionalVar.equals(parameter))
+							{
+								parametersTemp[j] += "!";
+							}
+						j++;
+					}
+					// Parameter array -> String conversion
+					j = 0;
+					for(String parameter: parametersTemp)
+					{
+						if(j > 0)
+							parameters += ", ";
+						parameters += parameter;
+						j++;
+					}
+					break;
+				}
+				i++;
+			}
+			return String.format("%s(%s)", constructorName, parameters.replace("this", "self"));
 		}
+		// Check if definition value matches function call (or constructor call):
+		//System.out.println("Checking definition value: " + definitionValue);
+		//definitionValue = stateParserFunctionCall(definitionValue + ";");
+		
 		// this durch self ersetzen:
 		definitionValue = definitionValue.replace("this", "self");
 		
@@ -985,6 +1046,19 @@ public class JavaCodeParser {
 				case 10: // parameters
 					if(currentGroupMatch != null)
 					{
+						// Add the function to the known functions list:
+						String[] parameterNameList = new String[currentGroupMatch.split(",").length];
+						int j = 0;
+						for(String parameter: currentGroupMatch.split(","))
+						{
+							parameter = parameter.trim();
+							if(parameter.equals(""))
+								continue;
+							String varName = parameter.split(" ")[1];
+							parameterNameList[j] = varName;
+							j++;
+						}
+						m_pFunctionParamLabels.put(functionName.trim(), parameterNameList);
 						parameters = toSwiftParameterList(currentGroupMatch);
 					}
 					break;
@@ -1052,6 +1126,7 @@ public class JavaCodeParser {
 		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(fileInput);
 		String functionName = "";
 		String parameters = "";
+		Boolean isConstructor = false;
 		if(functionCallMatcher.find()) {
 			int i = 0;
 			while(i <= functionCallMatcher.groupCount())
@@ -1061,7 +1136,14 @@ public class JavaCodeParser {
 				{
 				case 0: // Whole match. Ignore!
 					break;
-				case 1: // Function name
+				case 1: // "new" (for constructors)
+					if(currentGroupMatch != null)
+					{
+						System.out.println("Found constructor!");
+						isConstructor = true;
+					}
+					break;
+				case 2: // Function name
 					//queryFunctionName(currentGroupMatch);
 					if(!currentGroupMatch.isEmpty())
 					{
@@ -1076,21 +1158,31 @@ public class JavaCodeParser {
 					  }
 					}
 					break;
-				case 2: // Function parameter?
+				case 3: // Function parameter?
 					if(!currentGroupMatch.isEmpty())
 					{
 						// Check if we need to unwrap the function parameter
+						// and add parameter labels to the function
 						String[] parametersTemp = currentGroupMatch.split(",");
 						int j = 0;
 						for(String parameter: parametersTemp) {
 							parameter = parameter.trim();
+							if(j > 0 || isConstructor)
+							{
+								// Funktionsaufruf unterteilen:
+								String[] paramLabels = getParameterLabelsForFunction(functionName.trim());
+								if(paramLabels != null && paramLabels[j] != null) {
+									parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
+								}
+							}
 							for(String optionalVar: m_pOptionalVars)
 								if(optionalVar.equals(parameter))
 								{
-									parametersTemp[j] = parameter + "!";
+									parametersTemp[j] += "!";
 								}
 							j++;
 						}
+						// Parameter array -> String conversion
 						j = 0;
 						for(String parameter: parametersTemp)
 						{
@@ -1257,48 +1349,50 @@ public class JavaCodeParser {
 	 * @param element The element to generate an API list for
 	 * @return An ArrayList of method signatures with parameters for this element
 	 */
-	public HashMap<String, String[]> getPublicAPI(String element) {
+	public HashMap<String, String[]> getPublicAPI() {
 		HashMap<String, String[]> methodToParamNamesMap = new HashMap<String, String[]>();
-		//ArrayList<String> public_members = new ArrayList<String>();
-		/*Method[] methods = element.getClass().getMethods();
-		for(Method method: methods)
-		{
-			Annotation[] annotations = method.getAnnotations();
-			for(Annotation annotation: annotations)
-			{
-				if(annotation instanceof ExposedMember)
-				{
-					public_members.add(method.toGenericString());
-				}
-			}
-		}*/
+		
+		/* Constructors */
+		methodToParamNamesMap.put("Activity", new String[] {"context"});
+		methodToParamNamesMap.put("Application", new String[] {"context"});
+		methodToParamNamesMap.put("Button", new String[] {"context"});
+		methodToParamNamesMap.put("Textfield", new String[] {"context"});
 		
 		/* Application public members: */		
 		methodToParamNamesMap.put("createActivity", null);
 		methodToParamNamesMap.put("getActivity",    null);
 		
 		/* Activity public members: */
-		methodToParamNamesMap.put("addButton",     "button".split(","));
-		methodToParamNamesMap.put("addTextfield",  "textfield".split(","));
+		methodToParamNamesMap.put("addButton",     new String[] {"button"});
+		methodToParamNamesMap.put("addTextfield",  new String[] {"textfield"});
 		methodToParamNamesMap.put("createButton",  null);
 		methodToParamNamesMap.put("addTextfield",  null);
 		methodToParamNamesMap.put("getWrappedElement", null);
 		
 		/* GUI element public members (shared with all GUI elements): */
 		methodToParamNamesMap.put("getLabel",      null);
-		methodToParamNamesMap.put("setLabel",      "label".split(","));
-		methodToParamNamesMap.put("setPosition",   "x,y".split(","));
-		methodToParamNamesMap.put("setSize",       "width,height".split(","));
+		methodToParamNamesMap.put("setLabel",      new String[] {"label"});
+		methodToParamNamesMap.put("setPosition",   new String[] {"x", "y"});
+		methodToParamNamesMap.put("setSize",       new String[] {"width", "height"});
 		methodToParamNamesMap.put("addToActivity", null);
 		
 		/* Button public members: */
 		methodToParamNamesMap.put("addOnClickListener", 
-												  "methodName".split(","));
+												  new String[] {"methodName"});
 		
 		/* Textfield public members: */
-		methodToParamNamesMap.put("addText",      "text".split(","));
-		methodToParamNamesMap.put("setText",      "text".split(","));
+		methodToParamNamesMap.put("addText",      new String[] {"text"});
+		methodToParamNamesMap.put("setText",      new String[] {"text"});
 		methodToParamNamesMap.put("getText",      null);
 		return methodToParamNamesMap;
 	}
+	
+	public String[] getParameterLabelsForFunction(String methodName)
+	{
+		methodName = methodName.split("\\.")[methodName.split("\\.").length - 1];
+		System.out.println("Trying to get key " + methodName);
+		System.out.println("Has key? " + (m_pFunctionParamLabels.get(methodName) != null));
+		return m_pFunctionParamLabels.get(methodName);
+	}
+	
 }
