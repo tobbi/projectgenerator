@@ -81,7 +81,7 @@ public class GUIActivity extends BaseGUIType {
 	
 	public String getJavaFileContent()
 	{
-		return m_pJavaFileContent;
+		return m_pJavaCodeParser.getAndroidFileContent();
 	}
 	
 	/**
