@@ -1,4 +1,4 @@
-package com.fhflensburg.tobiasmarkus.androidBridge;
+package de.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.content.Context;
 import android.view.View;

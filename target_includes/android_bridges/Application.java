@@ -1,4 +1,4 @@
-package com.fhflensburg.tobiasmarkus.androidBridge;
+package de.fhflensburg.tobiasmarkus.androidBridge;
 
 public class Application {
 	
