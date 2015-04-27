@@ -168,6 +168,7 @@ public class MainDialog extends JDialog {
 				e2.printStackTrace();
 			}
 			addStatusMessage("Finished.");
+			m_pLoadingProgressBar.setIndeterminate(false);
 
 			String confirmMessage = "Your project files have been generated successfully. Do you want to open the folder?";
 
