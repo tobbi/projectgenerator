@@ -145,7 +145,7 @@ public class MainDialog extends JDialog {
 				File iosBridgeFiles = new File("target_includes/ios_bridges");
 				FileUtils.copyDirectory(iosBridgeFiles, projectDirIOS);
 				
-				File mainSwiftFile = new File(projectDirIOS + "/ViewController.swift");
+				File mainSwiftFile = new File(projectDirIOS + "/AppDelegate.swift");
 				FileWriter swiftWriter = new FileWriter(mainSwiftFile);
 				swiftWriter.write(m_pJavaCodeParser.getSwiftFileContent());
 				swiftWriter.close();
