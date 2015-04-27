@@ -76,7 +76,10 @@ public class MainDialog extends JDialog {
 			}
 
 			textField.setText(dlg.getDirectory() + dlg.getFile());
-			m_pOkButton.setEnabled(true);
+			if(m_pOutputDirectory != null)
+			{
+				m_pOkButton.setEnabled(true);
+			}
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
 			m_pJsonParser.parse(dlg.getDirectory(), dlg.getFile());
@@ -173,6 +176,10 @@ public class MainDialog extends JDialog {
 				return;
 
 			m_pDirectoryField.setText(dlg.getSelectedFile().getAbsolutePath());
+			if(!textField.getText().trim().equals(""))
+			{
+				m_pOkButton.setEnabled(true);
+			}
 			m_pOutputDirectory = dlg.getSelectedFile();
 		}
 	};
