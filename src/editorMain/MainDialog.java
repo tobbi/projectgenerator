@@ -49,7 +49,7 @@ public class MainDialog extends JDialog {
     
     private void addStatusMessage(String message)
     {
-    	//m_pStatusMessagesPane.setText(m_pStatusMessagesPane.getText() + "\r\n" + message);
+    	m_pLoadingLabel.setText(message);
     }
 	
 	private final ActionListener m_pfileOpenListener = new ActionListener() {
@@ -83,6 +83,8 @@ public class MainDialog extends JDialog {
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
 			parseSourceFile(dlg.getDirectory() + dlg.getFile());
+			m_pLoadingLabel.setText("Ready");
+			m_pLoadingProgressBar.setIndeterminate(false);
 		}
 	};
 	
