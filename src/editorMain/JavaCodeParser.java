@@ -690,11 +690,6 @@ public class JavaCodeParser {
 					if(currentGroupMatch != null)
 					{
 						accessModifiers = currentGroupMatch.trim();
-						//addToSwiftFile(String.format("%s class ", currentGroupMatch));
-					}
-					else
-					{
-						//addToSwiftFile("class ");
 					}
 					break;
 					
@@ -702,7 +697,6 @@ public class JavaCodeParser {
 					if(currentGroupMatch != null)
 					{
 						className = currentGroupMatch.trim();
-						//addToSwiftFile(currentGroupMatch);
 					}
 					break;
 					
@@ -711,7 +705,6 @@ public class JavaCodeParser {
 				case 5: // Super class name
 					if(currentGroupMatch != null) {
 						superClassName = currentGroupMatch.trim();
-						//addToSwiftFile(String.format(": %s", currentGroupMatch));
 					}
 					break;
 				default:
