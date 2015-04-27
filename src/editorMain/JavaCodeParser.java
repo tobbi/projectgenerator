@@ -936,7 +936,7 @@ public class JavaCodeParser {
 		if(dataType.equals("String"))
 			return "String";
 		
-		// Wir nehmen einen benutzerdefinierten Datentyp an.
+		// We assume a user-defined datatype:
 		return dataType;
 	}
 
