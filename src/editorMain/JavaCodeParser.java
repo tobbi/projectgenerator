@@ -285,6 +285,7 @@ public class JavaCodeParser {
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				break;
 
+			case IF:
 			case FUNCTION:
 				fileInput = stateParserConsoleOutput(fileInput);
 				fileInput = stateParserIfStatement(fileInput);
@@ -481,7 +482,6 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println("If statement: " + currentGroupMatch);
 					break;
 				case 1:
 					System.out.println("Group 1: " + currentGroupMatch);
@@ -493,6 +493,24 @@ public class JavaCodeParser {
 				i++;
 			}
 			fileInput = fileInput.replaceFirst(regexIfStatement, "");
+			addToSwiftFile(ifStatementMatcher.group(0));
+			addToAndroidFile(ifStatementMatcher.group(0));
+			
+			// Nicht druckbare Zeichen und Kommentare entfernen:
+			fileInput = stateParserNonPrintables(fileInput);
+			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserLineComment(fileInput);
+			
+			if(!fileInput.substring(0, 1).equals("{"))
+			{
+				System.out.println("Expected {, but found " + fileInput.substring(0, 1));
+			}
+			else
+			{
+				addToSwiftFile("{");
+				fileInput = fileInput.replaceFirst("\\{", "");
+				stateStack.push(State.IF);
+			}
 		}
 		return fileInput;
 	}
@@ -536,7 +554,7 @@ public class JavaCodeParser {
 			else
 			{
 				addToSwiftFile("{");
-				fileInput = fileInput.replaceFirst("{", "");
+				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.SWITCH);
 			}
 		}
