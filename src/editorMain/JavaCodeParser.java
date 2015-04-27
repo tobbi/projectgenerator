@@ -1316,9 +1316,8 @@ public class JavaCodeParser {
 	
 	public String[] getParameterLabelsForFunction(String methodName)
 	{
+		// Get last bit of the function name (the part after the class / object name)
 		methodName = methodName.split("\\.")[methodName.split("\\.").length - 1];
-		System.out.println("Trying to get key " + methodName);
-		System.out.println("Has key? " + (m_pFunctionParamLabels.get(methodName) != null));
 		return m_pFunctionParamLabels.get(methodName);
 	}
 	
