@@ -600,6 +600,7 @@ public class JavaCodeParser {
 			addToSwiftFile(blockComment);
 			addToAndroidFile(blockComment);
 			fileInput = fileInput.replaceFirst(regexBlockComment, "");
+			fileInput = fileInput.replaceFirst(regexBlockCommentEnd, "");
 			//JOptionPane.showMessageDialog(null, blockComment);
 		}
 		return fileInput;
