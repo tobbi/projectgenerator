@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.*;
 
-import editorMain.guitypes.BaseGUIType;
-import editorMain.guitypes.GUIElement;
-
 public class JavaCodeParser {
 	
 	private String m_pSwiftFileContent = "";
@@ -1258,7 +1255,7 @@ public class JavaCodeParser {
 	 * @param element The element to generate an API list for
 	 * @return An ArrayList of method signatures with parameters for this element
 	 */
-	public ArrayList<String> getPublicAPI(BaseGUIType element) {
+	public ArrayList<String> getPublicAPI(String element) {
 		ArrayList<String> public_members = new ArrayList<String>();
 		/*Method[] methods = element.getClass().getMethods();
 		for(Method method: methods)
@@ -1278,7 +1275,7 @@ public class JavaCodeParser {
 		return public_members;
 	}
 	
-	public Boolean publicAPIContains(GUIElement element, String functionName) {
+	public Boolean publicAPIContains(String element, String functionName) {
 		ArrayList<String> publicAPI = getPublicAPI(element);
 		for(String apiCall: publicAPI)
 		{

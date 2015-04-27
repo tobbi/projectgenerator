@@ -27,8 +27,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import editorMain.guitypes.MobileApplication;
-
 import org.apache.commons.io.FileUtils;
 
 public class MainDialog extends JDialog {
