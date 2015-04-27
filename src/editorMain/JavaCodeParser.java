@@ -15,6 +15,7 @@ import editorMain.guitypes.GUIElement;
 public class JavaCodeParser {
 	
 	private String m_pSwiftFileContent = "";
+	private String m_pAndroidFileContent = "";
 	private ArrayList<String> m_pOptionalVars = new ArrayList<String>();
 
 	private void addToSwiftFile(String text)
@@ -30,9 +31,25 @@ public class JavaCodeParser {
 		}
 	}
 	
+	private void addToAndroidFile(String text)
+	{
+		if(templateContext == TemplateContext.CLASS)
+		{
+			m_pAndroidFileContent = m_pAndroidFileContent.replace("@classContext", text + "@classContext");
+		}
+		else
+		{
+			m_pAndroidFileContent = m_pAndroidFileContent.replace("@mainContext", text + "@mainContext");
+		}
+	}
+	
 	public String getSwiftFileContent()
 	{
 		return m_pSwiftFileContent;
+	}
+	
+	public String getAndroidFileContent() {
+		return m_pAndroidFileContent;
 	}
 	
 	private Boolean nextDeclarationIsEventHandler = false;
@@ -150,13 +167,45 @@ public class JavaCodeParser {
 		}
 		m_pOptionalVars.clear();
 		stateStack.push(State.FILE);
-		m_pSwiftFileContent = getSwiftTemplateContent();
+		m_pSwiftFileContent   = getSwiftTemplateContent();
+		m_pAndroidFileContent = getAndroidTemplateContent();
 		stateParserStart(fileInput);
 	}
 	
 	private String getSwiftTemplateContent() {
 		
 		File sourceFile = new File("target_templates/mainClassIOS.txt");
+
+		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(sourceFile);
+		} catch (FileNotFoundException e) {
+			System.out.printf("ERROR: Could not find template file %s.", sourceFile.getAbsolutePath());
+			return "";
+		}
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		StringBuffer stringBuffer = new StringBuffer();
+		String line;
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuffer.append(line);
+				stringBuffer.append("\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			fileReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return stringBuffer.toString();
+	}
+	
+	private String getAndroidTemplateContent() {
+		File sourceFile = new File("target_templates/mainClassAndroid.txt");
 
 		// Source http://www.avajava.com/tutorials/lessons/how-do-i-read-a-string-from-a-file-line-by-line.html
 		FileReader fileReader;
@@ -259,8 +308,15 @@ public class JavaCodeParser {
 
 		m_pSwiftFileContent = m_pSwiftFileContent.replace("@classContext", "");
 		m_pSwiftFileContent = m_pSwiftFileContent.replace("@mainContext", "");
-		System.out.println("-------------------------------------------------------");
+		m_pAndroidFileContent = m_pAndroidFileContent.replace("@classContext", "");
+		m_pAndroidFileContent = m_pAndroidFileContent.replace("@mainContext", "");
+		
+		System.out.println("------------------ Swift file -------------------------");
 		System.out.println(m_pSwiftFileContent);
+		System.out.println("-------------------------------------------------------");
+		
+		System.out.println("----------------- Android file ------------------------");
+		System.out.println(m_pAndroidFileContent);
 		System.out.println("-------------------------------------------------------");
 	}
 	
@@ -286,6 +342,7 @@ public class JavaCodeParser {
 			}
 			fileInput = fileInput.replaceFirst(regexEnumCaseStatement, "");
 			addToSwiftFile(String.format("case %s;", caseName));
+			addToAndroidFile(enumCaseMatcher.group(0));
 		}
 		return fileInput;
 	}
@@ -343,6 +400,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			addToSwiftFile(String.format("return %s;", returnStatement));
+			addToAndroidFile(returnStatementMatcher.group(0));
 			fileInput = fileInput.replaceFirst(regexReturnStatement, "");
 		}
 		return fileInput;
@@ -402,6 +460,7 @@ public class JavaCodeParser {
 				i++;
 			}
 			addToSwiftFile(String.format("case %s:", caseName));
+			addToAndroidFile(caseStatementMatcher.group(0));
 			fileInput = fileInput.replaceFirst(regexCaseStatement, "");
 			stateStack.push(State.CASE);
 		}
@@ -461,6 +520,7 @@ public class JavaCodeParser {
 			}
 			fileInput = fileInput.replaceFirst(regexSwitchStatement, "");
 			addToSwiftFile(switchStatementMatcher.group(0));
+			addToAndroidFile(switchStatementMatcher.group(0));
 			
 			// Nicht druckbare Zeichen und Kommentare entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
@@ -488,6 +548,7 @@ public class JavaCodeParser {
 		if(nonPrintablesMatcher.find())
 		{
 			addToSwiftFile(nonPrintablesMatcher.group(0));
+			addToAndroidFile(nonPrintablesMatcher.group(0));
 			fileInput = fileInput.replaceFirst(regexNonPrintables, "");
 		}
 		return fileInput;
@@ -518,6 +579,7 @@ public class JavaCodeParser {
 			else
 			{
 				addToSwiftFile("}");
+				addToAndroidFile("}");
 			}
 			
 			stateStack.pop();
@@ -539,6 +601,7 @@ public class JavaCodeParser {
 			}
 			blockComment += "*/"; // Add <end of block comment marker> to file contents;
 			addToSwiftFile(blockComment);
+			addToAndroidFile(blockComment);
 			fileInput = fileInput.replaceFirst(regexBlockComment, "");
 			//JOptionPane.showMessageDialog(null, blockComment);
 		}
@@ -557,7 +620,7 @@ public class JavaCodeParser {
 				{
 				case 0: // Whole pattern match. Ignore!
 					addToSwiftFile(currentGroupMatch);
-					//System.out.println("Line comment: " + currentGroupMatch);
+					addToAndroidFile(currentGroupMatch);
 					break;
 				case 1:
 					//System.out.println("Line comment is: " + currentGroupMatch);
@@ -584,8 +647,9 @@ public class JavaCodeParser {
 				String currentGroupMatch = regexImportMatcher.group(i);
 				switch(i)
 				{
-				case 0: // Whole pattern match. Ignore!
-					System.out.println(currentGroupMatch);
+				case 0:
+					// Imports should work in android files
+					addToAndroidFile(currentGroupMatch);
 					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
@@ -667,6 +731,9 @@ public class JavaCodeParser {
 			{
 				addToSwiftFile(String.format("%s class %s", accessModifiers, className));
 			}
+			
+			if(!nextDeclarationIsMainClass)
+				addToAndroidFile(classDeclarationMatcher.group(0));
 			
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
@@ -795,6 +862,7 @@ public class JavaCodeParser {
 				addToSwiftFile(swiftVarDeclaration);
 				System.out.println(swiftVarDeclaration);
 			}
+			addToAndroidFile(variableDeclarationMatcher.group(0));
 			
 			fileInput = fileInput.replace(variableDeclarationMatcher.group(0), ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
 		}
@@ -948,6 +1016,11 @@ public class JavaCodeParser {
 			}
 			nextDeclarationIsEventHandler = false;
 			
+			if(templateContext != TemplateContext.MAIN)
+			{
+				addToAndroidFile(functionDeclarationMatcher.group(0));
+			}
+			
 			fileInput = fileInput.replaceFirst(regexMemberFunctionDeclaration, "");
 
 			// Nicht druckbare Zeichen entfernen:
@@ -965,6 +1038,7 @@ public class JavaCodeParser {
 					// Only add an opening brace when we are not in the main function, 
 					// as that function is handled externally.
 					addToSwiftFile("{");
+					addToAndroidFile("{");
 				}
 				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.FUNCTION);
@@ -1040,6 +1114,7 @@ public class JavaCodeParser {
 			{
 				System.out.println("Function without function name found. ERROR!");
 			}
+			addToAndroidFile(functionCallMatcher.group(0));
 		}
 		return fileInput;
 	}
@@ -1120,6 +1195,7 @@ public class JavaCodeParser {
 			{
 				addToSwiftFile(String.format("print(%s);", outputString));
 			}
+			addToAndroidFile(consoleOutputMatcher.group(0));
 			fileInput = fileInput.replaceFirst(regexConsoleOutput, "");
 		}
 		return fileInput;
@@ -1154,6 +1230,7 @@ public class JavaCodeParser {
 			}
 			fileInput = fileInput.replaceFirst(regexEnumStatement, "");
 			addToSwiftFile(String.format("enum %s", enumName.trim()));
+			addToAndroidFile(enumMatcher.group(0));
 
 			// Nicht druckbare Zeichen entfernen:
 			fileInput = stateParserNonPrintables(fileInput);
@@ -1167,6 +1244,7 @@ public class JavaCodeParser {
 			else
 			{
 				addToSwiftFile("{");
+				addToAndroidFile("{");
 				fileInput = fileInput.substring(1, fileInput.length() - 1);
 				stateStack.push(State.ENUM);
 			}
