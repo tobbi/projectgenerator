@@ -71,7 +71,7 @@ public class MainDialog extends JDialog {
 			
 			if(!dlg.getFile().endsWith(m_pFileExtension))
 			{
-				JOptionPane.showMessageDialog(MainDialog.this, "Bitte waehlen Sie eine gueltige JSON-Datei aus!");
+				JOptionPane.showMessageDialog(MainDialog.this, "Bitte waehlen Sie eine gueltige Java-Datei aus!");
 				return;
 			}
 
