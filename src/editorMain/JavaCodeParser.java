@@ -988,6 +988,7 @@ public class JavaCodeParser {
 					{
 						parameters = toSwiftParameterList(currentGroupMatch);
 					}
+					break;
 				default:
 					System.out.println("Unexpected group #" + i + " with value " + currentGroupMatch);
 					break;
