@@ -1,7 +1,6 @@
 package editorMain;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
@@ -18,34 +17,16 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-
-import editorMain.guitypes.BaseGUIType;
 import editorMain.guitypes.GUIActivity;
-import editorMain.guitypes.GUIElement;
 import editorMain.guitypes.MobileApplication;
 
 import org.apache.commons.io.FileUtils;
-
-import javax.swing.JTextPane;
 
 public class MainDialog extends JDialog {
 
@@ -59,19 +40,16 @@ public class MainDialog extends JDialog {
 	JProgressBar m_pLoadingProgressBar = new JProgressBar();
 	JSONParserClass m_pJsonParser = new JSONParserClass(this);
 	JLabel m_pLoadingLabel = new JLabel("Ready");
-	JButton m_pOkButton = new JButton("Generate projects");
+	JButton m_pOkButton = new JButton("Generate");
 	private static MainDialog dialog;
-    private JTree m_pCategoryTree;
     private String m_pFileExtension = ".json";
 
 	private File m_pOutputDirectory;
     private MobileApplication m_pMobileApplication;
     
-    private JTextPane m_pStatusMessagesPane;
-    
     private void addStatusMessage(String message)
     {
-    	m_pStatusMessagesPane.setText(m_pStatusMessagesPane.getText() + "\r\n" + message);
+    	//m_pStatusMessagesPane.setText(m_pStatusMessagesPane.getText() + "\r\n" + message);
     }
 	
 	private final ActionListener m_pfileOpenListener = new ActionListener() {
@@ -97,6 +75,7 @@ public class MainDialog extends JDialog {
 				return;
 			}
 
+			textField.setText(dlg.getDirectory() + dlg.getFile());
 			m_pOkButton.setEnabled(true);
 			m_pLoadingProgressBar.setIndeterminate(true);
 			m_pLoadingLabel.setText("Loading...");
@@ -109,7 +88,7 @@ public class MainDialog extends JDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			m_pStatusMessagesPane.setText("");
+			//m_pStatusMessagesPane.setText("");
 			File projectDir;
 			String outPath = m_pOutputDirectory + "/MobileApplicationProjects/";
 			if(m_pMobileApplication.getName() != null)
@@ -213,51 +192,6 @@ public class MainDialog extends JDialog {
 		}
 	};
 	
-	private final TreeSelectionListener m_pTreeSelectionListener = new TreeSelectionListener() {
-		
-		@Override
-		public void valueChanged(TreeSelectionEvent e) {
-			// TODO Auto-generated method stub
-			MutableGUITreeNode source = (MutableGUITreeNode)m_pCategoryTree.getLastSelectedPathComponent();
-			if(source == null)
-				return;
-
-			BaseGUIType sourceElement = (BaseGUIType)source.linkedElement;
-			if(sourceElement == null)
-			{
-				return;
-			}
-			TableModel model = m_pTable.getModel();
-			model.setValueAt("Name", 0, 0);
-			model.setValueAt("PositionX", 1, 0);
-			model.setValueAt("PositionY", 2, 0);
-			model.setValueAt("Width", 3, 0);
-			model.setValueAt("Height", 4, 0);
-			model.setValueAt("Label", 5, 0);
-			model.setValueAt("Generated ID", 6, 0);
-			
-			model.setValueAt(sourceElement.getName(), 0, 1);
-			model.setValueAt(sourceElement.getPosition().getX(), 1, 1);
-			model.setValueAt(sourceElement.getPosition().getY(), 2, 1);
-			model.setValueAt(sourceElement.getSize().getX(), 3, 1);
-			model.setValueAt(sourceElement.getSize().getY(), 4, 1);
-			model.setValueAt(sourceElement.getGeneratedID(), 6, 1);
-
-			if(sourceElement.getType() != null)
-			{
-				if(sourceElement.getType().equals("button"))
-				{
-					GUIElement p_element = (GUIElement)sourceElement;
-					model.setValueAt(p_element.getLabel(), 5, 1);
-				}
-				else
-				{
-					model.setValueAt("<element type does not support label>", 5, 1);
-				}
-			}
-		}
-	};
-	
 	private final ActionListener m_pQuitApplicationListener = new ActionListener() {
 		
 		@Override
@@ -265,8 +199,8 @@ public class MainDialog extends JDialog {
 			dispose();
 		}
 	};
-	private JTable m_pTable;
 	private JTextField m_pDirectoryField;
+	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -284,31 +218,6 @@ public class MainDialog extends JDialog {
     public void createTreeFromActivityList(final MobileApplication application)
     {
     	m_pMobileApplication = application;
-    	MutableGUITreeNode _defMutableTreeNode = new MutableGUITreeNode("Activities") {
-	    	/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			{
-		    	for(GUIActivity activity: application.m_pActivities)
-		    	{
-		    		MutableGUITreeNode node = new MutableGUITreeNode(activity.getName());
-		    		node.linkedElement = activity;
-		    		add(node);
-
-		    		for(GUIElement element: activity.m_pElements)
-		    		{
-		    			MutableGUITreeNode elementNode = new MutableGUITreeNode(element.getObjectName());
-		    			elementNode.linkedElement = element;
-		    			node.add(elementNode);
-		    		}
-		    	}
-	    	}
-    	};
-    	DefaultTreeModel _defDefaultTreeModel = new DefaultTreeModel(_defMutableTreeNode);
-    	m_pCategoryTree.setModel(_defDefaultTreeModel);
-        m_pCategoryTree.addTreeSelectionListener(this.m_pTreeSelectionListener);
         m_pLoadingProgressBar.setIndeterminate(false);
         m_pLoadingLabel.setText("Ready");
     }
@@ -319,86 +228,61 @@ public class MainDialog extends JDialog {
 	public MainDialog() {
 		setBounds(100, 100, 700, 520);
 		getContentPane().setLayout(new BorderLayout());
-		{
-			JMenuBar menuBar = new JMenuBar();
-			getContentPane().add(menuBar, BorderLayout.NORTH);
-			{
-				JMenu mnNewMenu = new JMenu("File");
-				mnNewMenu.setMnemonic('F');
-				menuBar.add(mnNewMenu);
-				{
-					JMenuItem mntmFile = new JMenuItem("Load definition...");
-					mntmFile.addActionListener(m_pfileOpenListener);
-					mnNewMenu.add(mntmFile);
-				}
-			}
-		}
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 		{
 			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			contentPanel.add(tabbedPane);
-			JSplitPane splitPane = new JSplitPane();
-			tabbedPane.addTab("Application data", null, splitPane, null);
-			{
-				JPanel panel = new JPanel();
-				splitPane.setLeftComponent(panel);
-				{
-					m_pCategoryTree = new JTree();
-					m_pCategoryTree.setModel(new DefaultTreeModel(
-						new DefaultMutableTreeNode("Application") {
-							/**
-							 * 
-							 */
-							private static final long serialVersionUID = 1L;
-
-							{
-						//		getContentPane().add(new DefaultMutableTreeNode("(Activities)"));
-							}
-						}
-					));
-					m_pCategoryTree.setBorder(null);
-					panel.add(m_pCategoryTree);
-				}
-			}
-			JPanel panel_1 = new JPanel();
-			splitPane.setRightComponent(panel_1);
-			panel_1.setLayout(new CardLayout(0, 0));
-			
-			String[] tableNames = {"Name", "Value"};
-			JTableHeader header = new JTableHeader();
-			TableModel model = new DefaultTableModel(tableNames, 10);
-			m_pTable = new JTable();
-			m_pTable.setModel(model);
-			m_pTable.setEnabled(false);
-			m_pTable.setTableHeader(header);
-			panel_1.add(m_pTable, "name_54266533460969");
 			{
 				JPanel panel = new JPanel();
 				tabbedPane.addTab("Generator", null, panel, null);
 				panel.setLayout(null);
 				
-				JLabel lblSelectOutputDirectory = new JLabel("Select output directory...");
+				JLabel lblSelectOutputDirectory = new JLabel("2. Select output directory...");
 				lblSelectOutputDirectory.setFont(new Font("Lucida Grande", Font.BOLD, 15));
-				lblSelectOutputDirectory.setBounds(6, 6, 239, 16);
+				lblSelectOutputDirectory.setBounds(6, 74, 239, 16);
 				panel.add(lblSelectOutputDirectory);
 				
 				m_pDirectoryField = new JTextField();
 				m_pDirectoryField.setEnabled(false);
 				m_pDirectoryField.setEditable(false);
-				m_pDirectoryField.setBounds(91, 34, 443, 28);
+				m_pDirectoryField.setBounds(91, 102, 443, 28);
 				panel.add(m_pDirectoryField);
 				m_pDirectoryField.setColumns(10);
 				
 				JButton btnSelect = new JButton("Browse...");
 				btnSelect.addActionListener(m_pSelectDirectoryListener);
-				btnSelect.setBounds(546, 35, 117, 29);
+				btnSelect.setBounds(546, 103, 117, 29);
 				panel.add(btnSelect);
 				
-				m_pStatusMessagesPane = new JTextPane();
-				m_pStatusMessagesPane.setBounds(6, 73, 657, 302);
-				panel.add(m_pStatusMessagesPane);
+				JLabel lblLoadDefinition = new JLabel("1. Load definition file...");
+				lblLoadDefinition.setFont(new Font("Lucida Grande", Font.BOLD, 15));
+				lblLoadDefinition.setBounds(6, 6, 239, 16);
+				panel.add(lblLoadDefinition);
+				
+				textField = new JTextField();
+				textField.setEnabled(false);
+				textField.setEditable(false);
+				textField.setColumns(10);
+				textField.setBounds(91, 34, 443, 28);
+				panel.add(textField);
+				
+				JButton button = new JButton("Browse...");
+				button.setBounds(546, 35, 117, 29);
+				button.addActionListener(m_pfileOpenListener);
+				panel.add(button);
+				m_pOkButton.setFont(new Font("Lucida Grande", Font.BOLD, 20));
+				m_pOkButton.setBounds(224, 316, 231, 59);
+				panel.add(m_pOkButton);
+				m_pOkButton.addActionListener(m_pGenerateProjectsButtonListener);
+				m_pOkButton.setActionCommand("OK");
+				getRootPane().setDefaultButton(m_pOkButton);
+				
+				JLabel lblClickgenerate = new JLabel("3. Click \"Generate\" button");
+				lblClickgenerate.setFont(new Font("Lucida Grande", Font.BOLD, 15));
+				lblClickgenerate.setBounds(6, 142, 239, 16);
+				panel.add(lblClickgenerate);
 			}
 		}
 		{
@@ -412,14 +296,10 @@ public class MainDialog extends JDialog {
 				buttonPane.add(m_pLoadingLabel);
 			}
 			{
-				m_pOkButton.addActionListener(m_pGenerateProjectsButtonListener);
-				m_pOkButton.setActionCommand("OK");
 				if(m_pOutputDirectory == null)
 				{
 					m_pOkButton.setEnabled(false);
 				}
-				buttonPane.add(m_pOkButton);
-				getRootPane().setDefaultButton(m_pOkButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
