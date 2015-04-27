@@ -41,7 +41,7 @@ public class Activity: UIViewController {
      * Adds a new text field to this activity
      * @param textfield The text field to add to this activity
      */
-    public func addElement(textfield: Textfield)
+    public func addTextfield(textfield: Textfield)
     {
         containedViews.append(textfield.getWrappedElement());
     }
@@ -50,7 +50,7 @@ public class Activity: UIViewController {
     * Adds a new button to this activity
     * @param button The button to add to this activity
     */
-    public func addElement(button: Button)
+    public func addButton(button: Button)
     {
         containedViews.append(button.getWrappedElement());
     }

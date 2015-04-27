@@ -1271,6 +1271,12 @@ public class JavaCodeParser {
 			}
 		}*/
 		
+		/* Activity public members: */
+		public_members.add("addButton(button)");
+		public_members.add("addTextfield(textfield)");
+		public_members.add("createActivity()");
+		public_members.add("getActivity()");
+		public_members.add("getWrappedElement()");
 		public_members.add("getLabel()");
 		public_members.add("setLabel(label)");
 		public_members.add("setPosition(x, y)");

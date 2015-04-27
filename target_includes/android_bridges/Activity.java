@@ -45,7 +45,7 @@ public class Activity {
 	 * Adds a text field to this activity
 	 * @param textfield The text field to add to this activity
 	 */
-	public void addElement(Textfield textfield) {
+	public void addTextfield(Textfield textfield) {
 		containedViews.add(textfield.getWrappedElement());
 		parentContext.addContentView(textfield.getWrappedElement(), textfield.getWrappedElement().getLayoutParams());
 	}
@@ -54,7 +54,7 @@ public class Activity {
 	 * Adds a button to this activity
 	 * @param button The button to add to this activity
 	 */
-	public void addElement(Button button) {
+	public void addButton(Button button) {
 		containedViews.add(button.getWrappedElement());
 		parentContext.addContentView(button.getWrappedElement(), button.getWrappedElement().getLayoutParams());
 	}
