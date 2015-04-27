@@ -64,6 +64,15 @@ public class Textfield {
 	}
 	
 	/**
+	 * Returns the number that might be contained in this text
+	 * @return Double value of this text
+	 */
+	public Double getNumber()
+	{
+		return Double.parseDouble(this.getText());
+	}
+	
+	/**
 	 * Sets the size of this element
 	 * @param width The width of this element
 	 * @param height The height of this element

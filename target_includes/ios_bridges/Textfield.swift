@@ -68,6 +68,15 @@ public class Textfield {
     }
     
     /**
+     * Returns the number that might be contained in this text
+     * @return Double value of this text
+     */
+    public func getNumber() -> Double
+    {
+        return (getText() as NSString).doubleValue;
+    }
+    
+    /**
      * Adds text to this text field
      * @text The text to add to this text field
      */
