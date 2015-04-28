@@ -1346,6 +1346,8 @@ public class JavaCodeParser {
 		methodToParamNamesMap.put("addText",      new String[] {"text"});
 		methodToParamNamesMap.put("setText",      new String[] {"text"});
 		methodToParamNamesMap.put("getText",      null);
+		methodToParamNamesMap.put("setNumber", new String[] {"number"});
+		methodToParamNamesMap.put("getNumber",    null);
 		return methodToParamNamesMap;
 	}
 	
