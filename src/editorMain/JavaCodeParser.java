@@ -928,7 +928,7 @@ public class JavaCodeParser {
 		}
 		
 		// Check if this is a member function:
-		definitionValue = unwrapMemberFunction(definitionValue);
+		definitionValue = unwrapMemberFunctionSignature(definitionValue);
 		
 		// this durch self ersetzen:
 		definitionValue = definitionValue.replace("this", "self");
@@ -1117,7 +1117,7 @@ public class JavaCodeParser {
 					//queryFunctionName(currentGroupMatch);
 					if(!currentGroupMatch.isEmpty())
 					{
-					  functionName = unwrapMemberFunction(currentGroupMatch.trim());
+					  functionName = unwrapMemberFunctionSignature(currentGroupMatch.trim());
 					}
 					break;
 				case 3: // Function parameter?
@@ -1379,7 +1379,7 @@ public class JavaCodeParser {
 	 * @param functionSignature The complete function signature
 	 * @return Unwrapped function name
 	 */
-	private String unwrapMemberFunction(String functionSignature)
+	private String unwrapMemberFunctionSignature(String functionSignature)
 	{
 		for(String optionalVar: m_pOptionalVars)
 			if(functionSignature.startsWith(optionalVar + "."))
