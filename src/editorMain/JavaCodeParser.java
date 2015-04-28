@@ -947,6 +947,7 @@ public class JavaCodeParser {
 					functionName = unwrapMemberFunctionSignature(currentGroupMatch.trim());
 					break;
 				case 3: // Function parameters!
+					//System.out.println("Trying to unwrap function parameters: " + currentGroupMatch.trim());
 					parameters = unwrapAndLabelParameterList(functionName, currentGroupMatch, false);
 					break;
 				}
@@ -954,7 +955,9 @@ public class JavaCodeParser {
 			}
 			return String.format("%s(%s)", functionName, parameters.replace("this", "self"));
 		}
-		definitionValue = unwrapMemberFunctionSignature(definitionValue);
+		
+		// Check if this is a known variable:
+		definitionValue = unwrapVariable(definitionValue);
 		
 		// this durch self ersetzen:
 		definitionValue = definitionValue.replace("this", "self");
@@ -1415,15 +1418,20 @@ public class JavaCodeParser {
 	 */
 	private String unwrapMemberFunctionSignature(String functionSignature)
 	{
+		System.out.println("Trying " + functionSignature);
 		for(String optionalVar: m_pOptionalVars)
-		{
-			String regex = String.format("^" + optionalVar + "[\\.\\s\\;]?");
-			if(functionSignature.matches(regex))
-			{
+			if(functionSignature.startsWith(optionalVar + ".") || functionSignature.startsWith(optionalVar + " ") || functionSignature.startsWith(optionalVar + ";"))
 				functionSignature = functionSignature.replaceFirst(optionalVar, optionalVar + "!");
-			}
-		}
 		return functionSignature;
+	}
+	
+	private String unwrapVariable(String variable)
+	{
+		variable = variable.trim();
+		for(String optionalVar: m_pOptionalVars)
+			if(variable.equals(optionalVar))
+				variable += "!";
+		return variable;
 	}
 	
 	/**
