@@ -881,8 +881,7 @@ public class JavaCodeParser {
 				addToSwiftFile(swiftVarDeclaration);
 			}
 			addToAndroidFile(variableDeclarationMatcher.group(0));
-			
-			fileInput = fileInput.replaceFirst(variableDeclarationMatcher.group(0), "");
+			fileInput = fileInput.replaceFirst(regexMemberDeclaration, "");
 		}
 		return fileInput;
 	}
