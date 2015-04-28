@@ -1416,8 +1416,13 @@ public class JavaCodeParser {
 	private String unwrapMemberFunctionSignature(String functionSignature)
 	{
 		for(String optionalVar: m_pOptionalVars)
-			if(functionSignature.startsWith(optionalVar + "."))
+		{
+			String regex = String.format("^" + optionalVar + "[\\.\\s\\;]?");
+			if(functionSignature.matches(regex))
+			{
 				functionSignature = functionSignature.replaceFirst(optionalVar, optionalVar + "!");
+			}
+		}
 		return functionSignature;
 	}
 	
