@@ -698,7 +698,6 @@ public class JavaCodeParser {
 				switch(i)
 				{
 				case 0: // Whole pattern match. Ignore!
-					System.out.println(currentGroupMatch);
 					break;
 					
 				case 1: // Outer access modifiers group
@@ -874,17 +873,15 @@ public class JavaCodeParser {
 				{
 					addToSwiftFile(String.format("\r\nself.window = %s.getWrappedElement();", variableName));
 				}
-				System.out.println(swiftVarDeclaration);
 			}
 			else
 			{
 				String swiftVarDeclaration = String.format("%s %s:[%s]%s;", accessModifiers, variableName, dataType, definition.equals("") ? "" : " = " + definition);
 				addToSwiftFile(swiftVarDeclaration);
-				System.out.println(swiftVarDeclaration);
 			}
 			addToAndroidFile(variableDeclarationMatcher.group(0));
 			
-			fileInput = fileInput.replace(variableDeclarationMatcher.group(0), ""); //fileInput.substring(variableDeclarationMatcher.group(0).length(), fileInput.length() - 1);
+			fileInput = fileInput.replace(variableDeclarationMatcher.group(0), "");
 		}
 		return fileInput;
 	}
