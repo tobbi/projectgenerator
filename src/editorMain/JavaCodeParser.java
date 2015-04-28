@@ -1376,15 +1376,15 @@ public class JavaCodeParser {
 	
 	/**
 	 * Unwraps a member function (adds exclamation marks to optional values)
-	 * @param functionName The complete function name
+	 * @param functionSignature The complete function signature
 	 * @return Unwrapped function name
 	 */
-	private String unwrapMemberFunction(String functionName)
+	private String unwrapMemberFunction(String functionSignature)
 	{
 		for(String optionalVar: m_pOptionalVars)
-			if(functionName.startsWith(optionalVar + "."))
-				functionName = functionName.replaceFirst(optionalVar, optionalVar + "!");
-		return functionName;
+			if(functionSignature.startsWith(optionalVar + "."))
+				functionSignature = functionSignature.replaceFirst(optionalVar, optionalVar + "!");
+		return functionSignature;
 	}
 	
 	/**

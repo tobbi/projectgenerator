@@ -77,6 +77,15 @@ public class Textfield {
     }
     
     /**
+    * Sets the passed number (parameter number) as text
+    * @param number The number to set as text
+    */
+    public func setNumber(number: Double)
+    {
+        setText(String(format:"%f", number));
+    }
+    
+    /**
      * Adds text to this text field
      * @text The text to add to this text field
      */
