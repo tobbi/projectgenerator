@@ -882,7 +882,7 @@ public class JavaCodeParser {
 			}
 			addToAndroidFile(variableDeclarationMatcher.group(0));
 			
-			fileInput = fileInput.replace(variableDeclarationMatcher.group(0), "");
+			fileInput = fileInput.replaceFirst(variableDeclarationMatcher.group(0), "");
 		}
 		return fileInput;
 	}
