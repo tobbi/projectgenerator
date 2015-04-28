@@ -905,6 +905,8 @@ public class JavaCodeParser {
 			// Swift benutzt kein new zur Instantiierung
 			definitionValue = definitionValue.replaceFirst("new ", "");
 		}*/
+		
+		// Check if what we're calling there is a constructor:
 		Matcher constructorCallMatcher = regexConstructorCallPattern.matcher(definitionValue);
 		if(constructorCallMatcher.find())
 		{
@@ -931,6 +933,12 @@ public class JavaCodeParser {
 			}
 			return String.format("%s(%s)", constructorName, parameters.replace("this", "self"));
 		}
+		
+		definitionValue = unwrapMemberFunction(definitionValue);
+		System.out.println("Definition value is: " + definitionValue);
+		// Check if what we're calling here is a function:
+		//definitionValue = stateParserFunctionCall(definitionValue + ";");
+		
 		// Check if definition value matches function call (or constructor call):
 		//System.out.println("Checking definition value: " + definitionValue);
 		//definitionValue = stateParserFunctionCall(definitionValue + ";");
@@ -1122,15 +1130,7 @@ public class JavaCodeParser {
 					//queryFunctionName(currentGroupMatch);
 					if(!currentGroupMatch.isEmpty())
 					{
-					  functionName = currentGroupMatch;
-					  for(String optionalVar: m_pOptionalVars)
-					  {
-						  if(functionName.startsWith(optionalVar + "."))
-						  {
-							  functionName = functionName.replaceFirst(optionalVar, optionalVar + "!");
-							  break;
-						  }
-					  }
+					  functionName = unwrapMemberFunction(currentGroupMatch.trim());
 					}
 					break;
 				case 3: // Function parameter?
@@ -1385,6 +1385,19 @@ public class JavaCodeParser {
 		}
 		
 		return parameters;
+	}
+	
+	/**
+	 * Unwraps a member function (adds exclamation marks to optional values)
+	 * @param functionName
+	 * @return
+	 */
+	private String unwrapMemberFunction(String functionName)
+	{
+		for(String optionalVar: m_pOptionalVars)
+			if(functionName.startsWith(optionalVar + "."))
+				functionName = functionName.replaceFirst(optionalVar, optionalVar + "!");
+		return functionName;
 	}
 	
 	private void addFunctionToKnownFunctionsList(String functionName, String parameterList)
