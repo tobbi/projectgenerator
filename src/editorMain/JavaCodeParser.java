@@ -1315,10 +1315,10 @@ public class JavaCodeParser {
 		HashMap<String, String[]> methodToParamNamesMap = new HashMap<String, String[]>();
 		
 		/* Constructors */
-		methodToParamNamesMap.put("Activity", new String[] {"context"});
-		methodToParamNamesMap.put("Application", new String[] {"context"});
-		methodToParamNamesMap.put("Button", new String[] {"context"});
-		methodToParamNamesMap.put("Textfield", new String[] {"context"});
+		methodToParamNamesMap.put("Activity",       new String[] {"context"});
+		methodToParamNamesMap.put("Application",    new String[] {"context"});
+		methodToParamNamesMap.put("Button",         new String[] {"context"});
+		methodToParamNamesMap.put("Textfield",      new String[] {"context"});
 		
 		/* Application public members: */		
 		methodToParamNamesMap.put("createActivity", null);
