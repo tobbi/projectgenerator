@@ -894,19 +894,14 @@ public class JavaCodeParser {
 			return "";
 		
 		definitionValue = definitionValue.trim();
+
 		// NULL-Werte korrekt handeln
 		if(definitionValue.equals("null"))
 		{
 			return "nil";
 		}
 		
-		/*if(definitionValue.startsWith("new "))
-		{
-			// Swift benutzt kein new zur Instantiierung
-			definitionValue = definitionValue.replaceFirst("new ", "");
-		}*/
-		
-		// Check if what we're calling there is a constructor:
+		// Check if what we're calling is a constructor:
 		Matcher constructorCallMatcher = regexConstructorCallPattern.matcher(definitionValue);
 		if(constructorCallMatcher.find())
 		{
@@ -934,14 +929,8 @@ public class JavaCodeParser {
 			return String.format("%s(%s)", constructorName, parameters.replace("this", "self"));
 		}
 		
+		// Check if this is a member function:
 		definitionValue = unwrapMemberFunction(definitionValue);
-		System.out.println("Definition value is: " + definitionValue);
-		// Check if what we're calling here is a function:
-		//definitionValue = stateParserFunctionCall(definitionValue + ";");
-		
-		// Check if definition value matches function call (or constructor call):
-		//System.out.println("Checking definition value: " + definitionValue);
-		//definitionValue = stateParserFunctionCall(definitionValue + ";");
 		
 		// this durch self ersetzen:
 		definitionValue = definitionValue.replace("this", "self");
