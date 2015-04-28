@@ -1389,8 +1389,8 @@ public class JavaCodeParser {
 	
 	/**
 	 * Unwraps a member function (adds exclamation marks to optional values)
-	 * @param functionName
-	 * @return
+	 * @param functionName The complete function name
+	 * @return Unwrapped function name
 	 */
 	private String unwrapMemberFunction(String functionName)
 	{
@@ -1400,6 +1400,11 @@ public class JavaCodeParser {
 		return functionName;
 	}
 	
+	/**
+	 * Adds a function to the list of known functions (containing function name -> parameter labels mapping)
+	 * @param functionName The name of the function
+	 * @param parameterList Stringified list of parameter labels
+	 */
 	private void addFunctionToKnownFunctionsList(String functionName, String parameterList)
 	{
 		String[] parameterNameList = new String[parameterList.split(",").length];
