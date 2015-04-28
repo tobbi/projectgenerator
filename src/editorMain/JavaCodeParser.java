@@ -1419,7 +1419,6 @@ public class JavaCodeParser {
 	 */
 	private String unwrapMemberFunctionSignature(String functionSignature)
 	{
-		System.out.println("Trying " + functionSignature);
 		for(String optionalVar: m_pOptionalVars)
 			if(functionSignature.startsWith(optionalVar + ".") || functionSignature.startsWith(optionalVar + " ") || functionSignature.startsWith(optionalVar + ";"))
 				functionSignature = functionSignature.replaceFirst(optionalVar, optionalVar + "!");
