@@ -977,7 +977,7 @@ public class JavaCodeParser {
 			return "Character";
 		if(dataType.equals("byte"))
 			return "UInt8";
-		if(dataType.equals("boolean") || dataType.equals("bool"))
+		if(dataType.equalsIgnoreCase("boolean"))
 			return "Bool";
 		if(dataType.equals("double"))
 			return "Double";
@@ -1425,6 +1425,11 @@ public class JavaCodeParser {
 		return functionSignature;
 	}
 	
+	/**
+	 * Unwraps a variable (adds exclamation mark to optional value)
+	 * @param variable The variable to unwrap
+	 * @return Unwrapped version of the variable
+	 */
 	private String unwrapVariable(String variable)
 	{
 		variable = variable.trim();
