@@ -997,7 +997,7 @@ public class JavaCodeParser {
 					{
 					   if(!currentGroupMatch.equals("static")) // static methods are supposed to be class functions
 					   {
-					      accessModifiers += String.format("%s ", "class func");
+					      accessModifiers += String.format("%s ", "func");
 					   }
 					   else
 					   {
@@ -1054,14 +1054,14 @@ public class JavaCodeParser {
 			else if(!returnType.equals(""))
 			{
 				if(!nextDeclarationIsEventHandler)
-					addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "class func", functionName, parameters, returnType));
+					addToSwiftFile(String.format("%s %s %s(%s) -> %s", accessModifiers, "func", functionName, parameters, returnType));
 				else
 					addToSwiftFile(String.format("%s %s(%s) -> %s", "func", functionName, parameters, returnType));
 			}
 			else
 			{
 				if(!nextDeclarationIsEventHandler)
-					addToSwiftFile(String.format("%s %s %s(%s)", accessModifiers, "class func", functionName, parameters));
+					addToSwiftFile(String.format("%s %s %s(%s)", accessModifiers, "func", functionName, parameters));
 				else
 					addToSwiftFile(String.format("%s %s(%s)", "func", functionName, parameters));
 			}
