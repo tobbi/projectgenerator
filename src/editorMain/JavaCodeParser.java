@@ -928,6 +928,32 @@ public class JavaCodeParser {
 		}
 		
 		// Check if this is a member function:
+		Matcher functionCallMatcher = functionCallDeclarationRegex.matcher(definitionValue + ";");
+		if(functionCallMatcher.find())
+		{
+			int i = 0;
+			String functionName = "";
+			String parameters = "";
+			while(i <= functionCallMatcher.groupCount())
+			{
+				String currentGroupMatch = functionCallMatcher.group(i);
+				switch(i)
+				{
+				case 0: // Whole group match. Ignore!
+					break;
+				case 1: // new... Ignore!
+					break;
+				case 2: // Function name!
+					functionName = unwrapMemberFunctionSignature(currentGroupMatch.trim());
+					break;
+				case 3: // Function parameters!
+					parameters = unwrapAndLabelParameterList(functionName, currentGroupMatch, false);
+					break;
+				}
+				i++;
+			}
+			return String.format("%s(%s)", functionName, parameters.replace("this", "self"));
+		}
 		definitionValue = unwrapMemberFunctionSignature(definitionValue);
 		
 		// this durch self ersetzen:
@@ -1344,6 +1370,19 @@ public class JavaCodeParser {
 		int j = 0;
 		for(String parameter: parametersTemp) {
 			parameter = parameter.trim();
+			for(String optionalVar: m_pOptionalVars)
+			{
+				// Normal parameter passes!
+				if(parameter.equals(optionalVar))
+				{
+					parametersTemp[j] += "!";
+				}
+				// Parameter passes that are part of a function
+				if(parameter.startsWith(optionalVar + "."))
+				{
+					parametersTemp[j] = parametersTemp[j].replace(optionalVar, optionalVar + "!");
+				}
+			}
 			// Konstruktoren muessen alle Parameter gelabeled haben,
 			// normale Funktionsaufrufe nur ab dem zweiten.
 			if(j > 0 || isConstructor)
@@ -1354,11 +1393,6 @@ public class JavaCodeParser {
 					parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
 				}
 			}
-			for(String optionalVar: m_pOptionalVars)
-				if(optionalVar.equals(parameter))
-				{
-					parametersTemp[j] += "!";
-				}
 			j++;
 		}
 		// Parameter array -> String conversion
