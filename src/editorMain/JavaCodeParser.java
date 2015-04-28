@@ -507,6 +507,7 @@ public class JavaCodeParser {
 			}
 			else
 			{
+				addToAndroidFile("{");
 				addToSwiftFile("{");
 				fileInput = fileInput.replaceFirst("\\{", "");
 				stateStack.push(State.IF);
