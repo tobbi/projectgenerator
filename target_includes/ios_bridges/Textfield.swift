@@ -82,7 +82,7 @@ public class Textfield {
     */
     public func setNumber(number: Double)
     {
-        setText(String(format:"%f", number));
+        setText("\(number)");
     }
     
     /**
