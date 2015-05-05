@@ -84,7 +84,13 @@ public class Button {
     */
     public func setSize(width: CGFloat, height: CGFloat)
     {
-        self.innerButton.frame = CGRectMake(self.x, self.y, width, height);
+        var screenWidth = (self.parentUIContext as! ApplicationView).getWidth();
+        var screenHeight = (self.parentUIContext as! ApplicationView).getHeight();
+
+        var newWidth = (screenWidth / 100) * width;
+        var newHeight = (screenHeight / 100) * height;
+        
+        self.innerButton.frame = CGRectMake(self.x, self.y, newWidth, newHeight);
     }
     
     /**
@@ -94,9 +100,15 @@ public class Button {
     */
     public func setPosition(x: CGFloat, y: CGFloat)
     {
-        self.x = x;
-        self.y = y;
-        self.innerButton.frame = CGRectMake(x, y, self.innerButton.frame.width, self.innerButton.frame.height);
+        var screenWidth = (self.parentUIContext as! ApplicationView).getWidth();
+        var screenHeight = (self.parentUIContext as! ApplicationView).getHeight();
+
+        var newX = (screenWidth / 100) * x;
+        var newY = (screenHeight / 100) * y;
+
+        self.x = newX;
+        self.y = newY;
+        self.innerButton.frame = CGRectMake(newX, newY, self.innerButton.frame.width, self.innerButton.frame.height);
     }
     
     /**

@@ -109,7 +109,13 @@ public class Textfield {
     */
     public func setSize(width: CGFloat, height: CGFloat)
     {
-        self.innerTextField.frame = CGRectMake(self.x, self.y, width, height);
+        var screenWidth = (self.parentUIContext as! ApplicationView).getWidth();
+        var screenHeight = (self.parentUIContext as! ApplicationView).getHeight();
+        
+        var newWidth = (screenWidth / 100) * width;
+        var newHeight = (screenHeight / 100) * height;
+
+        self.innerTextField.frame = CGRectMake(self.x, self.y, newWidth, newHeight);
     }
     
     /**
@@ -119,7 +125,13 @@ public class Textfield {
     */
     public func setPosition(x: CGFloat, y: CGFloat)
     {
-        self.innerTextField.frame = CGRectMake(x, y, self.innerTextField.frame.width, self.innerTextField.frame.height);
+        var screenWidth = (self.parentUIContext as! ApplicationView).getWidth();
+        var screenHeight = (self.parentUIContext as! ApplicationView).getHeight();
+        
+        var newX = (screenWidth / 100) * x;
+        var newY = (screenHeight / 100) * y;
+
+        self.innerTextField.frame = CGRectMake(newX, newY, self.innerTextField.frame.width, self.innerTextField.frame.height);
     }
     
     /**
