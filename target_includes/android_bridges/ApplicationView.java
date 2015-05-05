@@ -16,13 +16,26 @@ public class ApplicationView {
      */
 	private ArrayList<View> containedViews;
 	
+	/**
+	 * Width of the parent activity
+	 */
+	private int width;
+	
+	/**
+	 * Height of the parent activity
+	 */
+	private int height;
+	
     /**
      * Initialize activity
      * @param activity The MainActivity parent (aka "Main function")
      */
-	public ApplicationView(android.app.Activity context) {
+	public ApplicationView(android.app.Activity context, int width, int height) {
 		parentContext = context;
 		containedViews = new ArrayList<View>();
+
+		this.width = width;
+		this.height = height;
 	}
 	
     /**

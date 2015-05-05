@@ -131,9 +131,9 @@ public class Textfield {
     }
     
     /**
-     * Adds this text field to its parent activity
+     * Adds this text field to its parent application view
      */
-    public func addToActivity()
+    public func addToApplicationView()
     {
         parentUIContext.view.addSubview(getWrappedElement());
     }

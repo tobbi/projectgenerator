@@ -12,7 +12,7 @@ public class Application {
 	/**
 	 * The current "bridge" activity
 	 */
-	private ApplicationView activity = null;
+	private ApplicationView applicationView = null;
 	
 	/**
 	 * The height and width of the created activity
@@ -69,16 +69,16 @@ public class Application {
      * Create an activity inside this window
      * @return The created activity
      */
-	public ApplicationView createActivity() {
-		activity = new ApplicationView(innerActivity);
-		return activity;
+	public ApplicationView createApplicationView() {
+		applicationView = new ApplicationView(innerActivity, width, height);
+		return applicationView;
 	}
 	
 	/**
 	 * Gets the current activity inside this window
 	 * @return The activity inside this window
 	 */
-	public ApplicationView getActivity() {
-		return activity;
+	public ApplicationView getApplicationView() {
+		return applicationView;
 	}
 }

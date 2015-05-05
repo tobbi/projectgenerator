@@ -79,8 +79,8 @@ public class Button {
     
     /**
     * Sets the size of this element
-    * @param width The width of this element
-    * @param height The height of this element
+    * @param width The width of this element in percent
+    * @param height The height of this element in percent
     */
     public func setSize(width: CGFloat, height: CGFloat)
     {
@@ -108,9 +108,9 @@ public class Button {
     }
     
     /**
-     * Adds this button to the specified activity
+     * Adds this button to the specified application view
      */
-    public func addToActivity()
+    public func addToApplicationView()
     {
         parentUIContext.view.addSubview(getWrappedElement());
     }

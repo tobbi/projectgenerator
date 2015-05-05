@@ -21,12 +21,17 @@ public class ApplicationView: UIViewController {
      */
     var parentContext: UIResponder;
     
+    var width: Int = 0, height: Int = 0;
+    
     /**
      * Initialize activity
      * @param context The UIResponder parent (aka "Main function")
      */
-    public init(context: UIResponder) {
-        parentContext = context;
+    public init(context: UIResponder, width: Int, height: Int) {
+        self.parentContext = context;
+        self.width         = width;
+        self.height        = height;
+        
         super.init(nibName: nil, bundle: nil);
     }
 

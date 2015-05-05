@@ -114,10 +114,9 @@ public class Textfield {
 	}
 	
 	/**
-	 * Adds this button to the specified activity.
-	 * @param activity The activity to add the button to
+	 * Adds this button to the application view.
 	 */
-	public void addToActivity() {
+	public void addToApplicationView() {
 		((android.app.Activity)parentContext).addContentView(this.getWrappedElement(), this.getWrappedElement().getLayoutParams());
 	}
 }

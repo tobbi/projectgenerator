@@ -59,8 +59,8 @@ public class Button {
 	
 	/**
 	 * Sets the size of this element
-	 * @param width The width of this element
-	 * @param height The height of this element
+	 * @param width The width of this element in percent
+	 * @param height The height of this element in percent
 	 */
 	public void setSize(float width, float height)
 	{
@@ -92,7 +92,7 @@ public class Button {
 	 * Adds this button to the specified activity.
 	 * @param activity The activity to add the button to
 	 */
-	public void addToActivity() {
+	public void addToApplicationView() {
 		((android.app.Activity)parentContext).addContentView(this.getWrappedElement(), this.getWrappedElement().getLayoutParams());
 	}
 	
