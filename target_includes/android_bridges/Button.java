@@ -23,7 +23,7 @@ public class Button {
 	 * Private layout params instance
 	 */
 	private LayoutParams layoutParams = null;
-	
+
 	/**
 	 * Parent context (activity?)
 	 */

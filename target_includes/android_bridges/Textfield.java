@@ -16,11 +16,6 @@ public class Textfield {
 	 */
 	private EditText editText;
 	
-	/**
-	 * Layout parameters for wrap content elements
-	 */
-	//private final LayoutParams wrapContentParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	
 	private Context parentContext = null;
 	
 	private ApplicationView parentView = null;
@@ -93,7 +88,7 @@ public class Textfield {
 	{
 		int newWidth = (int)((parentView.getWidth() / 100) * width);
 		int newHeight = (int)(parentView.getHeight() / 100 * height);
-		editText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		editText.setLayoutParams(new LayoutParams(newWidth, newHeight));
 		editText.setWidth(newWidth);
 		editText.setHeight(newHeight);
 	}
