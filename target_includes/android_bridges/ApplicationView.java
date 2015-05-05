@@ -27,7 +27,7 @@ public class ApplicationView {
 	private int height;
 	
     /**
-     * Initialize activity
+     * Initialize application view
      * @param activity The MainActivity parent (aka "Main function")
      */
 	public ApplicationView(android.app.Activity context, int width, int height) {
@@ -55,8 +55,8 @@ public class ApplicationView {
 	}
 
 	/**
-	 * Adds a text field to this activity
-	 * @param textfield The text field to add to this activity
+	 * Adds a text field to this application view
+	 * @param textfield The text field to add to this application view
 	 */
 	public void addTextfield(Textfield textfield) {
 		containedViews.add(textfield.getWrappedElement());
@@ -64,8 +64,8 @@ public class ApplicationView {
 	}
 	
 	/**
-	 * Adds a button to this activity
-	 * @param button The button to add to this activity
+	 * Adds a button to this application view
+	 * @param button The button to add to this application view
 	 */
 	public void addButton(Button button) {
 		containedViews.add(button.getWrappedElement());

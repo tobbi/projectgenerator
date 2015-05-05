@@ -24,7 +24,7 @@ public class ApplicationView: UIViewController {
     var width: CGFloat = 0, height: CGFloat = 0;
     
     /**
-     * Initialize activity
+     * Initialize application view
      * @param context The UIResponder parent (aka "Main function")
      */
     public init(context: UIResponder, width: CGFloat, height: CGFloat) {
@@ -43,8 +43,8 @@ public class ApplicationView: UIViewController {
     }
     
     /**
-     * Adds a new text field to this activity
-     * @param textfield The text field to add to this activity
+     * Adds a new text field to this application view
+     * @param textfield The text field to add to this application view
      */
     public func addTextfield(textfield: Textfield)
     {
@@ -52,8 +52,8 @@ public class ApplicationView: UIViewController {
     }
     
     /**
-    * Adds a new button to this activity
-    * @param button The button to add to this activity
+    * Adds a new button to this application view
+    * @param button The button to add to this application view
     */
     public func addButton(button: Button)
     {
@@ -79,7 +79,7 @@ public class ApplicationView: UIViewController {
     }
     
     /**
-     * Puts all added elements to this activity
+     * Puts all added elements on this application view
      */
     private func initializeUIElements() {
         for containedView in containedViews {
