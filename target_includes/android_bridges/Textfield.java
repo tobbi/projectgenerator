@@ -80,6 +80,15 @@ public class Textfield {
 	}
 	
 	/**
+	 * Sets the passed number (parameter number) as text
+	 * @param number The number to set as text
+	 */
+	public void setNumber(int number)
+	{
+		setText(String.valueOf(number));
+	}
+	
+	/**
 	 * Sets the size of this element
 	 * @param width The width of this element
 	 * @param height The height of this element
