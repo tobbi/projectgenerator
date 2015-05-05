@@ -1,5 +1,7 @@
 package de.fhflensburg.tobiasmarkus.androidBridge;
 
+import android.graphics.Point;
+
 public class Application {
 	
 	/**
@@ -8,9 +10,14 @@ public class Application {
 	private android.app.Activity innerActivity = null;
 	
 	/**
-	 * The current "bridge" application view
+	 * The current "bridge" activity
 	 */
-	private ApplicationView applicationView = null;
+	private ApplicationView activity = null;
+	
+	/**
+	 * The height and width of the created activity
+	 */
+	private int width = 0, height = 0;
 	
     /**
      * Initialize window
@@ -18,6 +25,36 @@ public class Application {
      */
 	public Application(android.app.Activity context) {
 		innerActivity = context;
+		
+		android.view.Display display = innerActivity.getWindowManager().getDefaultDisplay();
+		
+		// Display-Size-Variable anlegen:
+		Point display_size = new Point();
+
+		// Groesse des Bildschirms abholen:
+		display.getSize(display_size);
+		
+		// Speichern der Groesse in den Variablen width und height:
+		this.height = display_size.y;
+		this.width = display_size.x;
+	}
+	
+	/**
+	 * Gets the height of this application
+	 * @return Height of this application in pixels
+	 */
+	public int getHeight()
+	{
+		return height;
+	}
+	
+	/**
+	 * Gets the width of this application
+	 * @return Width of this application in pixels
+	 */
+	public int getWidth()
+	{
+		return width;
 	}
 	
     /**
@@ -30,18 +67,18 @@ public class Application {
 
     /**
      * Create an activity inside this window
-     * @return The created application view
+     * @return The created activity
      */
-	public ApplicationView createApplicationView() {
-		applicationView = new ApplicationView(innerActivity);
-		return applicationView;
+	public ApplicationView createActivity() {
+		activity = new ApplicationView(innerActivity);
+		return activity;
 	}
 	
 	/**
-	 * Gets the current application view inside this window
-	 * @return The application view inside this window
+	 * Gets the current activity inside this window
+	 * @return The activity inside this window
 	 */
-	public ApplicationView getApplicationView() {
-		return applicationView;
+	public ApplicationView getActivity() {
+		return activity;
 	}
 }

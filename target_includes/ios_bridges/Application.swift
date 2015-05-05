@@ -25,6 +25,11 @@ public class Application {
     var parentWindow: UIWindow;
     
     /**
+    * The height and width of the Application
+    */
+    var width: CGFloat = 0, height: CGFloat = 0;
+    
+    /**
      * Initialize window
      * @param context The UI Responder object (aka main function) we create this activity for
      */
@@ -37,6 +42,30 @@ public class Application {
         
         // Hintergrundfarbe festlegen:
         parentWindow.backgroundColor = UIColor.whiteColor();
+        
+        // Groesse des Fensters in Variablen speichern:
+        var screenRect: CGRect = parentWindow.bounds;
+        
+        width  = screenRect.size.width;
+        height = screenRect.size.height;
+    }
+    
+    /**
+    * Gets the width of this application
+    * @return Width of this application in pixels
+    */
+    public func getWidth() -> CGFloat
+    {
+        return width;
+    }
+    
+    /**
+    * Gets the height of this application
+    * @return Height of this application in pixels
+    */
+    public func getHeight() -> CGFloat
+    {
+        return height;
     }
     
     /**
@@ -59,7 +88,7 @@ public class Application {
      * @return The created activity
      */
     public func createApplicationView() -> ApplicationView {
-        var activity = Activity(context: parentContext);
+        var activity = ApplicationView(context: parentContext);
         parentWindow.rootViewController = activity;
         return activity;
     }
