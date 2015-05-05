@@ -23,6 +23,16 @@ public class ApplicationView: UIViewController {
     
     var width: CGFloat = 0, height: CGFloat = 0;
     
+    public func getWidth() -> CGFloat
+    {
+        return width;
+    }
+    
+    public func getHeight() -> CGFloat
+    {
+        return height;
+    }
+
     /**
      * Initialize application view
      * @param context The UIResponder parent (aka "Main function")
@@ -33,6 +43,11 @@ public class ApplicationView: UIViewController {
         self.height        = height;
         
         super.init(nibName: nil, bundle: nil);
+    }
+    
+    public func getParentContext() -> UIResponder
+    {
+        return parentContext;
     }
 
     /**

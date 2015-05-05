@@ -32,10 +32,10 @@ public class Button {
 	/**
 	 * Public constructor of class Button
 	 */
-	public Button(Context context)
+	public Button(ApplicationView parentView)
 	{
-		parentContext = context;
-		button = new android.widget.Button(context);
+		parentContext = parentView.getParentContext();
+		button = new android.widget.Button(parentContext);
 		button.setTextSize(12);
 	}
 	

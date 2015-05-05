@@ -38,12 +38,27 @@ public class ApplicationView {
 		this.height = height;
 	}
 	
+	public int getWidth()
+	{
+		return width;
+	}
+	
+	public int getHeight()
+	{
+		return height;
+	}
+	
+	public android.app.Activity getParentContext()
+	{
+		return parentContext;
+	}
+	
     /**
     * Creates a new button element
     * @return The created button element
     */
 	public Button createButton() {
-		return new Button(parentContext);
+		return new Button(this);
 	}
 	
     /**
@@ -51,7 +66,7 @@ public class ApplicationView {
     * @return The created text field element
     */
 	public Textfield createTextfield() {
-		return new Textfield(parentContext);
+		return new Textfield(this);
 	}
 
 	/**

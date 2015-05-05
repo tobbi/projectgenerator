@@ -26,9 +26,9 @@ public class Textfield {
 	/**
 	 * Public constructor of class Textfield
 	 */
-	public Textfield(Context context)
+	public Textfield(ApplicationView parentView)
 	{
-		parentContext = context;
+		parentContext = parentView.;
 		editText = new EditText(context);
 		//editText.setLayoutParams(wrapContentParams);
 		editText.setBackgroundColor(Color.WHITE);
