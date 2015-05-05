@@ -39,6 +39,17 @@ public class Application {
         parentWindow.backgroundColor = UIColor.whiteColor();
     }
     
+    public init(context: UIResponder, width: CGFloat, height: CGFloat)
+    {
+        parentContext = context;
+        
+        // Größe festlegen:
+        parentWindow = UIWindow(frame: CGRectMake(0, 0, width, height));
+
+        // Hintergrundfarbe festlegen:
+        parentWindow.backgroundColor = UIColor.whiteColor();
+    }
+    
     /**
      * Function call required by iOS
      */

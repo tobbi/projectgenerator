@@ -20,6 +20,10 @@ public class Application {
 		innerActivity = context;
 	}
 	
+	public Application(android.app.Activity context, int width, int height) {
+		innerActivity = context;
+	}
+	
     /**
      * Return the wrapped Activity instance
      * @return Activity The wrapped Activity instance
