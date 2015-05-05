@@ -42,7 +42,8 @@ public class Button {
 		this.parentView = parentView;
 		parentContext = parentView.getParentContext();
 		button = new android.widget.Button(parentContext);
-		button.setTextSize(12);
+		button.setPadding(0, 0, 0, 0);
+		button.setTextSize(10);
 	}
 	
 	/**

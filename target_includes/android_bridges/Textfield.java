@@ -33,7 +33,7 @@ public class Textfield {
 		this.parentView = parentView; 
 		parentContext = parentView.getParentContext();
 		editText = new EditText(parentContext);
-		//editText.setLayoutParams(wrapContentParams);
+		editText.setPadding(0, 0, 0, 0);
 		editText.setBackgroundColor(Color.WHITE);
 		editText.setTextColor(Color.BLACK);
 		editText.setEms(12);
@@ -93,9 +93,9 @@ public class Textfield {
 	{
 		int newWidth = (int)((parentView.getWidth() / 100) * width);
 		int newHeight = (int)(parentView.getHeight() / 100 * height);
-		editText.setLayoutParams(new LayoutParams(newWidth, newHeight));
-		//editText.setWidth((int)width);
-		//editText.setHeight((int)height);
+		editText.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		editText.setWidth(newWidth);
+		editText.setHeight(newHeight);
 	}
 	
 	/**
