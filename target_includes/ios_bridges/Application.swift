@@ -88,7 +88,7 @@ public class Application {
      * @return The created activity
      */
     public func createApplicationView() -> ApplicationView {
-        var activity = ApplicationView(context: parentContext);
+        var activity = ApplicationView(context: parentContext, width, height);
         parentWindow.rootViewController = activity;
         return activity;
     }
