@@ -267,7 +267,7 @@ public class MainDialog extends JDialog {
 				
 				JLabel lblLoadDefinition = new JLabel("1. Load cross-Java source file...");
 				lblLoadDefinition.setFont(new Font("Lucida Grande", Font.BOLD, 15));
-				lblLoadDefinition.setBounds(6, 6, 239, 16);
+				lblLoadDefinition.setBounds(6, 6, 252, 16);
 				panel.add(lblLoadDefinition);
 				
 				textField = new JTextField();
