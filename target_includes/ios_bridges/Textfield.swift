@@ -119,6 +119,18 @@ public class Textfield {
     }
     
     /**
+    * Sets the size of this element
+    * @param width The width of this element in percent
+    * @param height The height of this element in percent
+    */
+    public func setSize(width: Int, height: Int)
+    {
+        var f_width = CGFloat(width);
+        var f_height = CGFloat(height);
+        setSize(f_width, height: f_height);
+    }
+    
+    /**
     * Sets the position of this element
     * @param x The x position of this element
     * @param y The y position of this element
@@ -132,6 +144,18 @@ public class Textfield {
         var newY = (screenHeight / 100) * y;
 
         self.innerTextField.frame = CGRectMake(newX, newY, self.innerTextField.frame.width, self.innerTextField.frame.height);
+    }
+    
+    /**
+    * Sets the position of this element
+    * @param x The x position of this element
+    * @param y The y position of this element
+    */
+    public func setPosition(x: Int, y: Int)
+    {
+        var f_x = CGFloat(x);
+        var f_y = CGFloat(y);
+        setPosition(f_x, y: f_y);
     }
     
     /**
