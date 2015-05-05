@@ -86,8 +86,8 @@ public class Button {
 	 */
 	public void setPosition(float x, float y)
 	{
-		int newX = (int)((parentView.getWidth() / 100) * x);
-		int newY = (int)(parentView.getHeight() / 100 * y);
+		float newX = parentView.getWidth() / 100 * x;
+		float newY = parentView.getHeight() / 100 * y;
 		
 		button.setX(newX);
 		button.setY(newY);
