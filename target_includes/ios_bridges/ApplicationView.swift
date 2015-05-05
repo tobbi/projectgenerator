@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-public class Activity: UIViewController {
+public class ApplicationView: UIViewController {
 
     /**
      * Array containing all subviews of this activity

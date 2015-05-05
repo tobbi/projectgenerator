@@ -8,9 +8,9 @@ public class Application {
 	private android.app.Activity innerActivity = null;
 	
 	/**
-	 * The current "bridge" activity
+	 * The current "bridge" application view
 	 */
-	private Activity activity = null;
+	private ApplicationView applicationView = null;
 	
     /**
      * Initialize window
@@ -19,7 +19,13 @@ public class Application {
 	public Application(android.app.Activity context) {
 		innerActivity = context;
 	}
-	
+
+	/**
+	 * Initialize window
+	 * @param context The main Activity (aka main function) this window is wrapped in
+	 * @param width Width of the window
+	 * @param height Height of the window
+	 */
 	public Application(android.app.Activity context, int width, int height) {
 		innerActivity = context;
 	}
@@ -34,18 +40,18 @@ public class Application {
 
     /**
      * Create an activity inside this window
-     * @return The created activity
+     * @return The created application view
      */
-	public Activity createActivity() {
-		activity = new Activity(innerActivity);
-		return activity;
+	public ApplicationView createApplicationView() {
+		applicationView = new ApplicationView(innerActivity);
+		return applicationView;
 	}
 	
 	/**
-	 * Gets the current activity inside this window
-	 * @return The activity inside this window
+	 * Gets the current application view inside this window
+	 * @return The application view inside this window
 	 */
-	public Activity getActivity() {
-		return activity;
+	public ApplicationView getApplicationView() {
+		return applicationView;
 	}
 }

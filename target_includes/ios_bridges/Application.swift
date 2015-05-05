@@ -39,6 +39,12 @@ public class Application {
         parentWindow.backgroundColor = UIColor.whiteColor();
     }
     
+    /**
+     * Initialize window
+     * @param context The UI Responder object (aka main function) we create this activity for
+     * @param width Width of this activity
+     * @param height Height of this activity
+     */
     public init(context: UIResponder, width: CGFloat, height: CGFloat)
     {
         parentContext = context;
@@ -69,7 +75,7 @@ public class Application {
      * Create an activity inside this window
      * @return The created activity
      */
-    public func createActivity() -> Activity {
+    public func createApplicationView() -> ApplicationView {
         var activity = Activity(context: parentContext);
         parentWindow.rootViewController = activity;
         return activity;
@@ -79,8 +85,8 @@ public class Application {
      * Returns the current activity
      * @return the activity belonging to this window
      */
-    public func getActivity() -> Activity
+    public func getApplicationView() -> ApplicationView
     {
-        return parentWindow.rootViewController as! Activity;
+        return parentWindow.rootViewController as! ApplicationView;
     }
 }
