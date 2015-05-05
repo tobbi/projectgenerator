@@ -19,16 +19,6 @@ public class Application {
 	public Application(android.app.Activity context) {
 		innerActivity = context;
 	}
-
-	/**
-	 * Initialize window
-	 * @param context The main Activity (aka main function) this window is wrapped in
-	 * @param width Width of the window
-	 * @param height Height of the window
-	 */
-	public Application(android.app.Activity context, int width, int height) {
-		innerActivity = context;
-	}
 	
     /**
      * Return the wrapped Activity instance
