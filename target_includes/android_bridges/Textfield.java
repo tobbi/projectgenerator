@@ -28,8 +28,8 @@ public class Textfield {
 	 */
 	public Textfield(ApplicationView parentView)
 	{
-		parentContext = parentView.;
-		editText = new EditText(context);
+		parentContext = parentView.getParentContext();
+		editText = new EditText(parentContext);
 		//editText.setLayoutParams(wrapContentParams);
 		editText.setBackgroundColor(Color.WHITE);
 		editText.setTextColor(Color.BLACK);
