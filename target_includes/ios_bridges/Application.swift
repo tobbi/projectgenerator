@@ -34,6 +34,7 @@ public class Application {
         // Größe festlegen:
         parentWindow = UIWindow(frame: UIScreen.mainScreen().bounds);
         
+        
         // Hintergrundfarbe festlegen:
         parentWindow.backgroundColor = UIColor.whiteColor();
     }
