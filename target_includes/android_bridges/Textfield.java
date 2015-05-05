@@ -23,11 +23,14 @@ public class Textfield {
 	
 	private Context parentContext = null;
 	
+	private ApplicationView parentView = null;
+	
 	/**
 	 * Public constructor of class Textfield
 	 */
 	public Textfield(ApplicationView parentView)
 	{
+		this.parentView = parentView; 
 		parentContext = parentView.getParentContext();
 		editText = new EditText(parentContext);
 		//editText.setLayoutParams(wrapContentParams);
@@ -88,7 +91,9 @@ public class Textfield {
 	 */
 	public void setSize(float width, float height)
 	{
-		editText.setLayoutParams(new LayoutParams((int)width, (int)height));
+		int newWidth = (int)((parentView.getWidth() / 100) * width);
+		int newHeight = (int)(parentView.getHeight() / 100 * height);
+		editText.setLayoutParams(new LayoutParams(newWidth, newHeight));
 		//editText.setWidth((int)width);
 		//editText.setHeight((int)height);
 	}
@@ -100,8 +105,11 @@ public class Textfield {
 	 */
 	public void setPosition(float x, float y)
 	{
-		editText.setX(x);
-		editText.setY(y);
+		int newX = (int)((parentView.getWidth() / 100) * x);
+		int newY = (int)(parentView.getHeight() / 100 * y);
+		
+		editText.setX(newX);
+		editText.setY(newY);
 	}
 	
 	/**

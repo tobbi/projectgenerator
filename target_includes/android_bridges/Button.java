@@ -28,12 +28,18 @@ public class Button {
 	 * Parent context (activity?)
 	 */
 	private Context parentContext = null;
+	
+	/**
+	 * Parent view
+	 */
+	private ApplicationView parentView;
 
 	/**
 	 * Public constructor of class Button
 	 */
 	public Button(ApplicationView parentView)
 	{
+		this.parentView = parentView;
 		parentContext = parentView.getParentContext();
 		button = new android.widget.Button(parentContext);
 		button.setTextSize(12);
@@ -64,9 +70,11 @@ public class Button {
 	 */
 	public void setSize(float width, float height)
 	{
-		button.setWidth((int)(width * 2));
-		button.setHeight((int)(height * 2));
-		layoutParams = new LayoutParams((int)width, (int) height);
+		int newWidth = (int)((parentView.getWidth() / 100) * width);
+		int newHeight = (int)(parentView.getHeight() / 100 * height);
+		button.setWidth(newWidth);
+		button.setHeight(newHeight);
+		layoutParams = new LayoutParams(newWidth, newHeight);
 		button.setLayoutParams(layoutParams);
 	}
 	
@@ -77,8 +85,11 @@ public class Button {
 	 */
 	public void setPosition(float x, float y)
 	{
-		button.setX(x);
-		button.setY(y);
+		int newX = (int)((parentView.getWidth() / 100) * x);
+		int newY = (int)(parentView.getHeight() / 100 * y);
+		
+		button.setX(newX);
+		button.setY(newY);
 	}
 	
 	/**
