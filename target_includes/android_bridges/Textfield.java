@@ -95,8 +95,12 @@ public class Textfield {
 	 */
 	public void setSize(float width, float height)
 	{
-		int newWidth = (int)((parentView.getWidth() / 100) * width);
-		int newHeight = (int)(parentView.getHeight() / 100 * height);
+		double application_width = parentView.getWidth() * 1.0;
+		double application_height = parentView.getHeight() * 1.0;
+
+		int newWidth = (int)((application_width / 100) * width);
+		int newHeight = (int)(application_height / 100 * height);
+
 		editText.setLayoutParams(new LayoutParams(newWidth, newHeight));
 		editText.setWidth(newWidth);
 		editText.setHeight(newHeight);
@@ -109,8 +113,11 @@ public class Textfield {
 	 */
 	public void setPosition(float x, float y)
 	{
-		float newX = parentView.getWidth() / 100 * x;
-		float newY = parentView.getHeight() / 100 * y;
+		double application_width = parentView.getWidth() * 1.0;
+		double application_height = parentView.getHeight() * 1.0;
+		
+		int newX = (int)(application_width / 100 * x);
+		int newY = (int)(application_height / 100 * y);
 		
 		editText.setX(newX);
 		editText.setY(newY);
