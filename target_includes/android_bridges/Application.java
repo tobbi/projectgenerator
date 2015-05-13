@@ -1,6 +1,7 @@
 package de.fhflensburg.tobiasmarkus.androidBridge;
 
 import android.graphics.Point;
+import android.view.Display;
 
 public class Application {
 	
@@ -26,7 +27,7 @@ public class Application {
 	public Application(android.app.Activity context) {
 		innerActivity = context;
 		
-		android.view.Display display = innerActivity.getWindowManager().getDefaultDisplay();
+		Display display = innerActivity.getWindowManager().getDefaultDisplay();
 		
 		// Display-Size-Variable anlegen:
 		Point display_size = new Point();
@@ -35,8 +36,8 @@ public class Application {
 		display.getSize(display_size);
 		
 		// Speichern der Groesse in den Variablen width und height:
-		this.height = display_size.y;
 		this.width = display_size.x;
+		this.height = display_size.y;
 	}
 	
 	/**
