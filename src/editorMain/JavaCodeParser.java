@@ -281,6 +281,7 @@ public class JavaCodeParser {
 				fileInput = stateParserIfStatement(fileInput);
 				fileInput = stateParserBreakStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
+				fileInput = stateParserReturnStatement(fileInput);
 				fileInput = stateParserFunctionCall(fileInput);
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				break;
