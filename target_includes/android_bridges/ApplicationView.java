@@ -31,8 +31,8 @@ public class ApplicationView {
      * @param activity The MainActivity parent (aka "Main function")
      */
 	public ApplicationView(android.app.Activity context, int width, int height) {
-		parentContext = context;
-		containedViews = new ArrayList<View>();
+		this.parentContext = context;
+		this.containedViews = new ArrayList<View>();
 
 		this.width = width;
 		this.height = height;
