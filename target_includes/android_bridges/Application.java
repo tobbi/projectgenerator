@@ -25,7 +25,7 @@ public class Application {
      * @param context The main Activity (aka main function) this window is wrapped in
      */
 	public Application(android.app.Activity context) {
-		innerActivity = context;
+		this.innerActivity = context;
 		
 		Display display = innerActivity.getWindowManager().getDefaultDisplay();
 		
