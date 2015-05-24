@@ -58,7 +58,7 @@ public class JavaCodeParser {
 	 * Stack, in welchem geschweifte Klammern gespeichert werden
 	 */
 	//Stack<String> bracketStack = new Stack<String>();
-	Stack<State> stateStack;
+	Stack<State> stateStack = new Stack<State>();
 	enum State {FILE, CLASS, ENUM, FUNCTION, IF, SWITCH, CASE};
 	
 	// Speichert, wo die erkannten Konstrukte eingefuegt werden.
@@ -159,11 +159,7 @@ public class JavaCodeParser {
 	Pattern classDeclarationRegex = Pattern.compile(classDeclaration);
 
 	public void parse(String fileInput) {
-		if(stateStack == null)
-		{
-			stateStack = new Stack<State>();
-		}
-		else 
+		if(!stateStack.isEmpty())
 		{
 			stateStack.removeAllElements();
 		}
