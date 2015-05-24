@@ -41,7 +41,7 @@ public class Textfield {
         self.parentEventContext = eventContext;
         
         // Initialize text field
-        self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 100));
+        self.innerTextField = UITextField(frame: CGRect(x:0, y: 0, width: 100, height: 30));
 
         // Set the look of this element
         self.innerTextField.layer.borderColor = UIColor.lightGrayColor().CGColor;
@@ -101,14 +101,6 @@ public class Textfield {
     public func addText(text: String)
     {
         innerTextField.text! += text;
-    }
-    
-    /**
-     * Removes all text from this text field
-     */
-    public func clear()
-    {
-        innerTextField.text! = "";
     }
     
     /**
