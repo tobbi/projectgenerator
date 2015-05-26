@@ -88,7 +88,7 @@ public class JavaCodeParser {
 	String regexArrayIndexAssignment = "^([\\w_]*\\[\\d+\\])\\s*=\\s*(.*?);";
 	Pattern regexArrayIndexAssignmentPattern = Pattern.compile(regexArrayIndexAssignment);
 	
-	String regexIfStatement = "^if\\s*\\([^\\)]*\\)";
+	String regexIfStatement = "^if\\s*\\(([^\\)]*)\\)";
 	Pattern ifStatementPattern = Pattern.compile(regexIfStatement);
 	
 	String regexSwitchStatement = "^switch\\s*\\(([^\\)]*)\\)";
