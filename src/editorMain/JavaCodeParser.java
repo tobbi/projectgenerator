@@ -242,26 +242,26 @@ public class JavaCodeParser {
 				break;
 			lastLength = fileInput.length();
 			
-			fileInput = stateParserNonPrintables(fileInput);
-			fileInput = stateParserLineComment(fileInput);
-			fileInput = stateParserBlockComment(fileInput);
+			fileInput = stateParserNonPrintables(fileInput); // xxx
+			fileInput = stateParserLineComment(fileInput); // xxx
+			fileInput = stateParserBlockComment(fileInput); // xxx
 			
 			switch(stateStack.peek()) // Check what the current state is
 			{
 			case FILE:
-				fileInput = stateParserImport(fileInput);
-				fileInput = stateParserMainClassTag(fileInput);
-				fileInput = stateParserClassDeclaration(fileInput);
+				fileInput = stateParserImport(fileInput); // xxx
+				fileInput = stateParserMainClassTag(fileInput); // xxx
+				fileInput = stateParserClassDeclaration(fileInput); // xxx
 				break;
 
 			case CLASS:
 				// We are in a class. Handle member and function declaration:
-				fileInput = stateParserClassDeclaration(fileInput);
-				fileInput = stateParserEnumDeclaration(fileInput);
-				fileInput = stateParserMemberDeclaration(fileInput);
-				fileInput = stateParserMainFunctionTag(fileInput);
-				fileInput = stateParserEventHandlerTag(fileInput);
-				fileInput = stateParserFunctionDeclaration(fileInput);
+				fileInput = stateParserClassDeclaration(fileInput); // xxx
+				fileInput = stateParserEnumDeclaration(fileInput); // xxx
+				fileInput = stateParserMemberDeclaration(fileInput); // xxx
+				fileInput = stateParserMainFunctionTag(fileInput); // xxx
+				fileInput = stateParserEventHandlerTag(fileInput); // xxx
+				fileInput = stateParserFunctionDeclaration(fileInput); // xxx
 				break;
 				
 			case ENUM:
@@ -278,7 +278,7 @@ public class JavaCodeParser {
 				fileInput = stateParserBreakStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
 				fileInput = stateParserReturnStatement(fileInput);
-				fileInput = stateParserFunctionCall(fileInput);
+				fileInput = stateParserFunctionCall(fileInput); // xxx
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				break;
 
@@ -289,8 +289,8 @@ public class JavaCodeParser {
 				fileInput = stateParserSwitchStatement(fileInput);
 				fileInput = stateParserAssignment(fileInput);
 				fileInput = stateParserReturnStatement(fileInput);
-				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
-				fileInput = stateParserFunctionCall(fileInput);
+				fileInput = stateParserMemberDeclaration(fileInput); // xxx // Gleiches RegEx fuer lokale Variablen nehmen!!!
+				fileInput = stateParserFunctionCall(fileInput); // xxx
 				break;
 
 			default:
@@ -430,6 +430,7 @@ public class JavaCodeParser {
 					stateStack.pop();
 				}
 				addToSwiftFile("break;");
+				addToAndroidFile("break;");
 			}
 			fileInput = fileInput.replaceFirst(regexBreakStatement, "");
 		}
@@ -1387,10 +1388,10 @@ public class JavaCodeParser {
 			}
 			// Konstruktoren muessen alle Parameter gelabeled haben,
 			// normale Funktionsaufrufe nur ab dem zweiten.
+			String[] paramLabels = getParameterLabelsForFunction(functionName.trim());
 			if(j > 0 || isConstructor)
 			{
 				// Funktionsaufruf unterteilen:
-				String[] paramLabels = getParameterLabelsForFunction(functionName.trim());
 				if(paramLabels != null && paramLabels[j] != null) {
 					parametersTemp[j] = paramLabels[j] + ": " + parametersTemp[j].trim();
 				}

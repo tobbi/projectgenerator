@@ -8,13 +8,14 @@ package com.change.please;
 //  Copyright (c) [current year] Tobias Markus. All rights reserved.
 //
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import de.fhflensburg.tobiasmarkus.androidBridge.*;
 
-public class MainActivity extends android.app.Activity {
+public class MainActivity extends Activity {
 	
 	@classContext
 	
