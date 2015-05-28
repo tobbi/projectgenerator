@@ -85,7 +85,7 @@ public class JavaCodeParser {
 			regexAccessModifier, regexOtherModifier, regexfinalModifier, regexIdentifier, regexIdentifier, "([\\s\\w,]*)");
 	Pattern regexMemberFunctionDeclarationPattern = Pattern.compile(regexMemberFunctionDeclaration);
 	
-	String regexArrayIndexAssignment = "^([\\w_]*\\[\\d+\\])\\s*=\\s*(.*?);";
+	String regexArrayIndexAssignment = "^([\\w_]+\\[\\d+\\])\\s*=\\s*(.*?);";
 	Pattern regexArrayIndexAssignmentPattern = Pattern.compile(regexArrayIndexAssignment);
 	
 	String regexIfStatement = "^if\\s*\\(([^\\)]*)\\)";
@@ -265,30 +265,30 @@ public class JavaCodeParser {
 				break;
 				
 			case ENUM:
-				fileInput = stateParserEnumCaseDeclaration(fileInput);
+				fileInput = stateParserEnumCaseDeclaration(fileInput); // xxx
 				break;
 				
 			case SWITCH:
-				fileInput = stateParserCaseDefinition(fileInput);
+				fileInput = stateParserCaseDefinition(fileInput); // xxx
 				break;
 			
 			case CASE:
-				fileInput = stateParserConsoleOutput(fileInput);
-				fileInput = stateParserIfStatement(fileInput);
-				fileInput = stateParserBreakStatement(fileInput);
-				fileInput = stateParserAssignment(fileInput);
-				fileInput = stateParserReturnStatement(fileInput);
+				fileInput = stateParserConsoleOutput(fileInput); // xxx
+				fileInput = stateParserIfStatement(fileInput); // xxx
+				fileInput = stateParserBreakStatement(fileInput); // xxx
+				fileInput = stateParserAssignment(fileInput); // xxx
+				fileInput = stateParserReturnStatement(fileInput); // xxx
 				fileInput = stateParserFunctionCall(fileInput); // xxx
 				fileInput = stateParserMemberDeclaration(fileInput); // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				break;
 
 			case IF:
 			case FUNCTION:
-				fileInput = stateParserConsoleOutput(fileInput);
-				fileInput = stateParserIfStatement(fileInput);
-				fileInput = stateParserSwitchStatement(fileInput);
-				fileInput = stateParserAssignment(fileInput);
-				fileInput = stateParserReturnStatement(fileInput);
+				fileInput = stateParserConsoleOutput(fileInput); // xxx
+				fileInput = stateParserIfStatement(fileInput); // xxx
+				fileInput = stateParserSwitchStatement(fileInput); // xxx
+				fileInput = stateParserAssignment(fileInput); // xxx
+				fileInput = stateParserReturnStatement(fileInput); // xxx
 				fileInput = stateParserMemberDeclaration(fileInput); // xxx // Gleiches RegEx fuer lokale Variablen nehmen!!!
 				fileInput = stateParserFunctionCall(fileInput); // xxx
 				break;
@@ -298,7 +298,7 @@ public class JavaCodeParser {
 			}
 
 			// bei einer schliessenden geschweiften Klammer, State vom Stack nehmen:
-			fileInput = stateParserBraces(fileInput);
+			fileInput = stateParserBraces(fileInput); // xxx
 		}
 		
 		if(fileInput.length() > 0) {
