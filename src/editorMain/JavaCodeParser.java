@@ -77,7 +77,7 @@ public class JavaCodeParser {
 
 	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s*(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
-			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_\\.]*", regexIdentifier, regexDefinition);
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_\\.]*?", regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
 
 	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
@@ -773,6 +773,7 @@ public class JavaCodeParser {
 	private String stateParserMemberDeclaration(String fileInput)
 	{
 		Matcher variableDeclarationMatcher = regexMemberDeclarationPattern.matcher(fileInput);
+		System.out.println(regexMemberDeclaration);
 		if(variableDeclarationMatcher.find())
 		{
 			int i = 0;
@@ -824,7 +825,6 @@ public class JavaCodeParser {
 					}
 					break;
 				case 7: // data type
-					//System.out.println("Variable has the data type " + currentGroupMatch);
 					dataType = toSwiftDataType(currentGroupMatch);
 					break;
 				case 8: // Array brackets []
