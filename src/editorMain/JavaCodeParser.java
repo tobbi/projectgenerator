@@ -77,7 +77,7 @@ public class JavaCodeParser {
 
 	String regexMemberDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)(\\[\\])?\\s*(%s)(%s)?;",
 		//     public                static               final              int              MAX_COUNT       =   5
-			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_\\.]+?", regexIdentifier, regexDefinition);
+			regexAccessModifier, regexOtherModifier, regexfinalModifier, "[\\w_\\.]*", regexIdentifier, regexDefinition);
 	Pattern regexMemberDeclarationPattern = Pattern.compile(regexMemberDeclaration);
 
 	String regexMemberFunctionDeclaration = String.format("^(%s)?(%s)?(%s)?(%s)\\s+%s\\(%s?\\)",
